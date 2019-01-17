@@ -1,0 +1,15 @@
+
+body {
+  margin: 0;
+  overscroll-behavior-y: none;
+}
+
+body * {
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.dev-shadows,
+.dev-shadows * {
+  box-shadow: 0 0 1px hsla(0,0%,0%,0.3);
+}
