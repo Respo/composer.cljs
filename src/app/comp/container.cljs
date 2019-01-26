@@ -12,7 +12,8 @@
             [cumulo-reel.comp.reel :refer [comp-reel]]
             [app.config :refer [dev?]]
             [app.schema :as schema]
-            [app.config :as config]))
+            [app.config :as config]
+            [app.comp.workspace :refer [comp-workspace]]))
 
 (defcomp
  comp-offline
@@ -63,7 +64,7 @@
       (comp-navigation (:logged-in? store) (:count store))
       (if (:logged-in? store)
         (case (:name router)
-          :home (<> "Home")
+          :home (comp-workspace)
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))

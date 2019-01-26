@@ -30,4 +30,4 @@
                   {})),
        :count (count (:sessions db)),
        :color (color/randomColor)}
-      nil))))
+      false))))
