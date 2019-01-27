@@ -54,7 +54,8 @@
  (states templates pointer-data)
  (let [pointer (:pointer pointer-data)
        tab (:tab pointer-data)
-       template (get templates pointer)]
+       template (get templates pointer)
+       focused-path (:focused-path pointer-data)]
    (div
     {:style (merge ui/flex ui/row)}
     (div
@@ -72,8 +73,8 @@
       (div
        {:style (merge ui/flex ui/column)}
        (case tab
-         :editor (comp-editor template)
-         nil (comp-editor template)
+         :editor (comp-editor template focused-path)
+         nil (comp-editor template focused-path)
          :mocks
            (cursor->
             :mock
@@ -81,6 +82,7 @@
             states
             (:id template)
             (:focused-mock pointer-data)
+            (:mock-pointer template)
             (:mocks template))
          :settings (cursor-> :settings comp-template-settings states template)
          (<> (str "Unknown tab:" (pr-str tab))))

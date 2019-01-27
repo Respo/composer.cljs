@@ -19,6 +19,7 @@
             :router/set-pointer router/set-pointer
             :router/set-tab router/set-tab
             :router/set-focused-mock router/set-focused-mock
+            :router/set-focused-path router/set-focused-path
             :template/create template/create-template
             :template/rename template/rename-template
             :template/remove template/remove-template
@@ -26,5 +27,7 @@
             :template/update-mock template/update-mock
             :template/remove-mock template/remove-mock
             :template/rename-mock template/rename-mock
+            :template/use-mock template/use-mock
+            :template/append-markup template/append-markup
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

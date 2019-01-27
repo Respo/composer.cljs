@@ -14,7 +14,8 @@ Workspace router:
  :data {:pointer "id"
         ; valid tab are: :editor, :mocks, :settings
         :tab :markup
-        :focused-mock "id"}}
+        :focused-mock "id"
+        :focused-path []}}
 ```
 
 Preview router:

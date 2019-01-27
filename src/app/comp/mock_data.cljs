@@ -64,13 +64,19 @@
     {:style ui/row-middle}
     (button
      {:style ui/button,
+      :inner-text "Use this",
+      :on-click (fn [e d! m!]
+        (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
+    (=< 8 nil)
+    (button
+     {:style ui/button,
       :inner-text "Remove",
       :on-click (fn [e d! m!]
         (d! :template/remove-mock {:template-id template-id, :mock-id (:id mock)}))})))))
 
 (defcomp
  comp-mock-data
- (states template-id focused-id mocks)
+ (states template-id focused-id used-mock mocks)
  (div
   {:class-name "", :style (merge ui/flex ui/row)}
   (div
@@ -95,10 +101,13 @@
             (fn [mock]
               (div
                {:style (merge
+                        ui/row-middle
                         {:cursor :pointer, :padding "0 8px"}
                         (if (= focused-id (:id mock)) {:background-color (hsl 0 0 94)})),
                 :on-click (fn [e d! m!] (d! :router/set-focused-mock (:id mock)))}
-               (<> (:name mock)))))))))
+               (<> (:name mock))
+               (=< 8 nil)
+               (if (= used-mock (:id mock)) (comp-i :star 14 (hsl 0 80 70))))))))))
   (if-let [mock (get mocks focused-id)]
     (cursor-> :editor comp-mock-editor states template-id mock)
     (div
