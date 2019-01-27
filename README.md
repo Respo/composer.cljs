@@ -13,7 +13,8 @@ Workspace router:
         ; points to template id
  :data {:pointer "id"
         ; valid tab are: :editor, :mocks, :settings
-        :tab :markup}}
+        :tab :markup
+        :focused-mock "id"}}
 ```
 
 Preview router:

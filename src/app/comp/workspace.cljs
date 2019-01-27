@@ -74,7 +74,14 @@
        (case tab
          :editor (comp-editor template)
          nil (comp-editor template)
-         :mocks (comp-mock-data)
+         :mocks
+           (cursor->
+            :mock
+            comp-mock-data
+            states
+            (:id template)
+            (:focused-mock pointer-data)
+            (:mocks template))
          :settings (cursor-> :settings comp-template-settings states template)
          (<> (str "Unknown tab:" (pr-str tab))))
        (div
