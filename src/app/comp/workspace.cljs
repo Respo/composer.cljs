@@ -23,7 +23,7 @@
     {:style {:padding "8px 16px"}}
     (div
      {:style ui/row-parted}
-     (<> "Templates list")
+     (<> "Templates" {:font-family ui/font-fancy})
      (cursor->
       :name
       comp-prompt

@@ -19,8 +19,14 @@
             :border-bottom (str "1px solid " (hsl 0 0 0 0.1)),
             :font-family ui/font-fancy})}
   (div
-   {:on-click (action-> :router/change {:name :home}), :style {:cursor :pointer}}
-   (<> (:title config/site) nil))
+   {:style ui/row-middle}
+   (div
+    {:on-click (action-> :router/change {:name :home}), :style {:cursor :pointer}}
+    (<> (:title config/site) nil))
+   (=< 16 nil)
+   (div
+    {:on-click (action-> :router/change {:name :preview}), :style {:cursor :pointer}}
+    (<> "Preview" nil)))
   (div
    {:style {:cursor "pointer"}, :on-click (action-> :router/change {:name :profile})}
    (<> (if logged-in? "Me" "Guest"))

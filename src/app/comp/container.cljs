@@ -13,7 +13,8 @@
             [app.config :refer [dev?]]
             [app.schema :as schema]
             [app.config :as config]
-            [app.comp.workspace :refer [comp-workspace]]))
+            [app.comp.workspace :refer [comp-workspace]]
+            [app.comp.preview :refer [comp-preview]]))
 
 (defcomp
  comp-offline
@@ -65,7 +66,14 @@
       (comp-navigation (:logged-in? store) (:count store))
       (if (:logged-in? store)
         (case (:name router)
-          :home (cursor-> :workspace comp-workspace states templates (:data router))
+          :home
+            (cursor->
+             :workspace
+             comp-workspace
+             states
+             templates
+             (get-in session [:router :data]))
+          :preview (comp-preview templates (get-in session [:router :data :pointer]))
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))

@@ -11,9 +11,16 @@ Workspace router:
 ```edn
 {:name :home
         ; points to template id
- :data {:pointer "name"
+ :data {:pointer "id"
         ; valid tab are: :editor, :mocks, :settings
         :tab :markup}}
+```
+
+Preview router:
+
+```edn
+{:name :preview
+ :data {:pointer "id"}}
 ```
 
 ### Workflow

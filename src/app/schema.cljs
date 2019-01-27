@@ -15,7 +15,8 @@
    :router (do router {:name :home, :data nil, :router nil}),
    :messages {}})
 
-(def template {:id nil, :name nil, :mocks (do mock {}), :markup (do markup nil)})
+(def template
+  {:id nil, :name nil, :mocks (do mock {}), :mock-pointer nil, :markup (do markup nil)})
 
 (def user {:name nil, :id nil, :nickname nil, :avatar nil, :password nil})
 
