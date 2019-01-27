@@ -56,7 +56,8 @@
  (let [state (:data states)
        session (:session store)
        router (:router store)
-       router-data (:data router)]
+       router-data (:data router)
+       templates (:templates store)]
    (if (nil? store)
      (comp-offline)
      (div
@@ -64,7 +65,7 @@
       (comp-navigation (:logged-in? store) (:count store))
       (if (:logged-in? store)
         (case (:name router)
-          :home (comp-workspace)
+          :home (cursor-> :workspace comp-workspace states templates (:data router))
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))

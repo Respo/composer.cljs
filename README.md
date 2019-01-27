@@ -1,8 +1,20 @@
 
-Deviser Respo
+Composer
 ------
 
-> Layout tool for Respo.
+> Template generating tool for Respo.
+
+### Specs
+
+Workspace router:
+
+```edn
+{:name :home
+        ; points to template id
+ :data {:pointer "name"
+        ; valid tab are: :editor, :mocks, :settings
+        :tab :markup}}
+```
 
 ### Workflow
 

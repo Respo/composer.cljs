@@ -25,9 +25,10 @@
                 router
                 :data
                 (case (:name router)
-                  :home (:pages db)
+                  :home (:data router)
                   :profile (twig-members (:sessions db) (:users db))
                   {})),
        :count (count (:sessions db)),
-       :color (color/randomColor)}
-      false))))
+       :color (color/randomColor),
+       :templates (:templates db)}
+      nil))))

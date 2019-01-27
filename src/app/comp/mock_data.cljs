@@ -7,4 +7,4 @@
             [respo.comp.space :refer [=<]]
             [app.config :as config]))
 
-(defcomp comp-mock-data () (div {:style (merge ui/row)} (<> "Mock data")))
+(defcomp comp-mock-data () (div {:style (merge ui/flex ui/row)} (<> "Mock data")))

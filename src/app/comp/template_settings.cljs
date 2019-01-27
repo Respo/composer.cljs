@@ -1,5 +1,5 @@
 
-(ns app.comp.template
+(ns app.comp.template-settings
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
             [respo-ui.core :as ui]
@@ -7,4 +7,7 @@
             [respo.comp.space :refer [=<]]
             [app.config :as config]))
 
-(defcomp comp-template () (div {:style (merge ui/row)} (<> "Template")))
+(defcomp
+ comp-template-settings
+ ()
+ (div {:style (merge ui/flex ui/row)} (<> "Template settings")))

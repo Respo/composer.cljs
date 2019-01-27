@@ -6,6 +6,7 @@
             [cumulo-reel.core :refer [reel-reducer refresh-reel reel-schema]]
             ["fs" :as fs]
             ["path" :as path]
+            ["chalk" :as chalk]
             [app.config :as config]
             [cumulo-util.file :refer [write-mildly! get-backup-path! merge-local-edn!]]
             [cumulo-util.core :refer [id! repeat! unix-time! delay!]]
@@ -58,7 +59,8 @@
            old-store (or (get @*client-caches sid) nil)
            new-store (render-twig (twig-container db session records) old-store)
            changes (diff-twig old-store new-store {:key :id})]
-       (println "Changes for" sid ":" changes (count records))
+       (when config/dev?
+         (println (.gray chalk (str "Changes for " sid ": " (count changes)))))
        (if (not= changes [])
          (do
           (wss-send! sid {:kind :patch, :data changes})
