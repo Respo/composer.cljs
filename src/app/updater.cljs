@@ -19,5 +19,7 @@
             :router/set-pointer router/set-pointer
             :router/set-tab router/set-tab
             :template/create template/create-template
+            :template/rename template/rename-template
+            :template/remove template/remove-template
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

@@ -30,17 +30,19 @@
       states
       {:trigger (comp-icon :plus {:font-size 15, :color (hsl 0 0 30), :cursor :pointer} nil)}
       (fn [result d! m!] (when-not (string/blank? result) (d! :template/create result)))))
-    (list->
-     {}
-     (->> templates
-          (map-val
-           (fn [template]
-             (div
-              {:style (merge
-                       {:cursor :pointer, :padding "0px 8px", :line-height "40px"}
-                       (if (= pointer (:id template)) {:background-color (hsl 0 0 90)})),
-               :on-click (fn [e d! m!] (d! :router/set-pointer (:id template)))}
-              (<> (:name template))))))))))
+    (if (empty? templates)
+      (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70)}} (<> "No templates"))
+      (list->
+       {}
+       (->> templates
+            (map-val
+             (fn [template]
+               (div
+                {:style (merge
+                         {:cursor :pointer, :padding "0px 8px", :line-height "40px"}
+                         (if (= pointer (:id template)) {:background-color (hsl 0 0 90)})),
+                 :on-click (fn [e d! m!] (d! :router/set-pointer (:id template)))}
+                (<> (:name template)))))))))))
 
 (def template-tabs
   [{:value :editor, :display "Editor"}
@@ -59,14 +61,21 @@
      {:style (merge {:width 320})}
      (cursor-> :list comp-templates-list states templates pointer tab))
     (if (nil? template)
-      (div {:style (merge ui/flex {:padding "16px"})} (<> "No template selected."))
+      (div
+       {:style (merge
+                ui/flex
+                {:padding "16px",
+                 :font-family ui/font-fancy,
+                 :font-size 24,
+                 :color (hsl 0 0 60)})}
+       (<> "No template selected."))
       (div
        {:style (merge ui/flex ui/column)}
        (case tab
          :editor (comp-editor template)
          nil (comp-editor template)
          :mocks (comp-mock-data)
-         :settings (comp-template-settings)
+         :settings (cursor-> :settings comp-template-settings states template)
          (<> (str "Unknown tab:" (pr-str tab))))
        (div
         {}

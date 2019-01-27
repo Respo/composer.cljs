@@ -3,11 +3,36 @@
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> <> span div button]]
+            [respo.core :refer [defcomp list-> cursor-> <> span div button]]
             [respo.comp.space :refer [=<]]
-            [app.config :as config]))
+            [app.config :as config]
+            [respo-alerts.comp.alerts :refer [comp-confirm comp-prompt]]
+            [clojure.string :as string]))
 
 (defcomp
  comp-template-settings
- ()
- (div {:style (merge ui/flex ui/row)} (<> "Template settings")))
+ (states template)
+ (div
+  {:style (merge ui/flex ui/column)}
+  (div
+   {:style {:font-family ui/font-fancy, :font-size 20, :padding "8px 0"}}
+   (<> "Template settings"))
+  (div
+   {}
+   (cursor->
+    :rename
+    comp-prompt
+    states
+    {:trigger (button {:style ui/button, :inner-text "Change name"}),
+     :initial (:name template),
+     :text "Change the name"}
+    (fn [result d! m!]
+      (when-not (string/blank? result)
+        (d! :template/rename {:id (:id template), :name result}))))
+   (=< 8 nil)
+   (cursor->
+    :remove
+    comp-confirm
+    states
+    {:trigger (button {:style ui/button, :inner-text "Remove"}), :text "Sure to remove?"}
+    (fn [e d! m!] (d! :template/remove (:id template)))))))
