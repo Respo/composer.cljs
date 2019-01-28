@@ -29,5 +29,7 @@
             :template/rename-mock template/rename-mock
             :template/use-mock template/use-mock
             :template/append-markup template/append-markup
+            :template/remove-markup template/remove-markup
+            :template/after-markup template/after-markup
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

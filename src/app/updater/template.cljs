@@ -2,15 +2,26 @@
 (ns app.updater.template
   (:require [app.schema :as schema]
             [bisection-key.core :as bisection]
-            [bisection-key.util :refer [key-append]]))
+            [bisection-key.util :refer [key-append key-after]]
+            [app.util :refer [path-with-children]]))
+
+(defn after-markup [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data), focused-path (:path op-data)]
+    (if (empty? focused-path)
+      db
+      (update-in
+       db
+       (concat [:templates template-id :markup] (path-with-children (butlast focused-path)))
+       (fn [children]
+         (println "children" children)
+         (let [next-key (key-after children (last focused-path))]
+           (assoc children next-key (merge schema/markup {:id next-key, :type :box}))))))))
 
 (defn append-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
     (update-in
      db
-     (concat
-      [:templates template-id :markup :children]
-      (interleave focused-path (repeat :children)))
+     (concat [:templates template-id :markup] (path-with-children focused-path))
      (fn [children]
        (let [next-key (key-append children)]
          (assoc children next-key (merge schema/markup {:id next-key, :type :box})))))))
@@ -26,6 +37,15 @@
         base-markup (merge schema/markup {:id markup-id, :type :box, :layout :row})
         new-template (merge schema/template {:id op-id, :name op-data, :markup base-markup})]
     (assoc-in db [:templates op-id] new-template)))
+
+(defn remove-markup [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data), path (:path op-data)]
+    (if (empty? path)
+      db
+      (update-in
+       db
+       (concat [:templates template-id :markup] (path-with-children (butlast path)))
+       (fn [children] (dissoc children (last path)))))))
 
 (defn remove-mock [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), mock-id (:mock-id op-data)]

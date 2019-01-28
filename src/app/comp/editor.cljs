@@ -15,13 +15,23 @@
  (markup path focused-path)
  (div
   {:style {}}
-  (<> (:type markup))
+  (div
+   {:style (merge
+            {:display :inline-block,
+             :cursor :pointer,
+             :padding "0 8px",
+             :background-color (hsl 0 0 88),
+             :color :white,
+             :border-radius "8px"}
+            (if (= path focused-path) {:background-color (hsl 200 80 70)})),
+    :on-click (fn [e d! m!] (d! :router/set-focused-path path))}
+   (<> (:type markup)))
   (list->
    {:style {:padding-left 16}}
    (->> (:children markup)
         (map-val
          (fn [child-markup]
-           (div {} (comp-markup child-markup (conj path (:id markup)) focused-path))))))))
+           (div {} (comp-markup child-markup (conj path (:id child-markup)) focused-path))))))))
 
 (defcomp
  comp-operations
@@ -35,7 +45,13 @@
     {:style ui/button,
      :inner-text "Append",
      :on-click (fn [e d! m!]
-       (d! :template/append-markup {:template-id template-id, :path (or focused-path [])}))})
+       (d! :template/append-markup {:template-id template-id, :path focused-path}))})
+   (=< 8 nil)
+   (button
+    {:style ui/button,
+     :inner-text "After",
+     :on-click (fn [e d! m!]
+       (d! :template/after-markup {:template-id template-id, :path focused-path}))})
    (=< 8 nil)
    (button {:style ui/button, :inner-text "Change Type"}))
   (=< nil 16)
@@ -45,7 +61,9 @@
    (button
     {:style ui/button,
      :inner-text "Remove",
-     :on-click (fn [e d! m!] (d! :template/remove-markup nil))}))))
+     :on-click (fn [e d! m!]
+       (d! :template/remove-markup {:template-id template-id, :path focused-path})
+       (d! :router/set-focused-path (vec (butlast focused-path))))}))))
 
 (defcomp
  comp-editor
@@ -56,4 +74,4 @@
    {:style ui/flex}
    (comp-markup (:markup template) [] focused-path)
    (comp-inspect "Markup" (:markup template) {}))
-  (comp-operations (:id template) focused-path)))
+  (comp-operations (:id template) (or focused-path []))))
