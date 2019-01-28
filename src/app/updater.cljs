@@ -29,7 +29,10 @@
             :template/rename-mock template/rename-mock
             :template/use-mock template/use-mock
             :template/append-markup template/append-markup
+            :template/prepend-markup template/prepend-markup
             :template/remove-markup template/remove-markup
             :template/after-markup template/after-markup
+            :template/before-markup template/before-markup
+            :template/node-type template/set-node-type
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

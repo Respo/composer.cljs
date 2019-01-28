@@ -72,9 +72,8 @@
        (<> "No template selected."))
       (div
        {:style (merge ui/flex ui/column)}
-       (case tab
-         :editor (comp-editor template focused-path)
-         nil (comp-editor template focused-path)
+       (case (or tab :editor)
+         :editor (cursor-> :editor comp-editor states template focused-path)
          :mocks
            (cursor->
             :mock
