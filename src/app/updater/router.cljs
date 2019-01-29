@@ -34,8 +34,7 @@
            children (get-in
                      db
                      (concat [:templates template-id :markup] (path-with-children path)))
-           next-key (last (keys children))]
-       (println "look" children next-key)
+           next-key (last (sort (keys children)))]
        (if (some? next-key)
          (assoc pointer-data :focused-path (conj (vec path) next-key))
          pointer-data)))))
@@ -71,7 +70,7 @@
            children (get-in
                      db
                      (concat [:templates template-id :markup] (path-with-children path)))
-           next-key (first (keys children))]
+           next-key (first (sort (keys children)))]
        (if (some? next-key)
          (assoc pointer-data :focused-path (conj (vec path) next-key))
          pointer-data)))))

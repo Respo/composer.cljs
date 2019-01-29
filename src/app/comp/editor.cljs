@@ -35,7 +35,8 @@
    node-layouts
    {}
    (fn [result d! m!]
-     (d! :template/node-layout {:template-id template-id, :path path, :layout result})))))
+     (if (some? result)
+       (d! :template/node-layout {:template-id template-id, :path path, :layout result}))))))
 
 (defcomp
  comp-markup
@@ -43,8 +44,8 @@
  (div
   {:class-name "no-shadows",
    :style (merge
-           {:border-left "1px solid #eee", :padding-left 8}
-           (if (empty? (:children markup)) {:display :inline-block}))}
+           {:padding-left 8}
+           (if (empty? (:children markup)) {:border-left "1px solid #eee"}))}
   (div
    {:style (merge
             {:display :inline-block,
@@ -58,7 +59,8 @@
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
     :on-click (fn [e d! m!] (d! :router/set-focused-path path))}
    (<> (:type markup))
-   (<> (count (:children markup))))
+   (=< 8 nil)
+   (<> (:id markup)))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}
@@ -85,24 +87,28 @@
     {:style ui/button,
      :inner-text "Append",
      :on-click (fn [e d! m!]
-       (d! :template/append-markup {:template-id template-id, :path focused-path}))})
+       (d! :template/append-markup {:template-id template-id, :path focused-path})
+       (d! :router/move-append nil))})
    (=< 8 nil)
    (button
     {:style ui/button,
      :inner-text "After",
      :on-click (fn [e d! m!]
-       (d! :template/after-markup {:template-id template-id, :path focused-path}))})
+       (d! :template/after-markup {:template-id template-id, :path focused-path})
+       (d! :router/move-after nil))})
    (=< 8 nil)
    (button
     {:style ui/button,
      :inner-text "Prepend",
      :on-click (fn [e d! m!]
-       (d! :template/prepend-markup {:template-id template-id, :path focused-path}))})
+       (d! :template/prepend-markup {:template-id template-id, :path focused-path})
+       (d! :router/move-prepend nil))})
    (button
     {:style ui/button,
      :inner-text "Before",
      :on-click (fn [e d! m!]
-       (d! :template/before-markup {:template-id template-id, :path focused-path}))})
+       (d! :template/before-markup {:template-id template-id, :path focused-path})
+       (d! :router/move-before nil))})
    (=< 8 nil)
    (cursor->
     :remove
@@ -119,7 +125,7 @@
    (button
     {:style ui/button,
      :inner-text "Move",
-     :on-click (fn [e d! m!] (d! :router/move-after nil))}))))
+     :on-click (fn [e d! m!] (d! :router/move-prepend nil))}))))
 
 (def node-types
   [{:value :box, :display "Box"}
@@ -152,7 +158,7 @@
  (div
   {:style (merge ui/flex ui/row)}
   (div
-   {:style ui/flex}
+   {:style (merge ui/flex {:overflow :auto, :padding 8})}
    (comp-markup (:markup template) [] focused-path)
    (comp-inspect "Markup" (:markup template) {}))
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))]
