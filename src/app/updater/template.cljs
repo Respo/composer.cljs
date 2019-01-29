@@ -83,6 +83,16 @@
   (let [id (:id op-data), new-name (:name op-data)]
     (update-in db [:templates id] (fn [template] (assoc template :name new-name)))))
 
+(defn set-node-layout [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data), path (:path op-data), layout (:layout op-data)]
+    (assoc-in
+     db
+     (concat
+      [:templates template-id :markup]
+      (interleave (repeat :children) path)
+      [:layout])
+     layout)))
+
 (defn set-node-type [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), path (:path op-data), new-type (:type op-data)]
     (assoc-in

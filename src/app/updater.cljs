@@ -20,6 +20,10 @@
             :router/set-tab router/set-tab
             :router/set-focused-mock router/set-focused-mock
             :router/set-focused-path router/set-focused-path
+            :router/move-append router/move-append
+            :router/move-prepend router/move-prepend
+            :router/move-after router/move-after
+            :router/move-before router/move-before
             :template/create template/create-template
             :template/rename template/rename-template
             :template/remove template/remove-template
@@ -34,5 +38,6 @@
             :template/after-markup template/after-markup
             :template/before-markup template/before-markup
             :template/node-type template/set-node-type
+            :template/node-layout template/set-node-layout
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))
