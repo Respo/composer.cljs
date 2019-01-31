@@ -2,7 +2,7 @@
 (ns app.schema )
 
 (def markup
-  {:id nil, :type nil, :props {}, :layout nil, :presets #{}, :styles {}, :children {}})
+  {:id nil, :type nil, :props {}, :layout nil, :presets #{}, :style {}, :children {}})
 
 (def mock {:id nil, :data nil, :name nil})
 

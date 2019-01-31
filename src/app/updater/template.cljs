@@ -93,6 +93,19 @@
       [:layout])
      layout)))
 
+(defn set-node-style [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        path (:path op-data)
+        property (:property op-data)
+        value (:value op-data)]
+    (assoc-in
+     db
+     (concat
+      [:templates template-id :markup]
+      (interleave (repeat :children) path)
+      [:style property])
+     value)))
+
 (defn set-node-type [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), path (:path op-data), new-type (:type op-data)]
     (assoc-in

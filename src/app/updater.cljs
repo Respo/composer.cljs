@@ -39,5 +39,6 @@
             :template/before-markup template/before-markup
             :template/node-type template/set-node-type
             :template/node-layout template/set-node-layout
+            :template/node-style template/set-node-style
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))
