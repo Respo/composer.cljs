@@ -10,7 +10,8 @@
             [respo.util.list :refer [map-val]]
             [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm comp-select]]
             [app.util :refer [path-with-children]]
-            [inflow-popup.comp.popup :refer [comp-popup]]))
+            [inflow-popup.comp.popup :refer [comp-popup]]
+            [app.comp.presets :refer [comp-presets]]))
 
 (def basic-colors
   [(hsl 0 0 50)
@@ -169,23 +170,19 @@
     {:trigger (button {:style ui/button, :inner-text "Remove"})}
     (fn [e d! m!]
       (d! :template/remove-markup {:template-id template-id, :path focused-path})
-      (d! :router/set-focused-path (vec (butlast focused-path))))))
-  (=< nil 16)
-  (div {} (<> "Changes"))
-  (div
-   {}
-   (button
-    {:style ui/button,
-     :inner-text "Move",
-     :on-click (fn [e d! m!] (d! :router/move-prepend nil))}))))
+      (d! :router/set-focused-path (vec (butlast focused-path))))))))
 
 (def node-types
   [{:value :box, :display "Box"}
-   {:value :text, :display "Text"}
    {:value :space, :display "Space"}
    {:value :icon, :display "Icon"}
-   {:value :if, :display "if expression"}
-   {:value :value, :display "value expression"}])
+   {:value :text, :display "Text"}
+   {:value :template, :display "Template"}
+   {:value :input, :display "Input"}
+   {:value :button, :display "Button"}
+   {:value :link, :display "Link"}
+   {:value :if, :display "If expression"}
+   {:value :value, :display "Value expression"}])
 
 (defcomp
  comp-type-picker
@@ -202,7 +199,8 @@
    node-types
    {}
    (fn [result d! m!]
-     (d! :template/node-type {:template-id template-id, :path focused-path, :type result})))))
+     (if (some? result)
+       (d! :template/node-type {:template-id template-id, :path focused-path, :type result}))))))
 
 (defcomp
  comp-editor
@@ -213,11 +211,13 @@
    {:style (merge ui/flex {:overflow :auto, :padding 8})}
    (comp-markup (:markup template) [] focused-path)
    (comp-inspect "Markup" (:markup template) {}))
-  (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))]
+  (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
+        template-id (:id template)]
     (div
      {:style {}}
-     (cursor-> :type comp-type-picker states (:id template) focused-path child)
-     (cursor-> :operations comp-operations states (:id template) (or focused-path []))
-     (cursor-> :layout comp-layout-picker states (:id template) focused-path child)
-     (cursor-> :background comp-bg-picker states (:id template) focused-path child)
-     (comp-inspect "Node" child {})))))
+     (cursor-> :type comp-type-picker states template-id focused-path child)
+     (cursor-> :operations comp-operations states template-id (or focused-path []))
+     (cursor-> :layout comp-layout-picker states template-id focused-path child)
+     (cursor-> :background comp-bg-picker states template-id focused-path child)
+     (comp-inspect "Node" child {:bottom 0})
+     (cursor-> :presets comp-presets states (:presets child) template-id focused-path)))))

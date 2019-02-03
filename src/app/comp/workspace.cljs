@@ -20,7 +20,7 @@
  (states templates pointer tab)
  (let [state (or (:data states) {:name nil})]
    (div
-    {:style {:padding "8px 16px"}}
+    {:style {:padding "8px 16px", :width 240}}
     (div
      {:style ui/row-parted}
      (<> "Templates" {:font-family ui/font-fancy})
@@ -58,9 +58,7 @@
        focused-path (:focused-path pointer-data)]
    (div
     {:style (merge ui/flex ui/row)}
-    (div
-     {:style (merge {:width 320})}
-     (cursor-> :list comp-templates-list states templates pointer tab))
+    (cursor-> :list comp-templates-list states templates pointer tab)
     (if (nil? template)
       (div
        {:style (merge
