@@ -11,58 +11,9 @@
             [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm comp-select]]
             [app.util :refer [path-with-children]]
             [inflow-popup.comp.popup :refer [comp-popup]]
-            [app.comp.presets :refer [comp-presets]]))
-
-(def basic-colors
-  [(hsl 0 0 50)
-   (hsl 0 0 70)
-   (hsl 0 0 90)
-   (hsl 0 70 60)
-   (hsl 40 70 60)
-   (hsl 80 70 60)
-   (hsl 120 70 60)
-   (hsl 160 70 60)
-   (hsl 200 70 60)])
-
-(defcomp
- comp-bg-picker
- (states template-id path markup)
- (div
-  {:style ui/row-middle}
-  (<> "Background:")
-  (=< 8 nil)
-  (cursor->
-   :bg-color
-   comp-popup
-   states
-   {:trigger (div
-              {:style {:width 24,
-                       :height 24,
-                       :background-color (or (get-in markup [:style :background-color])
-                                             (hsl 0 0 80))}})}
-   (fn [toggle!]
-     (div
-      {:style {:width 320}}
-      (div {} (<> "pick a color"))
-      (list->
-       {:style ui/row-middle}
-       (->> basic-colors
-            (map
-             (fn [color]
-               [color
-                (div
-                 {:style {:background-color color,
-                          :width 20,
-                          :height 20,
-                          :margin "0 8px 8px 0",
-                          :cursor :pointer},
-                  :on-click (fn [e d! m!]
-                    (d!
-                     :template/node-style
-                     {:template-id template-id,
-                      :path path,
-                      :property :background-color,
-                      :value color}))})])))))))))
+            [app.comp.presets :refer [comp-presets]]
+            [app.comp.type-picker :refer [comp-type-picker]]
+            [app.comp.bg-picker :refer [comp-bg-picker]]))
 
 (def node-layouts
   [{:value :row, :display "Row"}
@@ -88,8 +39,7 @@
    node-layouts
    {}
    (fn [result d! m!]
-     (if (some? result)
-       (d! :template/node-layout {:template-id template-id, :path path, :layout result}))))))
+     (d! :template/node-layout {:template-id template-id, :path path, :layout result})))))
 
 (defcomp
  comp-markup
@@ -171,36 +121,6 @@
     (fn [e d! m!]
       (d! :template/remove-markup {:template-id template-id, :path focused-path})
       (d! :router/set-focused-path (vec (butlast focused-path))))))))
-
-(def node-types
-  [{:value :box, :display "Box"}
-   {:value :space, :display "Space"}
-   {:value :icon, :display "Icon"}
-   {:value :text, :display "Text"}
-   {:value :template, :display "Template"}
-   {:value :input, :display "Input"}
-   {:value :button, :display "Button"}
-   {:value :link, :display "Link"}
-   {:value :if, :display "If expression"}
-   {:value :value, :display "Value expression"}])
-
-(defcomp
- comp-type-picker
- (states template-id focused-path markup)
- (div
-  {:style ui/row-middle}
-  (<> "Node Type:")
-  (=< 8 nil)
-  (cursor->
-   :type
-   comp-select
-   states
-   (:type markup)
-   node-types
-   {}
-   (fn [result d! m!]
-     (if (some? result)
-       (d! :template/node-type {:template-id template-id, :path focused-path, :type result}))))))
 
 (defcomp
  comp-editor
