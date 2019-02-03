@@ -13,7 +13,8 @@
             [inflow-popup.comp.popup :refer [comp-popup]]
             [app.comp.presets :refer [comp-presets]]
             [app.comp.type-picker :refer [comp-type-picker]]
-            [app.comp.bg-picker :refer [comp-bg-picker]]))
+            [app.comp.bg-picker :refer [comp-bg-picker]]
+            [app.comp.dict-editor :refer [comp-dict-editor]]))
 
 (def node-layouts
   [{:value :row, :display "Row"}
@@ -140,4 +141,16 @@
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
      (cursor-> :background comp-bg-picker states template-id focused-path child)
      (comp-inspect "Node" child {:bottom 0})
-     (cursor-> :presets comp-presets states (:presets child) template-id focused-path)))))
+     (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
+     (div
+      {}
+      (<> "Style:")
+      (cursor->
+       :style
+       comp-dict-editor
+       states
+       (:style child)
+       (fn [change m! d!]
+         (d!
+          :template/node-style
+          (merge {:template-id template-id, :path focused-path} change)))))))))

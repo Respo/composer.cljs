@@ -32,7 +32,7 @@
    {:trigger (div
               {:style {:width 24,
                        :height 24,
-                       :background-color (or (get-in markup [:style :background-color])
+                       :background-color (or (get-in markup [:style "background-color"])
                                              (hsl 0 0 80))}})}
    (fn [toggle!]
      (div
@@ -52,8 +52,8 @@
                           :cursor :pointer},
                   :on-click (fn [e d! m!]
                     (d!
-                     :template/node-style
+                     :template/set-node-style
                      {:template-id template-id,
                       :path path,
-                      :property :background-color,
+                      :property "background-color",
                       :value color}))})])))))))))

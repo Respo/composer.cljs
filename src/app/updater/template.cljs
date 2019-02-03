@@ -130,5 +130,21 @@
       [:presets])
      (fn [presets] (if (= op-kind :add) (conj presets value) (disj presets value))))))
 
+(defn update-node-style [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        path (:path op-data)
+        change-type (:type op-data)
+        change-key (:key op-data)
+        value (:value op-data)]
+    (update-in
+     db
+     (concat [:templates template-id :markup] (interleave (repeat :children) path) [:style])
+     (fn [style]
+       (println style change-type change-key value)
+       (case change-type
+         :remove (dissoc style change-key)
+         :set (assoc style change-key value)
+         (do (println "Unknown op" change-type) style))))))
+
 (defn use-mock [db op-data sid op-id op-time]
   (assoc-in db [:templates (:template-id op-data) :mock-pointer] (:mock-id op-data)))
