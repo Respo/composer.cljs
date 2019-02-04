@@ -130,6 +130,21 @@
       [:presets])
      (fn [presets] (if (= op-kind :add) (conj presets value) (disj presets value))))))
 
+(defn update-node-props [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        path (:path op-data)
+        change-type (:type op-data)
+        change-key (:key op-data)
+        value (:value op-data)]
+    (update-in
+     db
+     (concat [:templates template-id :markup] (interleave (repeat :children) path) [:props])
+     (fn [props]
+       (case change-type
+         :remove (dissoc props change-key)
+         :set (assoc props change-key value)
+         (do (println "Unknown op" change-type) props))))))
+
 (defn update-node-style [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)
         path (:path op-data)
@@ -140,7 +155,6 @@
      db
      (concat [:templates template-id :markup] (interleave (repeat :children) path) [:style])
      (fn [style]
-       (println style change-type change-key value)
        (case change-type
          :remove (dissoc style change-key)
          :set (assoc style change-key value)

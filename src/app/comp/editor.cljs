@@ -137,6 +137,18 @@
     (div
      {:style {}}
      (cursor-> :type comp-type-picker states template-id focused-path child)
+     (div
+      {}
+      (<> "Props:")
+      (cursor->
+       :props
+       comp-dict-editor
+       states
+       (:props child)
+       (fn [change m! d!]
+         (d!
+          :template/node-props
+          (merge {:template-id template-id, :path focused-path} change)))))
      (cursor-> :operations comp-operations states template-id (or focused-path []))
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
      (cursor-> :background comp-bg-picker states template-id focused-path child)
