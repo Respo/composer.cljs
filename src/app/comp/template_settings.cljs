@@ -7,7 +7,8 @@
             [respo.comp.space :refer [=<]]
             [app.config :as config]
             [respo-alerts.comp.alerts :refer [comp-confirm comp-prompt]]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            ["copy-text-to-clipboard" :as copy!]))
 
 (defcomp
  comp-template-settings
@@ -35,4 +36,9 @@
     comp-confirm
     states
     {:trigger (button {:style ui/button, :inner-text "Remove"}), :text "Sure to remove?"}
-    (fn [e d! m!] (d! :template/remove (:id template)))))))
+    (fn [e d! m!] (d! :template/remove (:id template))))
+   (=< 8 nil)
+   (button
+    {:style ui/button,
+     :inner-text "Copy",
+     :on-click (fn [e d! m!] (copy! (pr-str (:markup template))))}))))
