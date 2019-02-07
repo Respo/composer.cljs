@@ -18,14 +18,14 @@
 
 (def site
   {:port 11017,
-   :title "Composer",
+   :title "Composer App",
    :icon "http://cdn.tiye.me/logo/erigeron.png",
    :dev-ui "http://localhost:8100/main.css",
    :release-ui "http://cdn.tiye.me/favored-fonts/main.css",
-   :cdn-url "http://cdn.tiye.me/composer/",
-   :cdn-folder "tiye.me:cdn/composer",
-   :upload-folder "tiye.me:repo/Respo/composer/",
-   :server-folder "tiye.me:servers/composer",
+   :cdn-url "http://cdn.tiye.me/composer-app/",
+   :cdn-folder "tiye.me:cdn/composer-app",
+   :upload-folder "tiye.me:repo/Respo/composer-app/",
+   :server-folder "tiye.me:servers/composer-app",
    :theme "#eeeeff",
-   :storage-key "composer",
+   :storage-key "composer-app",
    :storage-file "storage.edn"})

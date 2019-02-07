@@ -12475,7 +12475,7 @@
           :type :expr, :by "root", :at 1527867502467, :id "BkeUud1ye7"
           :data {
            "T" {:type :leaf, :by "root", :at 1527867504737, :text ":title", :id "BkeUud1ye7leaf"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1548573610711, :text "\"Composer", :id "H1zKduykx7"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549556342059, :text "\"Composer App", :id "H1zKduykx7"}
           }
          }
          "u" {
@@ -12503,28 +12503,28 @@
           :type :expr, :by "root", :at 1528009883995, :id "ByxEoNG-lQ"
           :data {
            "T" {:type :leaf, :by "root", :at 1528009886059, :text ":cdn-url", :id "ByxEoNG-lQleaf"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1548573617455, :text "\"http://cdn.tiye.me/composer/", :id "BkPo4GbeQ"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549556348221, :text "\"http://cdn.tiye.me/composer-app/", :id "BkPo4GbeQ"}
           }
          }
          "xD" {
           :type :expr, :by "root", :at 1528009877862, :id "ryC9NMZl7"
           :data {
            "T" {:type :leaf, :by "root", :at 1528009882805, :text ":cdn-folder", :id "ryC9NMZl7leaf"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1548573621617, :text "\"tiye.me:cdn/composer", :id "rkx3pVMWxX"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549556352067, :text "\"tiye.me:cdn/composer-app", :id "rkx3pVMWxX"}
           }
          }
          "yT" {
           :type :expr, :by "root", :at 1527866712917, :id "SyebDS1kgQ"
           :data {
            "T" {:type :leaf, :by "root", :at 1528009970172, :text ":upload-folder", :id "SyebDS1kgQleaf"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1548573628081, :text "\"tiye.me:repo/Respo/composer/", :id "BymiPr1kgm"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549556354889, :text "\"tiye.me:repo/Respo/composer-app/", :id "BymiPr1kgm"}
           }
          }
          "yj" {
           :type :expr, :by "root", :at 1527866893140, :id "BJxHfLkygX"
           :data {
            "T" {:type :leaf, :by "root", :at 1528010247576, :text ":server-folder", :id "BJxHfLkygXleaf"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1548573635127, :text "\"tiye.me:servers/composer", :id "S1gpf8y1gQ"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549556358575, :text "\"tiye.me:servers/composer-app", :id "S1gpf8y1gQ"}
           }
          }
          "yr" {
@@ -12538,7 +12538,7 @@
           :type :expr, :by "B1y7Rc-Zz", :at 1544855275779, :id "p3x2NvQE8A"
           :data {
            "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1544855275779, :text ":storage-key", :id "uZPBtv98eu"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1548573639912, :text "\"composer", :id "ADQo0wpedu"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549556360910, :text "\"composer-app", :id "ADQo0wpedu"}
           }
          }
          "yx" {
