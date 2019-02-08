@@ -43,5 +43,6 @@
             :template/node-preset template/update-node-preset
             :template/node-style template/update-node-style
             :template/node-props template/update-node-props
+            :template/node-attrs template/update-node-attrs
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

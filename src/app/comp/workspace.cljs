@@ -57,7 +57,7 @@
        template (get templates pointer)
        focused-path (:focused-path pointer-data)]
    (div
-    {:style (merge ui/flex ui/row)}
+    {:style (merge ui/flex ui/row {:overflow :auto})}
     (cursor-> :list comp-templates-list states templates pointer tab)
     (if (nil? template)
       (div
@@ -69,7 +69,7 @@
                  :color (hsl 0 0 60)})}
        (<> "No template selected."))
       (div
-       {:style (merge ui/flex ui/column)}
+       {:style (merge ui/flex ui/column {:overflow :auto})}
        (case (or tab :editor)
          :editor (cursor-> :editor comp-editor states template focused-path)
          :mocks

@@ -117,6 +117,21 @@
   (let [template-id (:template-id op-data), mock-id (:mock-id op-data), data (:data op-data)]
     (assoc-in db [:templates template-id :mocks mock-id :data] data)))
 
+(defn update-node-attrs [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        path (:path op-data)
+        change-type (:type op-data)
+        change-key (:key op-data)
+        value (:value op-data)]
+    (update-in
+     db
+     (concat [:templates template-id :markup] (interleave (repeat :children) path) [:attrs])
+     (fn [attrs]
+       (case change-type
+         :remove (dissoc attrs change-key)
+         :set (assoc attrs change-key value)
+         (do (println "Unknown op" change-type) attrs))))))
+
 (defn update-node-preset [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)
         path (:path op-data)
