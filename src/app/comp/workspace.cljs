@@ -70,6 +70,12 @@
        (<> "No template selected."))
       (div
        {:style (merge ui/flex ui/column {:overflow :auto})}
+       (div
+        {:style {:border-bottom "1px solid #ddd"}}
+        (comp-tabs
+         template-tabs
+         tab
+         (fn [selected d! m!] (d! :router/set-tab (:value selected)))))
        (case (or tab :editor)
          :editor (cursor-> :editor comp-editor states template focused-path)
          :mocks
@@ -82,10 +88,4 @@
             (:mock-pointer template)
             (:mocks template))
          :settings (cursor-> :settings comp-template-settings states template)
-         (<> (str "Unknown tab:" (pr-str tab))))
-       (div
-        {}
-        (comp-tabs
-         template-tabs
-         tab
-         (fn [selected d! m!] (d! :router/set-tab (:value selected))))))))))
+         (<> (str "Unknown tab:" (pr-str tab)))))))))

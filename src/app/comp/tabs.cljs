@@ -20,7 +20,7 @@
            (div
             {:style (merge
                      {:padding "0 8px",
-                      :border (<< "1px solid ~(hsl 0 0 90)"),
+                      :border-right (<< "1px solid ~(hsl 0 0 90)"),
                       :cursor :pointer,
                       :border-radius "4px",
                       :color (hsl 0 0 60)}

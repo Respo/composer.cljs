@@ -13,11 +13,13 @@
             [app.twig.container :refer [twig-container]]
             [recollect.diff :refer [diff-twig]]
             [recollect.twig :refer [render-twig]]
-            [ws-edn.server :refer [wss-serve! wss-send! wss-each!]]))
+            [ws-edn.server :refer [wss-serve! wss-send! wss-each!]]
+            [favored-edn.core :refer [write-edn]]
+            [app.codegen :refer [generate-file]]))
 
 (defonce *client-caches (atom {}))
 
-(def storage-file (path/join js/__dirname (:storage-file config/site)))
+(def storage-file (path/join js/process.env.PWD (:storage-file config/site)))
 
 (defonce initial-db
   (merge-local-edn!
@@ -30,11 +32,14 @@
 (defonce *reader-reel (atom @*reel))
 
 (defn persist-db! []
-  (let [file-content (pr-str (assoc (:db @*reel) :sessions {}))
+  (println "Saved file.")
+  (let [file-content (write-edn (assoc (:db @*reel) :sessions {}))
         storage-path storage-file
-        backup-path (get-backup-path!)]
+        backup-path (get-backup-path!)
+        data-code (generate-file (:templates (:db @*reel)))]
     (write-mildly! storage-path file-content)
-    (write-mildly! backup-path file-content)))
+    (write-mildly! "src/composed/templates.cljs" data-code)
+    (comment write-mildly! backup-path file-content)))
 
 (defn dispatch! [op op-data sid]
   (let [op-id (id!), op-time (unix-time!)]
@@ -91,8 +96,8 @@
   (println "Running mode:" (if config/dev? "dev" "release"))
   (run-server!)
   (render-loop!)
-  (js/process.on "SIGINT" on-exit!)
-  (repeat! 600 #(persist-db!))
+  (comment js/process.on "SIGINT" on-exit!)
+  (comment repeat! 600 #(persist-db!))
   (println "Server started."))
 
 (defn reload! []

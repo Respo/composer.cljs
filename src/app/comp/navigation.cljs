@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> action-> span div]]
+            [respo.core :refer [defcomp <> action-> span div button]]
             [app.config :as config]))
 
 (defcomp
@@ -28,7 +28,14 @@
     {:on-click (action-> :router/change {:name :preview}), :style {:cursor :pointer}}
     (<> "Preview" nil)))
   (div
-   {:style {:cursor "pointer"}, :on-click (action-> :router/change {:name :profile})}
-   (<> (if logged-in? "Me" "Guest"))
-   (=< 8 nil)
-   (<> count-members))))
+   {:style ui/row}
+   (button
+    {:style ui/button,
+     :inner-text "Save",
+     :on-click (fn [e d! m!] (d! :effect/persist nil))})
+   (=< 12 nil)
+   (div
+    {:style {:cursor "pointer"}, :on-click (action-> :router/change {:name :profile})}
+    (<> (if logged-in? "Me" "Guest"))
+    (=< 8 nil)
+    (<> count-members)))))
