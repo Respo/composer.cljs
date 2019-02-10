@@ -17,7 +17,7 @@
       false)))
 
 (def site
-  {:port 11017,
+  {:port 6011,
    :title "Composer App",
    :icon "http://cdn.tiye.me/logo/respo.png",
    :dev-ui "http://localhost:8100/main.css",
