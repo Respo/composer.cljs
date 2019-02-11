@@ -8,7 +8,8 @@
             [app.config :as config]
             [ws-edn.client :refer [ws-connect! ws-send!]]
             [recollect.patch :refer [patch-twig]]
-            [cumulo-util.core :refer [on-page-touch]])
+            [cumulo-util.core :refer [on-page-touch]]
+            ["query-string" :as query-string])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (declare dispatch!)
@@ -35,17 +36,23 @@
     (ws-send! {:kind :op, :op op, :data op-data})))
 
 (defn connect! []
-  (ws-connect!
-   (<< "ws://~{js/location.hostname}:~(:port config/site)")
-   {:on-open (fn [] (simulate-login!)),
-    :on-close (fn [event] (reset! *store nil) (js/console.error "Lost connection!")),
-    :on-data (fn [data]
-      (case (:kind data)
-        :patch
-          (let [changes (:data data)]
-            (js/console.log "Changes" (clj->js changes))
-            (reset! *store (patch-twig @*store changes)))
-        (println "unknown kind:" data)))}))
+  (let [options (js->clj
+                 (query-string/parse (subs js/location.search 1))
+                 :keywordize-keys
+                 true)
+        host (or (:host options) "127.0.0.1")
+        port (or (:port options) (:port config/site))]
+    (ws-connect!
+     (<< "ws://~{host}:~{port}")
+     {:on-open (fn [] (simulate-login!)),
+      :on-close (fn [event] (reset! *store nil) (js/console.error "Lost connection!")),
+      :on-data (fn [data]
+        (case (:kind data)
+          :patch
+            (let [changes (:data data)]
+              (when config/dev? (js/console.log "Changes" (clj->js changes)))
+              (reset! *store (patch-twig @*store changes)))
+          (println "unknown kind:" data)))})))
 
 (def mount-target (.querySelector js/document ".app"))
 

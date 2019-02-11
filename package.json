@@ -1,8 +1,11 @@
 {
-  "name": "cumulo-workflow",
-  "version": "0.1.0",
-  "description": "Cumulo Workflow",
+  "name": "@respo/composer-app",
+  "version": "0.1.0-a1",
+  "description": "Composer app creator for Respo",
   "main": "index.js",
+  "bin": {
+    "composer-app": "./dist/server.js"
+  },
   "scripts": {
     "watch": "shadow-cljs watch client server",
     "build-cdn": "shadow-cljs clj-run build.main/build-cdn",
@@ -12,6 +15,7 @@
     "up": "yarn build-cdn && yarn upload",
     "serve": "http-server dist -s",
     "ln": "cd target && rm -f entry && ln -s ../entry",
+    "pkg": "rm -rf dist && shadow-cljs release server",
     "prod": "yarn install --production"
   },
   "repository": {
@@ -31,6 +35,7 @@
     "copy-text-to-clipboard": "^1.0.4",
     "feather-icons": "^4.17.0",
     "http-server": "^0.11.1",
+    "query-string": "^6.2.0",
     "shadow-cljs": "^2.7.30",
     "source-map-support": "^0.5.10"
   }

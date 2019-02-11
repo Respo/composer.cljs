@@ -98,7 +98,7 @@
   (render-loop!)
   (comment js/process.on "SIGINT" on-exit!)
   (comment repeat! 600 #(persist-db!))
-  (println "Server started."))
+  (println "Server started. Open http://composer.respo-mvc.org/ to edit."))
 
 (defn reload! []
   (println "Code updated.")
