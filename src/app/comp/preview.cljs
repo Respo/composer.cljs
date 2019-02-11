@@ -6,7 +6,9 @@
             [respo.core :refer [defcomp list-> <> span div button]]
             [respo.comp.space :refer [=<]]
             [app.config :as config]
-            [respo.util.list :refer [map-val]])
+            [respo.util.list :refer [map-val]]
+            [respo-composer.core :refer [render-markup]]
+            [app.util :refer [neaten-templates]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defcomp
@@ -32,5 +34,6 @@
    {:style (merge ui/flex ui/column)}
    (div
     {:style (merge ui/flex ui/center {:background-color (hsl 0 0 88), :overflow :auto})}
-    (div {:style {:background-color :white}} (<> "TODO PREVIEW")))
+    (let [tmpls (neaten-templates templates)]
+      (render-markup (get-in templates [pointer :markup]) {:data {}, :templates tmpls})))
    (div {:style ui/row-parted} (span {}) (div {} (<> "TODO MOCKs"))))))

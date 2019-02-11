@@ -4,11 +4,14 @@
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
             [respo.core :refer [defcomp <> action-> span div button]]
-            [app.config :as config]))
+            [app.config :as config]
+            ["copy-text-to-clipboard" :as copy!]
+            [app.util :refer [neaten-templates]]
+            [favored-edn.core :refer [write-edn]]))
 
 (defcomp
  comp-navigation
- (logged-in? count-members)
+ (logged-in? count-members templates)
  (div
   {:style (merge
            ui/row-center
@@ -29,6 +32,11 @@
     (<> "Preview" nil)))
   (div
    {:style ui/row}
+   (button
+    {:style ui/button,
+     :inner-text "Copy",
+     :on-click (fn [e d! m!] (copy! (write-edn (neaten-templates templates))))})
+   (=< 8 nil)
    (button
     {:style ui/button,
      :inner-text "Save",
