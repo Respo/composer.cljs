@@ -18,12 +18,12 @@
 
 (def node-layouts
   [{:value :row, :display "Row"}
-   {:value :column, :display "Column"}
-   {:value :center, :display "Center"}
-   {:value :row-center, :display "Row Center"}
    {:value :row-middle, :display "Row Middle"}
    {:value :row-parted, :display "Row Parted"}
-   {:value :column-parted, :display "Column Parted"}])
+   {:value :row-center, :display "Row Center"}
+   {:value :column, :display "Column"}
+   {:value :column-parted, :display "Column Parted"}
+   {:value :center, :display "Center"}])
 
 (defcomp
  comp-layout-picker
@@ -146,7 +146,7 @@
       states
       "Props:"
       (:props child)
-      (fn [change m! d!]
+      (fn [change d! m!]
         (d!
          :template/node-props
          (merge {:template-id template-id, :path focused-path} change))))
@@ -156,7 +156,7 @@
       states
       "Attrs:"
       (:attrs child)
-      (fn [change m! d!]
+      (fn [change d! m!]
         (d!
          :template/node-attrs
          (merge {:template-id template-id, :path focused-path} change))))
@@ -166,7 +166,7 @@
       states
       "Style:"
       (:style child)
-      (fn [change m! d!]
+      (fn [change d! m!]
         (d!
          :template/node-style
          (merge {:template-id template-id, :path focused-path} change))))))))

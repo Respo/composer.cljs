@@ -10,14 +10,14 @@
 (def node-types
   [{:value :box, :display "Box"}
    {:value :space, :display "Space"}
-   {:value :icon, :display "Icon"}
-   {:value :text, :display "Text"}
-   {:value :template, :display "Template"}
-   {:value :input, :display "Input"}
    {:value :button, :display "Button"}
    {:value :link, :display "Link"}
-   {:value :if, :display "If expression"}
-   {:value :value, :display "Value expression"}])
+   {:value :icon, :display "Icon"}
+   {:value :text, :display "Text"}
+   {:value :some, :display "Some"}
+   {:value :template, :display "Template"}
+   {:value :list, :display "List"}
+   {:value :input, :display "Input"}])
 
 (defcomp
  comp-type-picker
