@@ -35,5 +35,8 @@
    (div
     {:style (merge ui/flex ui/center {:background-color (hsl 0 0 88), :overflow :auto})}
     (let [tmpls (neaten-templates templates)]
-      (render-markup (get-in templates [pointer :markup]) {:data {}, :templates tmpls})))
+      (render-markup
+       (get-in templates [pointer :markup])
+       {:data {}, :templates tmpls, :level 0}
+       (fn [op op-data] (println op op-data)))))
    (div {:style ui/row-parted} (span {}) (div {} (<> "TODO MOCKs"))))))
