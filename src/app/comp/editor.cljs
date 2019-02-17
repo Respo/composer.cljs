@@ -150,8 +150,7 @@
         (d!
          :template/node-props
          (merge {:template-id template-id, :path focused-path} change))))
-     (comment
-      cursor->
+     (cursor->
       :attrs
       comp-dict-editor
       states

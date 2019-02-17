@@ -17,6 +17,7 @@
    {:value :some, :display "Some"}
    {:value :template, :display "Template"}
    {:value :list, :display "List"}
+   {:value :slot, :display "Slot"}
    {:value :input, :display "Input"}])
 
 (defcomp

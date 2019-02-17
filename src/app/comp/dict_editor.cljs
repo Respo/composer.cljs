@@ -69,7 +69,7 @@
            (fn [[k v]]
              [k
               (div
-               {:style (merge ui/row-middle {:line-height "24px"})}
+               {:style (merge ui/row-middle {:line-height "20px"})}
                (<> k {:color (hsl 0 0 70)})
                (=< 8 nil)
                (cursor->

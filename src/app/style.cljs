@@ -1,6 +1,8 @@
 
 (ns app.style (:require [hsl.core :refer [hsl]] [respo-ui.core :as ui]))
 
+(def button (dissoc ui/button :background-color))
+
 (def link
   {:text-decoration :underline,
    :cursor :pointer,
