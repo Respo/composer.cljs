@@ -3,6 +3,8 @@
 
 (def button (dissoc ui/button :background-color))
 
+(def field-label {:color (hsl 0 0 60), :font-weight :bold, :font-family ui/font-fancy})
+
 (def link
   {:text-decoration :underline,
    :cursor :pointer,

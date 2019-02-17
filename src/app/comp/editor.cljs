@@ -14,7 +14,8 @@
             [app.comp.presets :refer [comp-presets]]
             [app.comp.type-picker :refer [comp-type-picker]]
             [app.comp.bg-picker :refer [comp-bg-picker]]
-            [app.comp.dict-editor :refer [comp-dict-editor]]))
+            [app.comp.dict-editor :refer [comp-dict-editor]]
+            [app.style :as style]))
 
 (def node-layouts
   [{:value :row, :display "Row"}
@@ -30,7 +31,7 @@
  (states template-id path markup)
  (div
   {:style ui/row-middle}
-  (<> "Layout:")
+  (<> "Layout:" style/field-label)
   (=< 8 nil)
   (cursor->
    :picker
@@ -82,7 +83,7 @@
  (states template-id focused-path)
  (div
   {:style (merge ui/row {:width 300})}
-  (div {} (<> "Operations:"))
+  (div {} (<> "Operations:" style/field-label))
   (div
    {:style {}}
    (a

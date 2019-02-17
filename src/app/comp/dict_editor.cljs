@@ -10,7 +10,8 @@
             [app.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [respo-alerts.comp.alerts :refer [comp-prompt]]
-            [feather.core :refer [comp-i]]))
+            [feather.core :refer [comp-i]]
+            [app.style :as style]))
 
 (defcomp
  comp-pair-editor
@@ -49,7 +50,7 @@
     {}
     (div
      {:style ui/row-middle}
-     (<> title)
+     (<> title style/field-label)
      (=< 8 nil)
      (cursor->
       :set

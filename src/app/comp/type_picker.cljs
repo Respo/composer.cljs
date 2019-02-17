@@ -5,7 +5,8 @@
             [respo.comp.space :refer [=<]]
             [respo.core :refer [defcomp cursor-> <> action-> span div]]
             [app.config :as config]
-            [respo-alerts.comp.alerts :refer [comp-select]]))
+            [respo-alerts.comp.alerts :refer [comp-select]]
+            [app.style :as style]))
 
 (def node-types
   [{:value :box, :display "Box"}
@@ -25,7 +26,7 @@
  (states template-id focused-path markup)
  (div
   {:style ui/row-middle}
-  (<> "Node Type:")
+  (<> "Node Type:" style/field-label)
   (=< 8 nil)
   (cursor->
    :type

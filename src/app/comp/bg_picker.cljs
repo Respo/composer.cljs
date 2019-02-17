@@ -63,7 +63,7 @@
  (let [bg-color (or (get-in markup [:style "background-color"]) (hsl 0 0 80))]
    (div
     {:style ui/row-middle}
-    (<> "Background:")
+    (<> "Background:" style/field-label)
     (=< 8 nil)
     (cursor->
      :bg-color

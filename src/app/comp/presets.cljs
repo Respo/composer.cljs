@@ -7,7 +7,8 @@
             [app.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [feather.core :refer [comp-i]]
-            [clojure.set :refer [difference]]))
+            [clojure.set :refer [difference]]
+            [app.style :as style]))
 
 (def builtin-presets #{:flex :font-code :font-fancy :font-normal :fullscreen :scroll})
 
@@ -69,7 +70,7 @@
  (states presets template-id path)
  (div
   {}
-  (<> "Presets")
+  (<> "Presets" style/field-label)
   (=< 8 nil)
   (cursor-> :edit comp-presets-picker states presets template-id path)
   (list->
