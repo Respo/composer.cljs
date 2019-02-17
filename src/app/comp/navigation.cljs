@@ -3,11 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> action-> span div button]]
+            [respo.core :refer [defcomp <> action-> span div button a]]
             [app.config :as config]
             ["copy-text-to-clipboard" :as copy!]
             [app.util :refer [neaten-templates]]
-            [favored-edn.core :refer [write-edn]]))
+            [favored-edn.core :refer [write-edn]]
+            [app.style :as style]))
 
 (defcomp
  comp-navigation
@@ -15,7 +16,7 @@
  (div
   {:style (merge
            ui/row-center
-           {:height 48,
+           {:height 40,
             :justify-content :space-between,
             :padding "0 16px",
             :font-size 16,
@@ -32,13 +33,13 @@
     (<> "Preview" nil)))
   (div
    {:style ui/row}
-   (button
-    {:style ui/button,
+   (a
+    {:style style/link,
      :inner-text "Copy",
      :on-click (fn [e d! m!] (copy! (write-edn (neaten-templates templates))))})
    (=< 8 nil)
-   (button
-    {:style ui/button,
+   (a
+    {:style style/link,
      :inner-text "Save",
      :on-click (fn [e d! m!] (d! :effect/persist nil))})
    (=< 12 nil)

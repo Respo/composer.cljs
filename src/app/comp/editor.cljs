@@ -43,6 +43,17 @@
    (fn [result d! m!]
      (d! :template/node-layout {:template-id template-id, :path path, :layout result})))))
 
+(def style-element
+  {:display :inline-block,
+   :cursor :pointer,
+   :padding "0 8px",
+   :margin-bottom 8,
+   :background-color (hsl 0 0 88),
+   :color :white,
+   :border-radius "4px",
+   :vertical-align :top,
+   :line-height "24px"})
+
 (defcomp
  comp-markup
  (markup path focused-path)
@@ -53,14 +64,7 @@
            (if (empty? (:children markup)) {:border-left "1px solid #eee"}))}
   (div
    {:style (merge
-            {:display :inline-block,
-             :cursor :pointer,
-             :padding "0 8px",
-             :margin-bottom 8,
-             :background-color (hsl 0 0 88),
-             :color :white,
-             :border-radius "8px",
-             :vertical-align :top}
+            style-element
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
     :on-click (fn [e d! m!] (d! :router/set-focused-path path))}
    (<> (:type markup)))
@@ -128,15 +132,18 @@
  (div
   {:style (merge ui/flex ui/row {:overflow :auto})}
   (div
-   {:style (merge ui/flex {:overflow :auto, :padding 8})}
-   (comp-markup (:markup template) [] focused-path)
-   (when config/dev? (comp-inspect "Markup" (:markup template) {})))
+   {:style (merge ui/flex ui/column {:overflow :auto})}
+   (cursor-> :operations comp-operations states (:id template) (or focused-path []))
+   (div {:style {:height 1, :background-color (hsl 0 0 90)}})
+   (div
+    {:style (merge ui/flex {:overflow :auto, :padding 8})}
+    (comp-markup (:markup template) [] focused-path)
+    (when config/dev? (comp-inspect "Markup" (:markup template) {:bottom 0}))))
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
         template-id (:id template)]
     (div
-     {:style (merge ui/flex {:overflow :auto})}
+     {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
-     (cursor-> :operations comp-operations states template-id (or focused-path []))
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
      (cursor-> :background comp-bg-picker states template-id focused-path child)
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))

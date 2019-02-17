@@ -17,3 +17,7 @@ body * {
 button:active {
   background-color: hsl(0,0%,90%);
 }
+
+a:active {
+  transform: scale(1.16);
+}

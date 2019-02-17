@@ -16,12 +16,13 @@
  comp-preset
  (preset on-click)
  (div
-  {:style {:padding "0 8px",
-           :margin 4,
+  {:style {:padding "0 10px",
+           :margin 2,
            :cursor :pointer,
            :background-color (hsl 200 80 60),
            :color :white,
-           :border-radius "8px"},
+           :border-radius "16px",
+           :line-height "24px"},
    :on-click on-click}
   (<> (name preset))))
 
@@ -70,9 +71,11 @@
  (states presets template-id path)
  (div
   {}
-  (<> "Presets" style/field-label)
-  (=< 8 nil)
-  (cursor-> :edit comp-presets-picker states presets template-id path)
+  (div
+   {:style ui/row-middle}
+   (<> "Presets" style/field-label)
+   (=< 8 nil)
+   (cursor-> :edit comp-presets-picker states presets template-id path))
   (list->
    {:style (merge ui/row {:padding "0 8px"})}
    (->> presets
