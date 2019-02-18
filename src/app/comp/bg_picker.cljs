@@ -34,7 +34,7 @@
                       :value color}))]
    (div
     {:style {:width 320}}
-    (div {} (<> "pick a color"))
+    (div {} (<> "Pick a color" {:font-family ui/font-fancy}))
     (list->
      {:style ui/row-middle}
      (->> basic-colors
