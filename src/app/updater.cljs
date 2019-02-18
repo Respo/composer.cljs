@@ -37,6 +37,7 @@
             :template/remove-markup template/remove-markup
             :template/after-markup template/after-markup
             :template/before-markup template/before-markup
+            :template/wrap-markup template/wrap-markup
             :template/node-type template/set-node-type
             :template/node-layout template/set-node-layout
             :template/set-node-style template/set-node-style

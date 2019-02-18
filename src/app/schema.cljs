@@ -3,7 +3,7 @@
 
 (def markup
   {:id nil,
-   :type nil,
+   :type :box,
    :props {},
    :attrs {},
    :layout nil,

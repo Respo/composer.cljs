@@ -15,7 +15,8 @@
             [app.comp.type-picker :refer [comp-type-picker]]
             [app.comp.bg-picker :refer [comp-bg-picker]]
             [app.comp.dict-editor :refer [comp-dict-editor]]
-            [app.style :as style]))
+            [app.style :as style]
+            [bisection-key.core :as bisection]))
 
 (def node-layouts
   [{:value :row, :display "Row"}
@@ -78,18 +79,17 @@
                 {:display :inline-block})))}
    (->> (:children markup)
         (sort-by (fn [[k child-markup]] k))
-        (map-val
-         (fn [child-markup]
-           (comp-markup child-markup (conj path (:id child-markup)) focused-path)))))))
+        (map
+         (fn [[k child-markup]] [k (comp-markup child-markup (conj path k) focused-path)]))))))
 
 (defcomp
  comp-operations
  (states template-id focused-path)
  (div
-  {:style (merge ui/row {:width 300})}
+  {:style (merge ui/row {})}
   (div {} (<> "Operations:" style/field-label))
   (div
-   {:style {}}
+   {:style ui/flex}
    (a
     {:style ui/link,
      :inner-text "Append",
@@ -124,7 +124,20 @@
     {:trigger (a {:style ui/link, :inner-text "Remove"})}
     (fn [e d! m!]
       (d! :template/remove-markup {:template-id template-id, :path focused-path})
-      (d! :router/set-focused-path (vec (butlast focused-path))))))))
+      (d! :router/set-focused-path (vec (butlast focused-path)))))
+   (=< 8 nil)
+   (a
+    {:style ui/link,
+     :inner-text "Wrap",
+     :on-click (fn [e d! m!]
+       (d! :template/wrap-markup {:template-id template-id, :path focused-path})
+       (d! :router/set-focused-path (conj focused-path bisection/mid-id)))})
+   (a
+    {:style ui/link,
+     :inner-text "Spread",
+     :on-click (fn [e d! m!]
+       (d! :template/spread-markup {:template-id template-id, :path focused-path})
+       (d! :router/move-before nil))}))))
 
 (defcomp
  comp-editor
