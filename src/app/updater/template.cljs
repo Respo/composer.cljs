@@ -48,6 +48,12 @@
         new-template (merge schema/template {:id op-id, :name op-data, :markup base-markup})]
     (assoc-in db [:templates op-id] new-template)))
 
+(defn iter-merge-children [container picked-id xs]
+  (if (empty? xs)
+    container
+    (let [next-container (assoc container picked-id (first xs))]
+      (recur next-container (key-after next-container picked-id) (rest xs)))))
+
 (defn prepend-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
     (update-in
@@ -112,6 +118,21 @@
      db
      (concat [:templates template-id :markup] (interleave (repeat :children) path) [:type])
      new-type)))
+
+(defn spread-markup [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data), focused-path (:path op-data)]
+    (if (empty? focused-path)
+      db
+      (update-in
+       db
+       (concat [:templates template-id :markup] (path-with-children (butlast focused-path)))
+       (fn [container]
+         (let [last-id (last focused-path)
+               target (get-in container last-id)
+               children (:children target)]
+           (if (empty? children)
+             (dissoc container last-id)
+             (iter-merge-children container last-id (vals children)))))))))
 
 (defn update-mock [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), mock-id (:mock-id op-data), data (:data op-data)]

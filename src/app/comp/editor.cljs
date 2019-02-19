@@ -16,7 +16,8 @@
             [app.comp.bg-picker :refer [comp-bg-picker]]
             [app.comp.dict-editor :refer [comp-dict-editor]]
             [app.style :as style]
-            [bisection-key.core :as bisection]))
+            [bisection-key.core :as bisection])
+  (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def node-layouts
   [{:value :row, :display "Row"}
@@ -48,7 +49,7 @@
   {:display :inline-block,
    :cursor :pointer,
    :padding "0 8px",
-   :margin-bottom 8,
+   :margin-bottom 4,
    :background-color (hsl 0 0 88),
    :color :white,
    :border-radius "4px",
@@ -59,10 +60,12 @@
  comp-markup
  (markup path focused-path)
  (div
-  {:class-name "no-shadows",
-   :style (merge
-           {:padding-left 8}
-           (if (empty? (:children markup)) {:border-left "1px solid #eee"}))}
+  {:style (merge
+           {:padding "4px 4px 1px 4px",
+            :border (<< "1px solid ~(hsl 0 0 88)"),
+            :border-bottom nil,
+            :border-right nil}
+           (if (empty? (:children markup)) {:display :inline-block}))}
   (div
    {:style (merge
             style-element
@@ -89,29 +92,30 @@
   {:style (merge ui/row {})}
   (div {} (<> "Operations:" style/field-label))
   (div
-   {:style ui/flex}
+   {:style (merge ui/flex)}
    (a
-    {:style ui/link,
+    {:style style/link,
      :inner-text "Append",
      :on-click (fn [e d! m!]
        (d! :template/append-markup {:template-id template-id, :path focused-path})
        (d! :router/move-append nil))})
    (=< 8 nil)
    (a
-    {:style ui/link,
+    {:style style/link,
      :inner-text "After",
      :on-click (fn [e d! m!]
        (d! :template/after-markup {:template-id template-id, :path focused-path})
        (d! :router/move-after nil))})
    (=< 8 nil)
    (a
-    {:style ui/link,
+    {:style style/link,
      :inner-text "Prepend",
      :on-click (fn [e d! m!]
        (d! :template/prepend-markup {:template-id template-id, :path focused-path})
        (d! :router/move-prepend nil))})
+   (=< 8 nil)
    (a
-    {:style ui/link,
+    {:style style/link,
      :inner-text "Before",
      :on-click (fn [e d! m!]
        (d! :template/before-markup {:template-id template-id, :path focused-path})
@@ -127,17 +131,30 @@
       (d! :router/set-focused-path (vec (butlast focused-path)))))
    (=< 8 nil)
    (a
-    {:style ui/link,
+    {:style style/link,
      :inner-text "Wrap",
      :on-click (fn [e d! m!]
        (d! :template/wrap-markup {:template-id template-id, :path focused-path})
        (d! :router/set-focused-path (conj focused-path bisection/mid-id)))})
+   (=< 8 nil)
    (a
-    {:style ui/link,
+    {:style style/link,
      :inner-text "Spread",
      :on-click (fn [e d! m!]
        (d! :template/spread-markup {:template-id template-id, :path focused-path})
-       (d! :router/move-before nil))}))))
+       (d! :router/move-before nil))})
+   (=< 8 nil)
+   (a
+    {:style style/link,
+     :inner-text "Copy",
+     :on-click (fn [e d! m!]
+       (d! :template/copy-markup {:template-id template-id, :path focused-path}))})
+   (=< 8 nil)
+   (a
+    {:style style/link,
+     :inner-text "Paste",
+     :on-click (fn [e d! m!]
+       (d! :template/paste-markup {:template-id template-id, :path focused-path}))}))))
 
 (defcomp
  comp-editor
