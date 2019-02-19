@@ -12,6 +12,8 @@
             :session/connect session/connect
             :session/disconnect session/disconnect
             :session/remove-message session/remove-message
+            :session/copy-markup session/copy-markup
+            :session/paste-markup session/paste-markup
             :user/log-in user/log-in
             :user/sign-up user/sign-up
             :user/log-out user/log-out

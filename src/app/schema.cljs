@@ -20,7 +20,8 @@
    :id nil,
    :nickname nil,
    :router (do router {:name :home, :data nil, :router nil}),
-   :messages {}})
+   :messages {},
+   :copied-markup nil})
 
 (def template
   {:id nil, :name nil, :mocks (do mock {}), :mock-pointer nil, :markup (do markup nil)})

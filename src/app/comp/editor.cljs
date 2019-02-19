@@ -148,13 +148,13 @@
     {:style style/link,
      :inner-text "Copy",
      :on-click (fn [e d! m!]
-       (d! :template/copy-markup {:template-id template-id, :path focused-path}))})
+       (d! :session/copy-markup {:template-id template-id, :path focused-path}))})
    (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Paste",
      :on-click (fn [e d! m!]
-       (d! :template/paste-markup {:template-id template-id, :path focused-path}))}))))
+       (d! :session/paste-markup {:template-id template-id, :path focused-path}))}))))
 
 (defcomp
  comp-editor
