@@ -22,6 +22,7 @@
             :router/set-tab router/set-tab
             :router/set-focused-mock router/set-focused-mock
             :router/set-focused-path router/set-focused-path
+            :router/set-preview-sizes router/set-preview-sizes
             :router/move-append router/move-append
             :router/move-prepend router/move-prepend
             :router/move-after router/move-after
