@@ -31,7 +31,10 @@ Preview router:
 
 ```edn
 {:name :preview
- :data {:pointer "id"}}
+ :data {:pointer "id"
+        :focused-mock nil
+        :width nil
+        :height nil}}
 ```
 
 ### Workflow

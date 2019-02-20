@@ -73,7 +73,8 @@
              states
              templates
              (get-in session [:router :data]))
-          :preview (comp-preview templates (get-in session [:router :data :pointer]))
+          :preview
+            (cursor-> :preview comp-preview states templates (get-in session [:router :data]))
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))
