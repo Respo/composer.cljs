@@ -201,12 +201,8 @@
 
 (defn wrap-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
-    (if (empty? focused-path)
-      db
-      (update-in
-       db
-       (concat
-        [:templates template-id :markup]
-        (interleave (repeat :children) focused-path))
-       (fn [node]
-         (merge schema/markup {:id op-id, :type :box, :children {bisection/mid-id node}}))))))
+    (update-in
+     db
+     (concat [:templates template-id :markup] (interleave (repeat :children) focused-path))
+     (fn [node]
+       (merge schema/markup {:id op-id, :type :box, :children {bisection/mid-id node}})))))
