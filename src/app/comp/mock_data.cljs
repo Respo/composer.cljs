@@ -58,7 +58,7 @@
            {:template-id template-id, :mock-id (:id mock), :data data})))
        (catch js/Error err (.error js/console err) (js/alert "Invalid data"))))))
   (div
-   {:style ui/row-parted}
+   {:style (merge ui/row-parted {:padding 8})}
    (span {})
    (div
     {:style ui/row-middle}
