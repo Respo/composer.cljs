@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button a]]
+            [respo.core :refer [defcomp list-> cursor-> <> span div button a pre]]
             [respo.comp.space :refer [=<]]
             [app.config :as config]
             [respo.comp.inspect :refer [comp-inspect]]
@@ -156,6 +156,13 @@
      :on-click (fn [e d! m!]
        (d! :session/paste-markup {:template-id template-id, :path focused-path}))}))))
 
+(def style-mock-data
+  {:margin 0,
+   :padding "0 8px",
+   :font-size 12,
+   :font-family ui/font-code,
+   :background-color (hsl 0 0 94)})
+
 (defcomp
  comp-editor
  (states template focused-path)
@@ -170,7 +177,9 @@
     (comp-markup (:markup template) [] focused-path)
     (when config/dev? (comp-inspect "Markup" (:markup template) {:bottom 0}))))
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
-        template-id (:id template)]
+        template-id (:id template)
+        mock-id (:mock-pointer template)
+        mock-data (if (nil? mock-id) nil (get-in template [:mocks mock-id :data]))]
     (div
      {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
@@ -178,6 +187,8 @@
      (cursor-> :background comp-bg-picker states template-id focused-path child)
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
+     (=< nil 8)
+     (pre {:inner-text (pr-str mock-data), :style style-mock-data})
      (cursor->
       :props
       comp-dict-editor
