@@ -12,7 +12,7 @@
                 [respo/message          "0.3.4"]
                 [respo/feather          "0.1.1"]
                 [respo/inflow-popup     "0.2.7"]
-                [respo/composer         "0.1.0-a3"]
+                [respo/composer         "0.1.0-a4"]
                 [cirru/bisection-key    "0.1.5"]
                 [cirru/favored-edn      "0.1.1"]
                 [org.clojure/core.incubator "0.1.4"]]

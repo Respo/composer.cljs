@@ -84,6 +84,6 @@
        (get-in store [:session :messages])
        {}
        (fn [info d! m!] (d! :session/remove-message info)))
-      (when dev? (comp-reel (:reel-length store) {}))))))
+      (when dev? (comp-reel (:reel-length store) {:bottom 60}))))))
 
 (def style-body {:padding "8px 16px"})

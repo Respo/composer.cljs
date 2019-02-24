@@ -37,7 +37,10 @@
    {:value :some, :kind :control, :display "Some"}
    {:value :template, :kind :control, :display "Template"}
    {:value :list, :kind :control, :display "List"}
-   {:value :slot, :kind :control, :display "Slot"}])
+   {:value :slot, :kind :control, :display "Slot"}
+   {:value :inspect, :kind :devtool, :display "Inspect"}
+   {:value :popup, :kind :layout, :display "Popup"}
+   {:value :element, :kind :element, :display "Element"}])
 
 (defn render-title [title]
   (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70), :margin-top 20}} (<> title)))
@@ -87,9 +90,9 @@
           (->> node-types
                (filter (fn [x] (= :control (:kind x))))
                (map (fn [x] [(:value x) (comp-node-type x on-pick)]))))
-         (render-title "Other")
+         (render-title "DevTool")
          (list->
           {}
           (->> node-types
-               (filter (fn [x] (= :other (:kind x))))
+               (filter (fn [x] (= :devtool (:kind x))))
                (map (fn [x] [(:value x) (comp-node-type x on-pick)])))))))))))
