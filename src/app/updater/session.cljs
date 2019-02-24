@@ -15,6 +15,9 @@
 (defn disconnect [db op-data sid op-id op-time]
   (update db :sessions (fn [session] (dissoc session sid))))
 
+(defn focus-to [db op-data sid op-id op-time]
+  (update-in db [:sessions sid :focus-to] (fn [settings] (merge settings op-data))))
+
 (defn paste-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)
         focused-path (:path op-data)

@@ -14,7 +14,7 @@
 
 (defcomp
  comp-template-list
- (templates router-data)
+ (templates template-id)
  (div
   {:style (merge ui/column {:width 240, :padding 8})}
   (div {:style {:font-family ui/font-fancy}} (<> "Templates"))
@@ -26,23 +26,27 @@
            (div
             {:style (merge
                      {:line-height "40px", :cursor :pointer, :padding "0 8px"}
-                     (if (= (:pointer router-data) (:id template))
-                       {:background-color (hsl 0 0 90)})),
-             :on-click (fn [e d! m!] (d! :router/set-pointer (:id template)))}
+                     (if (= template-id (:id template)) {:background-color (hsl 0 0 90)})),
+             :on-click (fn [e d! m!]
+               (d! :session/focus-to {:template-id (:id template), :mock-id nil, :path []}))}
             (<> (:name template)))))))))
 
 (def style-number (merge ui/input {:width 56, :min-width 56, :padding "0 4px"}))
 
 (defcomp
  comp-preview
- (states templates router-data)
- (let [template-id (:pointer router-data)
+ (states templates focus-to)
+ (let [template-id (:template-id focus-to)
        template (get templates template-id)
        mock-id (:mock-pointer template)
-       mock-data (if (some? mock-id) (get-in template [:mocks mock-id :data]) nil)]
+       mock-data (if (some? mock-id) (get-in template [:mocks mock-id :data]) nil)
+       change-size! (fn [d! w h]
+                      (d!
+                       :template/set-preview-sizes
+                       {:template-id template-id, :width w, :height h}))]
    (div
     {:style (merge ui/flex ui/row {:padding "0 8px"})}
-    (comp-template-list templates router-data)
+    (comp-template-list templates template-id)
     (div
      {:style (merge ui/flex ui/column)}
      (div
@@ -50,12 +54,12 @@
                ui/flex
                {:background-color (hsl 0 0 0), :overflow :auto, :display :flex})}
       (let [tmpls (neaten-templates templates)
-            markup (get-in templates [(:pointer router-data) :markup])]
+            markup (get-in templates [template-id :markup])]
         (if (some? markup)
           (div
            {:style {:background-color (hsl 0 0 100 0.2),
-                    :width (or (:width router-data) "100%"),
-                    :height (or (:height router-data) "100%"),
+                    :width (or (:width template) "100%"),
+                    :height (or (:height template) "100%"),
                     :margin :auto}}
            (render-markup
             markup
@@ -72,28 +76,26 @@
       (input
        {:style style-number,
         :type "number",
-        :value (:width router-data),
-        :on-input (fn [e d! m!]
-          (d! :router/set-preview-sizes {:width (:value e), :height (:height router-data)}))})
+        :value (:width template),
+        :on-input (fn [e d! m!] (change-size! d! (:value e) (:height template)))})
       (=< 8 nil)
       (input
        {:style style-number,
         :type "number",
-        :value (:height router-data),
-        :on-input (fn [e d! m!]
-          (d! :router/set-preview-sizes {:width (:width router-data), :height (:value e)}))})
+        :value (:height template),
+        :on-input (fn [e d! m!] (change-size! d! (:width template) (:value e)))})
       (=< 8 nil)
       (a
        {:style ui/link,
         :inner-text "100x400",
-        :on-click (fn [e d! m!] (d! :router/set-preview-sizes {:width 100, :height 400}))})
+        :on-click (fn [e d! m!] (change-size! d! 100 400))})
       (a
        {:style ui/link,
         :inner-text "400x100",
-        :on-click (fn [e d! m!] (d! :router/set-preview-sizes {:width 400, :height 100}))})
+        :on-click (fn [e d! m!] (change-size! d! 400 100))})
       (a
        {:style ui/link,
         :inner-text "full",
-        :on-click (fn [e d! m!] (d! :router/set-preview-sizes {:width nil, :height nil}))}))))))
+        :on-click (fn [e d! m!] (change-size! d! nil nil))}))))))
 
 (defn get-mocks [mocks] (->> mocks (map (fn [[k m]] {:value k, :display (:name m)}))))

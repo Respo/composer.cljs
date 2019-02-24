@@ -104,7 +104,7 @@
                         ui/row-middle
                         {:cursor :pointer, :padding "0 8px"}
                         (if (= focused-id (:id mock)) {:background-color (hsl 0 0 94)})),
-                :on-click (fn [e d! m!] (d! :router/set-focused-mock (:id mock)))}
+                :on-click (fn [e d! m!] (d! :session/focus-to {:mock-id (:id mock)}))}
                (<> (:name mock))
                (=< 8 nil)
                (if (= used-mock (:id mock)) (comp-i :star 14 (hsl 0 80 70))))))))))

@@ -58,7 +58,8 @@
        session (:session store)
        router (:router store)
        router-data (:data router)
-       templates (:templates store)]
+       templates (:templates store)
+       focus-to (:focus-to session)]
    (if (nil? store)
      (comp-offline)
      (div
@@ -66,20 +67,13 @@
       (comp-navigation (:logged-in? store) (:count store) (:templates store))
       (if (:logged-in? store)
         (case (:name router)
-          :home
-            (cursor->
-             :workspace
-             comp-workspace
-             states
-             templates
-             (get-in session [:router :data]))
-          :preview
-            (cursor-> :preview comp-preview states templates (get-in session [:router :data]))
+          :home (cursor-> :workspace comp-workspace states templates focus-to)
+          :preview (cursor-> :preview comp-preview states templates focus-to)
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))
       (comp-status-color (:color store))
-      (when dev? (comp-inspect "Store" store {:bottom 0, :left 0, :max-width "100%"}))
+      (when dev? (comp-inspect "Session" session {:bottom 0, :left 0, :max-width "100%"}))
       (comp-messages
        (get-in store [:session :messages])
        {}

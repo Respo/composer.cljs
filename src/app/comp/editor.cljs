@@ -70,7 +70,7 @@
    {:style (merge
             style-element
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
-    :on-click (fn [e d! m!] (d! :router/set-focused-path path))}
+    :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
    (<> (:type markup)))
   (list->
    {:style (merge
@@ -128,14 +128,14 @@
     {:trigger (a {:style ui/link, :inner-text "Remove"})}
     (fn [e d! m!]
       (d! :template/remove-markup {:template-id template-id, :path focused-path})
-      (d! :router/set-focused-path (vec (butlast focused-path)))))
+      (d! :session/focus-to {:path (vec (butlast focused-path))})))
    (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Wrap",
      :on-click (fn [e d! m!]
        (d! :template/wrap-markup {:template-id template-id, :path focused-path})
-       (d! :router/set-focused-path (conj focused-path bisection/mid-id)))})
+       (d! :session/focus-to {:path (conj focused-path bisection/mid-id)}))})
    (=< 8 nil)
    (a
     {:style style/link,
