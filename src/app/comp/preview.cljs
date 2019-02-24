@@ -49,24 +49,24 @@
       {:style (merge
                ui/flex
                {:background-color (hsl 0 0 0), :overflow :auto, :display :flex})}
-      (div
-       {:style {:background-color (hsl 0 0 100 0.2),
-                :width (or (:width router-data) "100%"),
-                :height (or (:height router-data) "100%"),
-                :margin :auto}}
-       (let [tmpls (neaten-templates templates)
-             markup (get-in templates [(:pointer router-data) :markup])]
-         (if (some? markup)
+      (let [tmpls (neaten-templates templates)
+            markup (get-in templates [(:pointer router-data) :markup])]
+        (if (some? markup)
+          (div
+           {:style {:background-color (hsl 0 0 100 0.2),
+                    :width (or (:width router-data) "100%"),
+                    :height (or (:height router-data) "100%"),
+                    :margin :auto}}
            (render-markup
             markup
             {:data mock-data, :templates tmpls, :level 0}
-            (fn [op op-data] (println op op-data)))
-           (span
-            {:style {:color (hsl 0 0 60),
-                     :font-family ui/font-fancy,
-                     :font-size 16,
-                     :margin :auto},
-             :inner-text "No selected template."})))))
+            (fn [op op-data] (println op op-data))))
+          (span
+           {:style {:color (hsl 0 0 60),
+                    :font-family ui/font-fancy,
+                    :font-size 16,
+                    :margin :auto},
+            :inner-text "No selected template."}))))
      (div
       {:style ui/row-middle}
       (input
