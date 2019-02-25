@@ -11,7 +11,7 @@
                 [respo/alerts           "0.3.11"]
                 [respo/message          "0.3.4"]
                 [respo/feather          "0.1.1"]
-                [respo/inflow-popup     "0.2.7"]
+                [respo/inflow-popup     "0.2.8"]
                 ; [respo/composer         "0.1.0-a5"] ; soft linked
                 [cirru/bisection-key    "0.1.5"]
                 [cirru/favored-edn      "0.1.1"]
