@@ -91,7 +91,7 @@
   (when (not (identical? @*reader-reel @*reel))
     (reset! *reader-reel @*reel)
     (sync-clients! @*reader-reel))
-  (delay! 0.2 render-loop!))
+  (delay! 0.12 render-loop!))
 
 (defn run-server! []
   (wss-serve!

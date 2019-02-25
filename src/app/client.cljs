@@ -9,7 +9,7 @@
             [ws-edn.client :refer [ws-connect! ws-send!]]
             [recollect.patch :refer [patch-twig]]
             [cumulo-util.core :refer [on-page-touch]]
-            ["query-string" :as query-string])
+            ["url-parse" :as url-parse])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (declare dispatch!)
@@ -36,10 +36,8 @@
     (ws-send! {:kind :op, :op op, :data op-data})))
 
 (defn connect! []
-  (let [options (js->clj
-                 (query-string/parse (subs js/location.search 1))
-                 :keywordize-keys
-                 true)
+  (let [obj (url-parse js/location.href true)
+        options (js->clj (.-query obj) :keywordize-keys true)
         host (or (:host options) "127.0.0.1")
         port (or (:port options) (:port config/site))]
     (ws-connect!
