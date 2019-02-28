@@ -6,12 +6,12 @@
 (defn move-after [db op-data sid op-id op-time]
   (update-in
    db
-   [:sessions sid :router :data]
-   (fn [pointer-data]
-     (let [path (:focused-path pointer-data)]
+   [:sessions sid :focus-to]
+   (fn [focus-to]
+     (let [path (:path focus-to)]
        (if (empty? path)
-         pointer-data
-         (let [template-id (:pointer pointer-data)
+         focus-to
+         (let [template-id (:template-id focus-to)
                children (get-in
                          db
                          (concat
@@ -21,33 +21,31 @@
                idx (.indexOf keys-in-order (last path))
                next-key (get keys-in-order (inc idx))]
            (if (some? next-key)
-             (assoc pointer-data :focused-path (conj (vec (butlast path)) next-key))
-             pointer-data)))))))
+             (assoc focus-to :path (conj (vec (butlast path)) next-key))
+             focus-to)))))))
 
 (defn move-append [db op-data sid op-id op-time]
   (update-in
    db
-   [:sessions sid :router :data]
-   (fn [pointer-data]
-     (let [template-id (:pointer pointer-data)
-           path (:focused-path pointer-data)
+   [:sessions sid :focus-to]
+   (fn [focus-to]
+     (let [template-id (:template-id focus-to)
+           path (:path focus-to)
            children (get-in
                      db
                      (concat [:templates template-id :markup] (path-with-children path)))
            next-key (last (sort (keys children)))]
-       (if (some? next-key)
-         (assoc pointer-data :focused-path (conj (vec path) next-key))
-         pointer-data)))))
+       (if (some? next-key) (assoc focus-to :path (conj (vec path) next-key)) focus-to)))))
 
 (defn move-before [db op-data sid op-id op-time]
   (update-in
    db
-   [:sessions sid :router :data]
-   (fn [pointer-data]
-     (let [path (:focused-path pointer-data)]
+   [:sessions sid :focus-to]
+   (fn [focus-to]
+     (let [path (:path focus-to)]
        (if (empty? path)
-         pointer-data
-         (let [template-id (:pointer pointer-data)
+         focus-to
+         (let [template-id (:template-id focus-to)
                children (get-in
                          db
                          (concat
@@ -57,39 +55,18 @@
                idx (.indexOf keys-in-order (last path))
                next-key (get keys-in-order (dec idx))]
            (if (some? next-key)
-             (assoc pointer-data :focused-path (conj (vec (butlast path)) next-key))
-             pointer-data)))))))
+             (assoc focus-to :path (conj (vec (butlast path)) next-key))
+             focus-to)))))))
 
 (defn move-prepend [db op-data sid op-id op-time]
   (update-in
    db
-   [:sessions sid :router :data]
-   (fn [pointer-data]
-     (let [template-id (:pointer pointer-data)
-           path (:focused-path pointer-data)
+   [:sessions sid :focus-to]
+   (fn [focus-to]
+     (let [template-id (:template-id focus-to)
+           path (:path focus-to)
            children (get-in
                      db
                      (concat [:templates template-id :markup] (path-with-children path)))
            next-key (first (sort (keys children)))]
-       (if (some? next-key)
-         (assoc pointer-data :focused-path (conj (vec path) next-key))
-         pointer-data)))))
-
-(defn set-focused-mock [db op-data sid op-id op-time]
-  (assoc-in db [:sessions sid :router :data :focused-mock] op-data))
-
-(defn set-focused-path [db op-data sid op-id op-time]
-  (assoc-in db [:sessions sid :router :data :focused-path] op-data))
-
-(defn set-pointer [db op-data sid op-id op-time]
-  (assoc-in db [:sessions sid :router :data :pointer] op-data))
-
-(defn set-preview-sizes [db op-data sid op-id op-time]
-  (update-in
-   db
-   [:sessions sid :router :data]
-   (fn [router-data]
-     (-> router-data (assoc :width (:width op-data)) (assoc :height (:height op-data))))))
-
-(defn set-tab [db op-data sid op-id op-time]
-  (assoc-in db [:sessions sid :router :data :tab] op-data))
+       (if (some? next-key) (assoc focus-to :path (conj (vec path) next-key)) focus-to)))))

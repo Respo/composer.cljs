@@ -21,10 +21,18 @@
    :nickname nil,
    :router (do router {:name :home, :data nil, :router nil}),
    :messages {},
-   :copied-markup nil})
+   :copied-markup nil,
+   :template-id nil,
+   :focus-to {:template-id nil, :path [], :tab :editor, :mock-id []}})
 
 (def template
-  {:id nil, :name nil, :mocks (do mock {}), :mock-pointer nil, :markup (do markup nil)})
+  {:id nil,
+   :name nil,
+   :mocks (do mock {}),
+   :mock-pointer nil,
+   :markup (do markup nil),
+   :width nil,
+   :height nil})
 
 (def user {:name nil, :id nil, :nickname nil, :avatar nil, :password nil})
 

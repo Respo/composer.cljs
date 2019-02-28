@@ -119,6 +119,14 @@
      (concat [:templates template-id :markup] (interleave (repeat :children) path) [:type])
      new-type)))
 
+(defn set-preview-sizes [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)]
+    (update-in
+     db
+     [:templates template-id]
+     (fn [template]
+       (-> template (assoc :width (:width op-data)) (assoc :height (:height op-data)))))))
+
 (defn spread-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
     (if (empty? focused-path)

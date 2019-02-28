@@ -11,7 +11,8 @@
             [inflow-popup.comp.popup :refer [comp-popup]]
             [respo-alerts.comp.alerts :refer [comp-prompt]]
             [feather.core :refer [comp-i]]
-            [app.style :as style]))
+            [app.style :as style]
+            [cumulo-util.core :refer [delay!]]))
 
 (defcomp
  comp-pair-editor
@@ -24,15 +25,21 @@
      {}
      (input
       {:placeholder "key",
+       :class-name "pair-key",
        :style ui/input,
        :value (:key state),
-       :on-input (fn [e d! m!] (m! (assoc state :key (:value e))))})
+       :on-input (fn [e d! m!] (m! (assoc state :key (:value e)))),
+       :autofocus true,
+       :auto-focus true})
      (=< 8 nil)
      (input
       {:placeholder "value",
+       :class-name "pair-value",
        :style ui/input,
        :value (:value state),
-       :on-input (fn [e d! m!] (m! (assoc state :value (:value e))))}))
+       :on-input (fn [e d! m!] (m! (assoc state :value (:value e)))),
+       :on-keydown (fn [e d! m!]
+         (if (= 13 (:keycode e)) (do (on-change state d! m!) (m! nil))))}))
     (=< nil 8)
     (div
      {:style ui/row-parted}
@@ -45,7 +52,15 @@
 (defcomp
  comp-dict-editor
  (states title dict on-change)
- (let [state (or (:data states) {:draft ""})]
+ (let [state (or (:data states) {:draft ""})
+       do-focus! (fn []
+                   (delay!
+                    0.2
+                    (fn []
+                      (let [target (.querySelector js/document ".pair-key")]
+                        (if (some? target)
+                          (.focus target)
+                          (js/console.warn ".pair-key not found!"))))))]
    (div
     {}
     (div
@@ -56,7 +71,7 @@
       :set
       comp-popup
       states
-      {:trigger (comp-i :plus 14 (hsl 200 80 70))}
+      {:trigger (comp-i :plus 14 (hsl 200 80 70)), :on-popup (fn [e d! m!] (do-focus!))}
       (fn [on-toggle]
         (cursor->
          :pair

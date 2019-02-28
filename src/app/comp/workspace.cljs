@@ -17,7 +17,7 @@
 
 (defcomp
  comp-templates-list
- (states templates pointer tab)
+ (states templates template-id tab)
  (let [state (or (:data states) {:name nil})]
    (div
     {:style {:padding "8px 16px", :width 240}}
@@ -40,8 +40,12 @@
                (div
                 {:style (merge
                          {:cursor :pointer, :padding "0px 8px", :line-height "40px"}
-                         (if (= pointer (:id template)) {:background-color (hsl 0 0 90)})),
-                 :on-click (fn [e d! m!] (d! :router/set-pointer (:id template)))}
+                         (if (= template-id (:id template))
+                           {:background-color (hsl 0 0 90)})),
+                 :on-click (fn [e d! m!]
+                   (d!
+                    :session/focus-to
+                    {:template-id (:id template), :path [], :mock-id nil}))}
                 (<> (:name template)))))))))))
 
 (def template-tabs
@@ -51,14 +55,14 @@
 
 (defcomp
  comp-workspace
- (states templates pointer-data)
- (let [pointer (:pointer pointer-data)
-       tab (:tab pointer-data)
-       template (get templates pointer)
-       focused-path (:focused-path pointer-data)]
+ (states templates focus-to)
+ (let [tab (:tab focus-to)
+       template-id (:template-id focus-to)
+       template (get templates template-id)
+       focused-path (:path focus-to)]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :list comp-templates-list states templates pointer tab)
+    (cursor-> :list comp-templates-list states templates template-id tab)
     (if (nil? template)
       (div
        {:style (merge
@@ -75,7 +79,7 @@
         (comp-tabs
          template-tabs
          tab
-         (fn [selected d! m!] (d! :router/set-tab (:value selected)))))
+         (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)}))))
        (case (or tab :editor)
          :editor (cursor-> :editor comp-editor states template focused-path)
          :mocks
@@ -84,7 +88,7 @@
             comp-mock-data
             states
             (:id template)
-            (:focused-mock pointer-data)
+            (:mock-id focus-to)
             (:mock-pointer template)
             (:mocks template))
          :settings (cursor-> :settings comp-template-settings states template)

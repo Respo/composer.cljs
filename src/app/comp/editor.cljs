@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button a]]
+            [respo.core :refer [defcomp list-> cursor-> <> span div button a pre]]
             [respo.comp.space :refer [=<]]
             [app.config :as config]
             [respo.comp.inspect :refer [comp-inspect]]
@@ -70,7 +70,7 @@
    {:style (merge
             style-element
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
-    :on-click (fn [e d! m!] (d! :router/set-focused-path path))}
+    :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
    (<> (:type markup)))
   (list->
    {:style (merge
@@ -128,14 +128,14 @@
     {:trigger (a {:style ui/link, :inner-text "Remove"})}
     (fn [e d! m!]
       (d! :template/remove-markup {:template-id template-id, :path focused-path})
-      (d! :router/set-focused-path (vec (butlast focused-path)))))
+      (d! :session/focus-to {:path (vec (butlast focused-path))})))
    (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Wrap",
      :on-click (fn [e d! m!]
        (d! :template/wrap-markup {:template-id template-id, :path focused-path})
-       (d! :router/set-focused-path (conj focused-path bisection/mid-id)))})
+       (d! :session/focus-to {:path (conj focused-path bisection/mid-id)}))})
    (=< 8 nil)
    (a
     {:style style/link,
@@ -156,6 +156,13 @@
      :on-click (fn [e d! m!]
        (d! :session/paste-markup {:template-id template-id, :path focused-path}))}))))
 
+(def style-mock-data
+  {:margin 0,
+   :padding "0 8px",
+   :font-size 12,
+   :font-family ui/font-code,
+   :background-color (hsl 0 0 94)})
+
 (defcomp
  comp-editor
  (states template focused-path)
@@ -170,7 +177,9 @@
     (comp-markup (:markup template) [] focused-path)
     (when config/dev? (comp-inspect "Markup" (:markup template) {:bottom 0}))))
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
-        template-id (:id template)]
+        template-id (:id template)
+        mock-id (:mock-pointer template)
+        mock-data (if (nil? mock-id) nil (get-in template [:mocks mock-id :data]))]
     (div
      {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
@@ -178,6 +187,8 @@
      (cursor-> :background comp-bg-picker states template-id focused-path child)
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
+     (=< nil 8)
+     (pre {:inner-text (pr-str mock-data), :style style-mock-data})
      (cursor->
       :props
       comp-dict-editor

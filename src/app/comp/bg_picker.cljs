@@ -17,7 +17,8 @@
    (hsl 80 70 60)
    (hsl 120 70 60)
    (hsl 160 70 60)
-   (hsl 200 70 60)])
+   (hsl 200 70 60)
+   (hsl 0 0 100)])
 
 (def style-label {:width 20, :height 20, :margin "0 8px 8px 0", :cursor :pointer})
 
@@ -42,7 +43,9 @@
            (fn [color]
              [color
               (div
-               {:style (merge style-label {:background-color color}),
+               {:style (merge
+                        style-label
+                        {:background-color color, :border "1px solid #ddd"}),
                 :on-click (fn [e d! m!] (set-color! color d!))})]))))
     (div
      {}
@@ -69,6 +72,10 @@
      :bg-color
      comp-popup
      states
-     {:trigger (div {:style {:width 24, :height 24, :background-color bg-color}})}
+     {:trigger (div
+                {:style {:width 24,
+                         :height 24,
+                         :background-color bg-color,
+                         :border "1px solid #ddd"}})}
      (fn [on-toggle]
        (cursor-> :panel comp-color-panel states bg-color template-id path on-toggle))))))

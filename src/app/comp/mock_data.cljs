@@ -36,6 +36,22 @@
          :template/rename-mock
          {:template-id template-id, :mock-id (:id mock), :text result})))))
   (div
+   {:style (merge ui/row-parted {:padding 8})}
+   (span {})
+   (div
+    {:style ui/row-middle}
+    (button
+     {:style ui/button,
+      :inner-text "Use this",
+      :on-click (fn [e d! m!]
+        (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
+    (=< 8 nil)
+    (button
+     {:style ui/button,
+      :inner-text "Remove",
+      :on-click (fn [e d! m!]
+        (d! :template/remove-mock {:template-id template-id, :mock-id (:id mock)}))})))
+  (div
    {:style ui/flex}
    (cursor->
     :data
@@ -56,23 +72,7 @@
           (d!
            :template/update-mock
            {:template-id template-id, :mock-id (:id mock), :data data})))
-       (catch js/Error err (.error js/console err) (js/alert "Invalid data"))))))
-  (div
-   {:style (merge ui/row-parted {:padding 8})}
-   (span {})
-   (div
-    {:style ui/row-middle}
-    (button
-     {:style ui/button,
-      :inner-text "Use this",
-      :on-click (fn [e d! m!]
-        (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
-    (=< 8 nil)
-    (button
-     {:style ui/button,
-      :inner-text "Remove",
-      :on-click (fn [e d! m!]
-        (d! :template/remove-mock {:template-id template-id, :mock-id (:id mock)}))})))))
+       (catch js/Error err (.error js/console err) (js/alert "Invalid data"))))))))
 
 (defcomp
  comp-mock-data
@@ -104,7 +104,7 @@
                         ui/row-middle
                         {:cursor :pointer, :padding "0 8px"}
                         (if (= focused-id (:id mock)) {:background-color (hsl 0 0 94)})),
-                :on-click (fn [e d! m!] (d! :router/set-focused-mock (:id mock)))}
+                :on-click (fn [e d! m!] (d! :session/focus-to {:mock-id (:id mock)}))}
                (<> (:name mock))
                (=< 8 nil)
                (if (= used-mock (:id mock)) (comp-i :star 14 (hsl 0 80 70))))))))))

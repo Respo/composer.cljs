@@ -14,15 +14,11 @@
             :session/remove-message session/remove-message
             :session/copy-markup session/copy-markup
             :session/paste-markup session/paste-markup
+            :session/focus-to session/focus-to
             :user/log-in user/log-in
             :user/sign-up user/sign-up
             :user/log-out user/log-out
             :router/change router/change
-            :router/set-pointer router/set-pointer
-            :router/set-tab router/set-tab
-            :router/set-focused-mock router/set-focused-mock
-            :router/set-focused-path router/set-focused-path
-            :router/set-preview-sizes router/set-preview-sizes
             :router/move-append router/move-append
             :router/move-prepend router/move-prepend
             :router/move-after router/move-after
@@ -49,5 +45,6 @@
             :template/node-style template/update-node-style
             :template/node-props template/update-node-props
             :template/node-attrs template/update-node-attrs
+            :template/set-preview-sizes template/set-preview-sizes
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))
