@@ -85,6 +85,26 @@
         (map
          (fn [[k child-markup]] [k (comp-markup child-markup (conj path k) focused-path)]))))))
 
+(defn get-mocks [mocks] (->> mocks (map (fn [[k m]] {:value k, :display (:name m)}))))
+
+(defcomp
+ comp-mock-picker
+ (states template)
+ (<> (pr-str (:mock-pointer template)))
+ (div
+  {:style ui/row-middle}
+  (<> "Mock:" style/field-label)
+  (=< 8 nil)
+  (cursor->
+   :mock
+   comp-select
+   states
+   (:mock-pointer template)
+   (get-mocks (:mocks template))
+   {:text "Select mock"}
+   (fn [result d! m!]
+     (d! :template/use-mock {:template-id (:id template), :mock-id result})))))
+
 (defcomp
  comp-operations
  (states template-id focused-path)
@@ -188,6 +208,7 @@
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
      (=< nil 8)
+     (cursor-> :mocks comp-mock-picker states template)
      (pre {:inner-text (pr-str mock-data), :style style-mock-data})
      (cursor->
       :props
