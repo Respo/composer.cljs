@@ -64,7 +64,7 @@
            (render-markup
             markup
             {:data mock-data, :templates tmpls, :level 0}
-            (fn [op op-data] (println op op-data))))
+            (fn [d! op props op-data] (println op props op-data))))
           (span
            {:style {:color (hsl 0 0 60),
                     :font-family ui/font-fancy,
