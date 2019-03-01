@@ -49,13 +49,13 @@
 
 (defn persist-db! []
   (println "Saved file.")
-  (let [file-content (write-edn (assoc (:db @*reel) :sessions {}))
-        storage-path storage-file
-        backup-path (get-backup-path!)
-        data-code (generate-file (:templates (:db @*reel)))]
-    (write-mildly! storage-path file-content)
-    (write-mildly! "src/composed/templates.cljs" data-code)
-    (comment write-mildly! backup-path file-content)))
+  (let [file-content (write-edn (assoc (:db @*reel) :sessions {}))]
+    (write-mildly! storage-file file-content)
+    (comment
+     write-mildly!
+     "src/composed/templates.cljs"
+     (generate-file (:templates (:db @*reel))))
+    (comment write-mildly! (get-backup-path!) file-content)))
 
 (defn dispatch! [op op-data sid]
   (let [op-id (id!), op-time (unix-time!)]
@@ -112,7 +112,7 @@
   (println "Running mode:" (if config/dev? "dev" "release"))
   (run-server!)
   (render-loop!)
-  (comment js/process.on "SIGINT" on-exit!)
+  (js/process.on "SIGINT" on-exit!)
   (comment repeat! 600 #(persist-db!))
   (println
    (<< "Server started. Open ~(.blue chalk \"http://composer.respo-mvc.org/\") to edit."))

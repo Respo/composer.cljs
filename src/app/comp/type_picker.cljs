@@ -3,11 +3,20 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp cursor-> list-> <> action-> span div]]
+            [respo.core :refer [defcomp cursor-> list-> <> action-> span div a]]
             [app.config :as config]
             [respo-alerts.comp.alerts :refer [comp-select]]
             [app.style :as style]
             [inflow-popup.comp.popup :refer [comp-popup]]))
+
+(defcomp
+ comp-icon-site
+ ()
+ (a
+  {:href "http://repo.respo-mvc.org/feather/",
+   :inner-text "Built-in icons",
+   :target "_blank",
+   :style {:font-family ui/font-fancy}}))
 
 (defcomp
  comp-node-type
@@ -95,4 +104,6 @@
           {}
           (->> node-types
                (filter (fn [x] (= :devtool (:kind x))))
-               (map (fn [x] [(:value x) (comp-node-type x on-pick)])))))))))))
+               (map (fn [x] [(:value x) (comp-node-type x on-pick)])))))))))
+  (=< 8 nil)
+  (if (= :icon (:type markup)) (comp-icon-site))))
