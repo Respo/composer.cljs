@@ -23,7 +23,8 @@
    :messages {},
    :copied-markup nil,
    :template-id nil,
-   :focus-to {:template-id nil, :path [], :tab :editor, :mock-id []}})
+   :focus-to {:template-id nil, :path [], :tab :editor, :mock-id []},
+   :shadows? false})
 
 (def template
   {:id nil,

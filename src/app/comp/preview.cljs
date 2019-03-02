@@ -17,7 +17,7 @@
 
 (defcomp
  comp-preview
- (states templates focus-to)
+ (states templates focus-to shadows?)
  (let [template-id (:template-id focus-to)
        template (get templates template-id)
        mock-id (:mock-pointer template)
@@ -39,7 +39,8 @@
             markup (get-in templates [template-id :markup])]
         (if (some? markup)
           (div
-           {:style {:background-color (hsl 0 0 100 1),
+           {:class-name (if shadows? "dev-shadows" ""),
+            :style {:background-color (hsl 0 0 100 1),
                     :width (or (:width template) "100%"),
                     :height (or (:height template) "100%"),
                     :margin :auto}}
@@ -77,7 +78,13 @@
         :on-click (fn [e d! m!] (change-size! d! 400 100))})
       (a
        {:style ui/link,
-        :inner-text "full",
-        :on-click (fn [e d! m!] (change-size! d! nil nil))}))))))
+        :inner-text "Full",
+        :on-click (fn [e d! m!] (change-size! d! nil nil))})
+      (=< 8 nil)
+      (input
+       {:type "checkbox",
+        :style {:cursor :pointer},
+        :checked shadows?,
+        :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))}))))))
 
 (defn get-mocks [mocks] (->> mocks (map (fn [[k m]] {:value k, :display (:name m)}))))

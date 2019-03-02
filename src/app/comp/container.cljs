@@ -68,7 +68,8 @@
       (if (:logged-in? store)
         (case (:name router)
           :home (cursor-> :workspace comp-workspace states templates focus-to)
-          :preview (cursor-> :preview comp-preview states templates focus-to)
+          :preview
+            (cursor-> :preview comp-preview states templates focus-to (:shadows? session))
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))
