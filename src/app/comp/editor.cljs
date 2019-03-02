@@ -178,10 +178,12 @@
 
 (def style-mock-data
   {:margin 0,
-   :padding "0 8px",
+   :padding "4px 8px",
    :font-size 12,
    :font-family ui/font-code,
-   :background-color (hsl 0 0 94)})
+   :background-color (hsl 0 0 94),
+   :white-space :normal,
+   :line-height "18px"})
 
 (defcomp
  comp-editor

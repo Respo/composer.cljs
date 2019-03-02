@@ -9,27 +9,9 @@
             [respo.util.list :refer [map-val]]
             [respo-composer.core :refer [render-markup]]
             [app.util :refer [neaten-templates]]
-            [respo-alerts.comp.alerts :refer [comp-select]])
+            [respo-alerts.comp.alerts :refer [comp-select]]
+            [app.comp.templates-list :refer [comp-templates-list]])
   (:require-macros [clojure.core.strint :refer [<<]]))
-
-(defcomp
- comp-template-list
- (templates template-id)
- (div
-  {:style (merge ui/column {:width 240, :padding 8})}
-  (div {:style {:font-family ui/font-fancy}} (<> "Templates"))
-  (list->
-   {}
-   (->> templates
-        (map-val
-         (fn [template]
-           (div
-            {:style (merge
-                     {:line-height "40px", :cursor :pointer, :padding "0 8px"}
-                     (if (= template-id (:id template)) {:background-color (hsl 0 0 90)})),
-             :on-click (fn [e d! m!]
-               (d! :session/focus-to {:template-id (:id template), :mock-id nil, :path []}))}
-            (<> (:name template)))))))))
 
 (def style-number (merge ui/input {:width 56, :min-width 56, :padding "0 4px"}))
 
@@ -46,7 +28,7 @@
                        {:template-id template-id, :width w, :height h}))]
    (div
     {:style (merge ui/flex ui/row {:padding "0 8px"})}
-    (comp-template-list templates template-id)
+    (cursor-> :templates comp-templates-list states templates template-id)
     (div
      {:style (merge ui/flex ui/column)}
      (div
@@ -57,7 +39,7 @@
             markup (get-in templates [template-id :markup])]
         (if (some? markup)
           (div
-           {:style {:background-color (hsl 0 0 100 0.2),
+           {:style {:background-color (hsl 0 0 100 1),
                     :width (or (:width template) "100%"),
                     :height (or (:height template) "100%"),
                     :margin :auto}}
