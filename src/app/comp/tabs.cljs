@@ -12,18 +12,14 @@
  comp-tabs
  (tabs selected-tab on-select)
  (list->
-  {:style ui/row-middle}
+  {:style (merge ui/row-middle {:padding "0 8px", :font-family ui/font-fancy})}
   (->> tabs
        (map
         (fn [tab]
           [(:value tab)
            (div
             {:style (merge
-                     {:padding "0 8px",
-                      :border-right (<< "1px solid ~(hsl 0 0 90)"),
-                      :cursor :pointer,
-                      :border-radius "4px",
-                      :color (hsl 0 0 60)}
+                     {:padding "0 8px", :cursor :pointer, :color (hsl 0 0 60)}
                      (if (= (:value tab) selected-tab) {:color :black})),
              :on-click (fn [e d! m!] (on-select tab d! m!))}
             (<> (:display tab)))])))))

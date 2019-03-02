@@ -64,7 +64,7 @@
      (comp-offline)
      (div
       {:style (merge ui/global ui/fullscreen ui/column)}
-      (comp-navigation (:logged-in? store) (:count store))
+      (comp-navigation (:logged-in? store) (:count store) router)
       (if (:logged-in? store)
         (case (:name router)
           :home (cursor-> :workspace comp-workspace states templates focus-to)

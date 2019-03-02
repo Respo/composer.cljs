@@ -65,7 +65,8 @@
             :border (<< "1px solid ~(hsl 0 0 88)"),
             :border-bottom nil,
             :border-right nil}
-           (if (empty? (:children markup)) {:display :inline-block}))}
+           (if (empty? (:children markup)) {:display :inline-block})
+           (if (empty? path) {:border :none, :padding 0}))}
   (div
    {:style (merge
             style-element
@@ -109,7 +110,7 @@
  comp-operations
  (states template-id focused-path)
  (div
-  {:style (merge ui/row {:padding "0 *px"})}
+  {:style (merge ui/row {:padding "0 8px"})}
   (div {} (<> "Operations:" style/field-label))
   (div
    {:style (merge ui/flex)}
@@ -119,28 +120,24 @@
      :on-click (fn [e d! m!]
        (d! :template/append-markup {:template-id template-id, :path focused-path})
        (d! :router/move-append nil))})
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "After",
      :on-click (fn [e d! m!]
        (d! :template/after-markup {:template-id template-id, :path focused-path})
        (d! :router/move-after nil))})
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Prepend",
      :on-click (fn [e d! m!]
        (d! :template/prepend-markup {:template-id template-id, :path focused-path})
        (d! :router/move-prepend nil))})
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Before",
      :on-click (fn [e d! m!]
        (d! :template/before-markup {:template-id template-id, :path focused-path})
        (d! :router/move-before nil))})
-   (=< 8 nil)
    (cursor->
     :remove
     comp-confirm
@@ -149,27 +146,23 @@
     (fn [e d! m!]
       (d! :template/remove-markup {:template-id template-id, :path focused-path})
       (d! :session/focus-to {:path (vec (butlast focused-path))})))
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Wrap",
      :on-click (fn [e d! m!]
        (d! :template/wrap-markup {:template-id template-id, :path focused-path})
        (d! :session/focus-to {:path (conj focused-path bisection/mid-id)}))})
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Spread",
      :on-click (fn [e d! m!]
        (d! :template/spread-markup {:template-id template-id, :path focused-path})
        (d! :router/move-before nil))})
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Copy",
      :on-click (fn [e d! m!]
        (d! :session/copy-markup {:template-id template-id, :path focused-path}))})
-   (=< 8 nil)
    (a
     {:style style/link,
      :inner-text "Paste",
@@ -192,12 +185,13 @@
   {:style (merge ui/flex ui/row {:overflow :auto})}
   (div
    {:style (merge ui/flex ui/column {:overflow :auto})}
+   (=< nil 4)
    (cursor-> :operations comp-operations states (:id template) (or focused-path []))
-   (div {:style {:height 1, :background-color (hsl 0 0 90)}})
    (div
-    {:style (merge ui/flex {:overflow :auto, :padding 8})}
+    {:style (merge ui/flex {:overflow :auto, :padding "0 8px"})}
     (comp-markup (:markup template) [] focused-path)
     (when config/dev? (comp-inspect "Markup" (:markup template) {:bottom 0}))))
+  (div {:style {:width 1, :background-color "#eee"}})
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
         template-id (:id template)
         mock-id (:mock-pointer template)

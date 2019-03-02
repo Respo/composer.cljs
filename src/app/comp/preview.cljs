@@ -27,7 +27,7 @@
                        :template/set-preview-sizes
                        {:template-id template-id, :width w, :height h}))]
    (div
-    {:style (merge ui/flex ui/row {:padding "0 8px"})}
+    {:style (merge ui/flex ui/row {})}
     (cursor-> :templates comp-templates-list states templates template-id)
     (div
      {:style (merge ui/flex ui/column)}

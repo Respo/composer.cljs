@@ -37,13 +37,13 @@
                 ui/flex
                 {:padding "16px",
                  :font-family ui/font-fancy,
-                 :font-size 24,
-                 :color (hsl 0 0 60)})}
+                 :font-size 18,
+                 :color (hsl 0 0 70)})}
        (<> "No template selected."))
       (div
        {:style (merge ui/flex ui/column {:overflow :auto})}
        (div
-        {:style {:border-bottom "1px solid #ddd"}}
+        {:style {:border-bottom "1px solid #ddd", :padding-top "8px"}}
         (comp-tabs
          template-tabs
          tab

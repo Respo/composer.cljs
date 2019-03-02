@@ -37,7 +37,10 @@
              (fn [template]
                (div
                 {:style (merge
-                         {:cursor :pointer, :padding "0px 8px", :line-height "40px"}
+                         {:cursor :pointer,
+                          :padding "0px 8px",
+                          :line-height "32px",
+                          :border-bottom "1px solid #eee"}
                          (if (= template-id (:id template))
                            {:background-color (hsl 0 0 90)})),
                  :on-click (fn [e d! m!]

@@ -10,8 +10,18 @@
             [app.style :as style]))
 
 (defcomp
+ comp-entry
+ (title router-name router)
+ (div
+  {:on-click (action-> :router/change {:name router-name}),
+   :style (merge
+           {:cursor :pointer, :color (hsl 0 0 70)}
+           (if (= router-name (:name router)) {:color :black}))}
+  (<> title nil)))
+
+(defcomp
  comp-navigation
- (logged-in? count-members)
+ (logged-in? count-members router)
  (div
   {:style (merge
            ui/row-center
@@ -23,22 +33,18 @@
             :font-family ui/font-fancy})}
   (div
    {:style ui/row-middle}
-   (div
-    {:on-click (action-> :router/change {:name :home}), :style {:cursor :pointer}}
-    (<> (:title config/site) nil))
+   (comp-entry (:title config/site) :home router)
    (=< 16 nil)
-   (div
-    {:on-click (action-> :router/change {:name :preview}), :style {:cursor :pointer}}
-    (<> "Preview" nil)))
+   (comp-entry "Preview" :preview router))
   (div
-   {:style ui/row}
+   {:style ui/row-middle}
    (a
     {:style style/link,
      :inner-text "Save",
      :on-click (fn [e d! m!] (d! :effect/persist nil))})
    (=< 12 nil)
    (div
-    {:style {:cursor "pointer"}, :on-click (action-> :router/change {:name :profile})}
+    {:style {:cursor :pointer}, :on-click (action-> :router/change {:name :profile})}
     (<> (if logged-in? "Me" "Guest"))
-    (=< 8 nil)
+    (=< 4 nil)
     (<> count-members)))))
