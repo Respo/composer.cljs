@@ -31,8 +31,8 @@
    :mocks (do mock {}),
    :mock-pointer nil,
    :markup (do markup nil),
-   :width nil,
-   :height nil})
+   :width 400,
+   :height 400})
 
 (def user {:name nil, :id nil, :nickname nil, :avatar nil, :password nil})
 

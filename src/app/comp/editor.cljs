@@ -109,7 +109,7 @@
  comp-operations
  (states template-id focused-path)
  (div
-  {:style (merge ui/row {})}
+  {:style (merge ui/row {:padding "0 *px"})}
   (div {} (<> "Operations:" style/field-label))
   (div
    {:style (merge ui/flex)}

@@ -15,8 +15,7 @@
             [recollect.diff :refer [diff-twig]]
             [recollect.twig :refer [render-twig]]
             [ws-edn.server :refer [wss-serve! wss-send! wss-each!]]
-            [favored-edn.core :refer [write-edn]]
-            [app.codegen :refer [generate-file]])
+            [favored-edn.core :refer [write-edn]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defonce *client-caches (atom {}))
@@ -51,10 +50,6 @@
   (println "Saved file.")
   (let [file-content (write-edn (assoc (:db @*reel) :sessions {}))]
     (write-mildly! storage-file file-content)
-    (comment
-     write-mildly!
-     "src/composed/templates.cljs"
-     (generate-file (:templates (:db @*reel))))
     (comment write-mildly! (get-backup-path!) file-content)))
 
 (defn dispatch! [op op-data sid]

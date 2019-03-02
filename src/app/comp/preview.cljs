@@ -8,9 +8,9 @@
             [app.config :as config]
             [respo.util.list :refer [map-val]]
             [respo-composer.core :refer [render-markup]]
-            [app.util :refer [neaten-templates]]
             [respo-alerts.comp.alerts :refer [comp-select]]
-            [app.comp.templates-list :refer [comp-templates-list]])
+            [app.comp.templates-list :refer [comp-templates-list]]
+            [app.util :refer [neaten-templates]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def style-number (merge ui/input {:width 56, :min-width 56, :padding "0 4px"}))

@@ -6,7 +6,6 @@
             [respo.core :refer [defcomp <> list-> span div cursor-> button a]]
             [app.config :as config]
             ["copy-text-to-clipboard" :as copy!]
-            [app.util :refer [neaten-templates]]
             [favored-edn.core :refer [write-edn]]
             [app.style :as style]
             [feather.core :refer [comp-icon]]
