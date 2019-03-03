@@ -28,7 +28,12 @@
    storage-file
    (fn [found?] (if found? (println "Found local EDN data") (println "Found no data")))))
 
-(defonce *reel (atom (merge reel-schema {:base initial-db, :db initial-db})))
+(defonce *reel
+  (atom
+   (merge
+    reel-schema
+    (let [db (assoc initial-db :saved-templates (:templates initial-db))]
+      {:base db, :db db}))))
 
 (defonce *reader-reel (atom @*reel))
 
@@ -48,7 +53,8 @@
 
 (defn persist-db! []
   (println "Saved file.")
-  (let [file-content (write-edn (assoc (:db @*reel) :sessions {}))]
+  (let [file-content (write-edn
+                      (-> (:db @*reel) (assoc :sessions {}) (dissoc :saved-templates)))]
     (write-mildly! storage-file file-content)
     (comment write-mildly! (get-backup-path!) file-content)))
 
@@ -57,7 +63,7 @@
     (if config/dev? (println "Dispatch!" (str op) op-data sid))
     (try
      (cond
-       (= op :effect/persist) (persist-db!)
+       (= op :effect/persist) (do (dispatch! :template/mark-saved nil sid) (persist-db!))
        :else (reset! *reel (reel-reducer @*reel updater op op-data sid op-id op-time)))
      (catch js/Error error (js/console.error error)))))
 

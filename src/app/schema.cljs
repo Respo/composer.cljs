@@ -37,4 +37,8 @@
 
 (def user {:name nil, :id nil, :nickname nil, :avatar nil, :password nil})
 
-(def database {:sessions (do session {}), :users (do user {}), :templates (do template {})})
+(def database
+  {:sessions (do session {}),
+   :users (do user {}),
+   :templates (do template {}),
+   :saved-templates {}})

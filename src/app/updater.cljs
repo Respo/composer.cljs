@@ -47,5 +47,6 @@
             :template/node-props template/update-node-props
             :template/node-attrs template/update-node-attrs
             :template/set-preview-sizes template/set-preview-sizes
+            :template/mark-saved template/mark-saved
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

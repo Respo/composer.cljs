@@ -31,5 +31,6 @@
                   {})),
        :count (count (:sessions db)),
        :color (color/randomColor),
-       :templates (:templates db)}
+       :templates (:templates db),
+       :templates-modified? (not (identical? (:templates db) (:saved-templates db)))}
       nil))))

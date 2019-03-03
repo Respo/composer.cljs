@@ -1,6 +1,6 @@
 {
   "name": "@respo/composer-app",
-  "version": "0.1.0-a5",
+  "version": "0.1.0-a6",
   "description": "Composer app creator for Respo",
   "main": "index.js",
   "bin": {

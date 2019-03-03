@@ -21,7 +21,7 @@
 
 (defcomp
  comp-navigation
- (logged-in? count-members router)
+ (logged-in? count-members router modified?)
  (div
   {:style (merge
            ui/row-center
@@ -39,7 +39,7 @@
   (div
    {:style ui/row-middle}
    (a
-    {:style style/link,
+    {:style (merge style/link (if modified? {:color (hsl 200 80 50)} {:color (hsl 0 0 86)})),
      :inner-text "Save",
      :on-click (fn [e d! m!] (d! :effect/persist nil))})
    (=< 12 nil)
