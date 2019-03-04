@@ -23,7 +23,8 @@
    :messages {},
    :copied-markup nil,
    :template-id nil,
-   :focus-to {:template-id nil, :path [], :tab :editor, :mock-id []}})
+   :focus-to {:template-id nil, :path [], :tab :editor, :mock-id []},
+   :shadows? false})
 
 (def template
   {:id nil,
@@ -31,9 +32,13 @@
    :mocks (do mock {}),
    :mock-pointer nil,
    :markup (do markup nil),
-   :width nil,
-   :height nil})
+   :width 400,
+   :height 400})
 
 (def user {:name nil, :id nil, :nickname nil, :avatar nil, :password nil})
 
-(def database {:sessions (do session {}), :users (do user {}), :templates (do template {})})
+(def database
+  {:sessions (do session {}),
+   :users (do user {}),
+   :templates (do template {}),
+   :saved-templates {}})

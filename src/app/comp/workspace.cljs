@@ -13,40 +13,8 @@
             [app.comp.editor :refer [comp-editor]]
             [app.comp.tabs :refer [comp-tabs]]
             [app.comp.mock-data :refer [comp-mock-data]]
-            [app.comp.template-settings :refer [comp-template-settings]]))
-
-(defcomp
- comp-templates-list
- (states templates template-id tab)
- (let [state (or (:data states) {:name nil})]
-   (div
-    {:style {:padding "8px 16px", :width 240}}
-    (div
-     {:style ui/row-parted}
-     (<> "Templates" {:font-family ui/font-fancy})
-     (cursor->
-      :name
-      comp-prompt
-      states
-      {:trigger (comp-icon :plus {:font-size 15, :color (hsl 0 0 30), :cursor :pointer} nil)}
-      (fn [result d! m!] (when-not (string/blank? result) (d! :template/create result)))))
-    (if (empty? templates)
-      (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70)}} (<> "No templates"))
-      (list->
-       {}
-       (->> templates
-            (map-val
-             (fn [template]
-               (div
-                {:style (merge
-                         {:cursor :pointer, :padding "0px 8px", :line-height "40px"}
-                         (if (= template-id (:id template))
-                           {:background-color (hsl 0 0 90)})),
-                 :on-click (fn [e d! m!]
-                   (d!
-                    :session/focus-to
-                    {:template-id (:id template), :path [], :mock-id nil}))}
-                (<> (:name template)))))))))))
+            [app.comp.template-settings :refer [comp-template-settings]]
+            [app.comp.templates-list :refer [comp-templates-list]]))
 
 (def template-tabs
   [{:value :editor, :display "Editor"}
@@ -62,20 +30,20 @@
        focused-path (:path focus-to)]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :list comp-templates-list states templates template-id tab)
+    (cursor-> :list comp-templates-list states templates template-id)
     (if (nil? template)
       (div
        {:style (merge
                 ui/flex
                 {:padding "16px",
                  :font-family ui/font-fancy,
-                 :font-size 24,
-                 :color (hsl 0 0 60)})}
+                 :font-size 18,
+                 :color (hsl 0 0 70)})}
        (<> "No template selected."))
       (div
        {:style (merge ui/flex ui/column {:overflow :auto})}
        (div
-        {:style {:border-bottom "1px solid #ddd"}}
+        {:style {:border-bottom "1px solid #ddd", :padding-top "8px"}}
         (comp-tabs
          template-tabs
          tab

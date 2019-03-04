@@ -64,16 +64,21 @@
      (comp-offline)
      (div
       {:style (merge ui/global ui/fullscreen ui/column)}
-      (comp-navigation (:logged-in? store) (:count store) (:templates store))
+      (comp-navigation
+       (:logged-in? store)
+       (:count store)
+       router
+       (:templates-modified? store))
       (if (:logged-in? store)
         (case (:name router)
           :home (cursor-> :workspace comp-workspace states templates focus-to)
-          :preview (cursor-> :preview comp-preview states templates focus-to)
+          :preview
+            (cursor-> :preview comp-preview states templates focus-to (:shadows? session))
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))
       (comp-status-color (:color store))
-      (when dev? (comp-inspect "Session" session {:bottom 0, :left 0, :max-width "100%"}))
+      (when dev? (comp-inspect "Store" store {:bottom 0, :left 0, :max-width "100%"}))
       (comp-messages
        (get-in store [:session :messages])
        {}

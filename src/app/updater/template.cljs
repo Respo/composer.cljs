@@ -54,6 +54,8 @@
     (let [next-container (assoc container picked-id (first xs))]
       (recur next-container (key-after next-container picked-id) (rest xs)))))
 
+(defn mark-saved [db op-data sid op-id op-time] (assoc db :saved-templates (:templates db)))
+
 (defn prepend-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
     (update-in

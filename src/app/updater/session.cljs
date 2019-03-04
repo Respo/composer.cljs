@@ -33,3 +33,6 @@
 
 (defn remove-message [db op-data sid op-id op-time]
   (update-in db [:sessions sid :messages] (fn [messages] (dissoc messages (:id op-data)))))
+
+(defn toggle-shadows [db op-data sid op-id op-data]
+  (update-in db [:sessions sid :shadows?] not))

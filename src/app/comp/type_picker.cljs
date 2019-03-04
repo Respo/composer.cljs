@@ -38,6 +38,7 @@
 (def node-types
   [{:value :box, :kind :layout, :display "Box"}
    {:value :space, :kind :layout, :display "Space"}
+   {:value :divider, :kind :layout, :display "Divider"}
    {:value :button, :kind :element, :display "Button"}
    {:value :link, :kind :element, :display "Link"}
    {:value :icon, :kind :element, :display "Icon"}

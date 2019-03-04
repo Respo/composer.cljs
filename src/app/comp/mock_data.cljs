@@ -3,12 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button textarea pre]]
+            [respo.core :refer [defcomp list-> cursor-> <> span div button textarea pre a]]
             [respo.comp.space :refer [=<]]
             [app.config :as config]
             [respo.util.list :refer [map-val]]
             [feather.core :refer [comp-i]]
-            [respo-alerts.comp.alerts :refer [comp-prompt]]
+            [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm]]
             [clojure.string :as string]
             [favored-edn.core :refer [write-edn]]
             [cljs.reader :refer [read-string]]))
@@ -19,7 +19,7 @@
  (div
   {:style (merge ui/flex ui/column)}
   (div
-   {:style {:padding 8}}
+   {:style {:padding "4px 8px"}}
    (cursor->
     :rename
     comp-prompt
@@ -34,23 +34,21 @@
       (when-not (string/blank? result)
         (d!
          :template/rename-mock
-         {:template-id template-id, :mock-id (:id mock), :text result})))))
-  (div
-   {:style (merge ui/row-parted {:padding 8})}
-   (span {})
-   (div
-    {:style ui/row-middle}
-    (button
-     {:style ui/button,
-      :inner-text "Use this",
-      :on-click (fn [e d! m!]
-        (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
-    (=< 8 nil)
-    (button
-     {:style ui/button,
-      :inner-text "Remove",
-      :on-click (fn [e d! m!]
-        (d! :template/remove-mock {:template-id template-id, :mock-id (:id mock)}))})))
+         {:template-id template-id, :mock-id (:id mock), :text result}))))
+   (=< 40 nil)
+   (a
+    {:style ui/link,
+     :inner-text "Use this",
+     :on-click (fn [e d! m!]
+       (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
+   (=< 8 nil)
+   (cursor->
+    :remove
+    comp-confirm
+    states
+    {:trigger (a {:style ui/link, :inner-text "Remove"}), :text "Sure to remove mock data?"}
+    (fn [e d! m!]
+      (d! :template/remove-mock {:template-id template-id, :mock-id (:id mock)}))))
   (div
    {:style ui/flex}
    (cursor->
@@ -58,7 +56,12 @@
     comp-prompt
     states
     {:trigger (pre
-               {:style (merge ui/textarea {:font-family ui/font-code, :width "100%"}),
+               {:style (merge
+                        ui/textarea
+                        {:font-family ui/font-code,
+                         :width "100%",
+                         :line-height "20px",
+                         :font-size 13}),
                 :disabled true,
                 :inner-text (write-edn (:data mock))}),
      :style {:width "100%", :padding "0 8px"},
@@ -80,9 +83,9 @@
  (div
   {:class-name "", :style (merge ui/flex ui/row)}
   (div
-   {:style {:width 200}}
+   {:style {:width 160, :border-right "1px solid #eee"}}
    (div
-    {:style ui/row-parted}
+    {:style (merge ui/row-parted {:padding "0 8px", :border-bottom "1px solid #eee"})}
     (<> "Mock data")
     (cursor->
      :create
@@ -93,7 +96,9 @@
        (when-not (string/blank? result)
          (d! :template/create-mock {:template-id template-id, :text result})))))
    (if (empty? mocks)
-     (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70)}} (<> "No data"))
+     (div
+      {:style {:font-family ui/font-fancy, :color (hsl 0 0 70), :padding 8}}
+      (<> "No data"))
      (list->
       {}
       (->> mocks
@@ -111,5 +116,7 @@
   (if-let [mock (get mocks focused-id)]
     (cursor-> :editor comp-mock-editor states template-id mock)
     (div
-     {:style (merge ui/flex {:font-size 18, :font-family ui/font-fancy, :padding 8})}
+     {:style (merge
+              ui/flex
+              {:font-size 16, :font-family ui/font-fancy, :padding 8, :color (hsl 0 0 70)})}
      (<> "Nothing")))))

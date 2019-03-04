@@ -15,6 +15,7 @@
             :session/copy-markup session/copy-markup
             :session/paste-markup session/paste-markup
             :session/focus-to session/focus-to
+            :session/toggle-shadows session/toggle-shadows
             :user/log-in user/log-in
             :user/sign-up user/sign-up
             :user/log-out user/log-out
@@ -46,5 +47,6 @@
             :template/node-props template/update-node-props
             :template/node-attrs template/update-node-attrs
             :template/set-preview-sizes template/set-preview-sizes
+            :template/mark-saved template/mark-saved
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

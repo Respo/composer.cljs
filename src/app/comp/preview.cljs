@@ -8,34 +8,16 @@
             [app.config :as config]
             [respo.util.list :refer [map-val]]
             [respo-composer.core :refer [render-markup]]
-            [app.util :refer [neaten-templates]]
-            [respo-alerts.comp.alerts :refer [comp-select]])
+            [respo-alerts.comp.alerts :refer [comp-select]]
+            [app.comp.templates-list :refer [comp-templates-list]]
+            [app.util :refer [neaten-templates]])
   (:require-macros [clojure.core.strint :refer [<<]]))
-
-(defcomp
- comp-template-list
- (templates template-id)
- (div
-  {:style (merge ui/column {:width 240, :padding 8})}
-  (div {:style {:font-family ui/font-fancy}} (<> "Templates"))
-  (list->
-   {}
-   (->> templates
-        (map-val
-         (fn [template]
-           (div
-            {:style (merge
-                     {:line-height "40px", :cursor :pointer, :padding "0 8px"}
-                     (if (= template-id (:id template)) {:background-color (hsl 0 0 90)})),
-             :on-click (fn [e d! m!]
-               (d! :session/focus-to {:template-id (:id template), :mock-id nil, :path []}))}
-            (<> (:name template)))))))))
 
 (def style-number (merge ui/input {:width 56, :min-width 56, :padding "0 4px"}))
 
 (defcomp
  comp-preview
- (states templates focus-to)
+ (states templates focus-to shadows?)
  (let [template-id (:template-id focus-to)
        template (get templates template-id)
        mock-id (:mock-pointer template)
@@ -45,8 +27,8 @@
                        :template/set-preview-sizes
                        {:template-id template-id, :width w, :height h}))]
    (div
-    {:style (merge ui/flex ui/row {:padding "0 8px"})}
-    (comp-template-list templates template-id)
+    {:style (merge ui/flex ui/row {})}
+    (cursor-> :templates comp-templates-list states templates template-id)
     (div
      {:style (merge ui/flex ui/column)}
      (div
@@ -57,7 +39,8 @@
             markup (get-in templates [template-id :markup])]
         (if (some? markup)
           (div
-           {:style {:background-color (hsl 0 0 100 0.2),
+           {:class-name (if shadows? "dev-shadows" ""),
+            :style {:background-color (hsl 0 0 100 1),
                     :width (or (:width template) "100%"),
                     :height (or (:height template) "100%"),
                     :margin :auto}}
@@ -95,7 +78,13 @@
         :on-click (fn [e d! m!] (change-size! d! 400 100))})
       (a
        {:style ui/link,
-        :inner-text "full",
-        :on-click (fn [e d! m!] (change-size! d! nil nil))}))))))
+        :inner-text "Full",
+        :on-click (fn [e d! m!] (change-size! d! nil nil))})
+      (=< 8 nil)
+      (input
+       {:type "checkbox",
+        :style {:cursor :pointer},
+        :checked shadows?,
+        :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))}))))))
 
 (defn get-mocks [mocks] (->> mocks (map (fn [[k m]] {:value k, :display (:name m)}))))

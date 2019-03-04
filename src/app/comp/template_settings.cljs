@@ -14,10 +14,8 @@
  comp-template-settings
  (states template)
  (div
-  {:style (merge ui/flex ui/column)}
-  (div
-   {:style {:font-family ui/font-fancy, :font-size 20, :padding "8px 0"}}
-   (<> "Template settings"))
+  {:style (merge ui/flex ui/column {:padding "8px"})}
+  (div {:style {:font-family ui/font-fancy, :font-size 20}} (<> "Template settings"))
   (div
    {}
    (cursor->
