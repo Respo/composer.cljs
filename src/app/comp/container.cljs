@@ -14,7 +14,8 @@
             [app.schema :as schema]
             [app.config :as config]
             [app.comp.workspace :refer [comp-workspace]]
-            [app.comp.preview :refer [comp-preview]]))
+            [app.comp.preview :refer [comp-preview]]
+            [app.comp.overflow :refer [comp-overview]]))
 
 (defcomp
  comp-offline
@@ -74,11 +75,13 @@
           :home (cursor-> :workspace comp-workspace states templates focus-to)
           :preview
             (cursor-> :preview comp-preview states templates focus-to (:shadows? session))
+          :overview (comp-overview templates)
           :profile (comp-profile (:user store) (:data router))
           (<> router))
         (comp-login states))
       (comp-status-color (:color store))
-      (when dev? (comp-inspect "Store" store {:bottom 0, :left 0, :max-width "100%"}))
+      (when dev?
+        (comp-inspect "Templates" templates {:bottom 0, :left 0, :max-width "100%"}))
       (comp-messages
        (get-in store [:session :messages])
        {}

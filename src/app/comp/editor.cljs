@@ -169,6 +169,44 @@
      :on-click (fn [e d! m!]
        (d! :session/paste-markup {:template-id template-id, :path focused-path}))}))))
 
+(def props-hints
+  {:box ["action" "data"],
+   :space ["width" "height"],
+   :divider ["kind" "color"],
+   :text ["value"],
+   :some ["value" "kind"],
+   :button ["text" "action" "data"],
+   :link ["text" "href" "action" "data"],
+   :icon ["name" "color" "action" "data"],
+   :template ["name" "data"],
+   :list ["value"],
+   :input ["value" "textarea" "action" "data"],
+   :slot ["dom"],
+   :insptct ["title"],
+   :popup ["visible"],
+   :case ["value"],
+   :element ["name"]})
+
+(defcomp
+ comp-props-hint
+ (type)
+ (div
+  {:style ui/row-middle}
+  (<> "Support props: " style/field-label)
+  (=< 8 nil)
+  (list->
+   {}
+   (->> (get props-hints type)
+        (map
+         (fn [name]
+           [name
+            (span
+             {:inner-text name,
+              :style {:margin "0 4px",
+                      :color (hsl 0 0 60),
+                      :font-size 12,
+                      :font-family ui/font-code}})]))))))
+
 (def style-mock-data
   {:margin 0,
    :padding "4px 8px",
@@ -199,6 +237,7 @@
     (div
      {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
+     (comp-props-hint (:type child))
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
      (cursor-> :background comp-bg-picker states template-id focused-path child)
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
