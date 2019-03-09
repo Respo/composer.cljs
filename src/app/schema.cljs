@@ -9,7 +9,8 @@
    :layout nil,
    :presets #{},
    :style {},
-   :children {}})
+   :children {},
+   :actions {}})
 
 (def mock {:id nil, :data nil, :name nil})
 

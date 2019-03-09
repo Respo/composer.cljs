@@ -256,6 +256,16 @@
          :template/node-props
          (merge {:template-id template-id, :path focused-path} change))))
      (cursor->
+      :event
+      comp-dict-editor
+      states
+      "Event:"
+      (:event child)
+      (fn [change d! m!]
+        (d!
+         :template/node-event
+         (merge {:template-id template-id, :path focused-path} change))))
+     (cursor->
       :attrs
       comp-dict-editor
       states
