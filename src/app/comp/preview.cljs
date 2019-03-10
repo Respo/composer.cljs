@@ -47,7 +47,7 @@
            (render-markup
             markup
             {:data mock-data, :templates tmpls, :level 0}
-            (fn [d! op props op-data] (println op props op-data))))
+            (fn [d! op param options] (println op param (pr-str options)))))
           (span
            {:style {:color (hsl 0 0 60),
                     :font-family ui/font-fancy,

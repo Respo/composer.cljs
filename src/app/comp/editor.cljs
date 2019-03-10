@@ -170,17 +170,17 @@
        (d! :session/paste-markup {:template-id template-id, :path focused-path}))}))))
 
 (def props-hints
-  {:box ["action" "data"],
+  {:box ["param"],
    :space ["width" "height"],
    :divider ["kind" "color"],
    :text ["value"],
    :some ["value" "kind"],
-   :button ["text" "action" "data"],
-   :link ["text" "href" "action" "data"],
-   :icon ["name" "color" "action" "data"],
+   :button ["text" "param"],
+   :link ["text" "href" "param"],
+   :icon ["name" "color" "param"],
    :template ["name" "data"],
    :list ["value"],
-   :input ["value" "textarea" "action" "data"],
+   :input ["value" "textarea" "param"],
    :slot ["dom"],
    :insptct ["title"],
    :popup ["visible"],
@@ -237,7 +237,6 @@
     (div
      {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
-     (comp-props-hint (:type child))
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
      (cursor-> :background comp-bg-picker states template-id focused-path child)
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
@@ -245,6 +244,7 @@
      (=< nil 8)
      (cursor-> :mocks comp-mock-picker states template)
      (pre {:inner-text (pr-str mock-data), :style style-mock-data})
+     (comp-props-hint (:type child))
      (cursor->
       :props
       comp-dict-editor

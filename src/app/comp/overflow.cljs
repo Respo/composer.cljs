@@ -46,7 +46,7 @@
                           (render-markup
                            (:markup template)
                            {:data (:data mock), :templates tmpls, :level 0}
-                           (fn [d! op props op-data] (println op props op-data))))
+                           (fn [d! op param options] (println op param (pr-str options)))))
                          (div
                           {:style {:margin-left 8,
                                    :color (hsl 0 0 70),
