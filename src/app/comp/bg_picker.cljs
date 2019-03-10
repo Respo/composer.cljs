@@ -3,7 +3,9 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> action-> list-> cursor-> span div input button]]
+            [respo.core
+             :refer
+             [defcomp <> action-> list-> cursor-> span div input button a]]
             [app.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [app.style :as style]))
@@ -34,7 +36,7 @@
                       :property "background-color",
                       :value color}))]
    (div
-    {:style {:width 320}}
+    {:style {:width 360}}
     (div {} (<> "Pick a color" {:font-family ui/font-fancy}))
     (list->
      {:style ui/row-middle}
@@ -48,9 +50,9 @@
                         {:background-color color, :border "1px solid #ddd"}),
                 :on-click (fn [e d! m!] (set-color! color d!))})]))))
     (div
-     {}
+     {:style ui/row-middle}
      (input
-      {:style (merge ui/input {:font-family ui/font-code}),
+      {:style (merge ui/input {:font-family ui/font-code, :width 140}),
        :value (:text state),
        :placeholder "A color",
        :on-input (fn [e d! m!] (m! (assoc state :text (:value e))))})
@@ -58,7 +60,12 @@
      (button
       {:style style/button,
        :inner-text "Set",
-       :on-click (fn [e d! m!] (set-color! (:text state) d!))})))))
+       :on-click (fn [e d! m!] (set-color! (:text state) d!))})
+     (=< 8 nil)
+     (a
+      {:style style/link,
+       :inner-text "Transparent",
+       :on-click (fn [e d! m!] (set-color! "transparent" d!))})))))
 
 (defcomp
  comp-bg-picker
