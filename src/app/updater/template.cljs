@@ -163,6 +163,21 @@
          :set (assoc attrs change-key value)
          (do (println "Unknown op" change-type) attrs))))))
 
+(defn update-node-event [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        path (:path op-data)
+        change-type (:type op-data)
+        change-key (:key op-data)
+        value (:value op-data)]
+    (update-in
+     db
+     (concat [:templates template-id :markup] (interleave (repeat :children) path) [:event])
+     (fn [event]
+       (case change-type
+         :remove (dissoc event change-key)
+         :set (assoc event change-key value)
+         (do (println "Unknown op" change-type) event))))))
+
 (defn update-node-preset [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)
         path (:path op-data)

@@ -55,7 +55,7 @@
 (def mount-target (.querySelector js/document ".app"))
 
 (defn on-window-keydown [event]
-  (js/console.log event)
+  (comment js/console.log event)
   (when (and (= "s" (.-key event)) (.-metaKey event))
     (.preventDefault event)
     (dispatch! :effect/persist nil)))

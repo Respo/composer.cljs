@@ -85,7 +85,11 @@
   (div
    {:style {:width 160, :border-right "1px solid #eee"}}
    (div
-    {:style (merge ui/row-parted {:padding "0 8px", :border-bottom "1px solid #eee"})}
+    {:style (merge
+             ui/row-parted
+             {:padding "4px 8px",
+              :border-bottom "1px solid #eee",
+              :font-family ui/font-fancy})}
     (<> "Mock data")
     (cursor->
      :create

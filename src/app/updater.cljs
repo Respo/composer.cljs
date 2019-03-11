@@ -45,6 +45,7 @@
             :template/node-preset template/update-node-preset
             :template/node-style template/update-node-style
             :template/node-props template/update-node-props
+            :template/node-event template/update-node-event
             :template/node-attrs template/update-node-attrs
             :template/set-preview-sizes template/set-preview-sizes
             :template/mark-saved template/mark-saved
