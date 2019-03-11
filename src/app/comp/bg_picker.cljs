@@ -52,7 +52,7 @@
     (div
      {:style ui/row-middle}
      (input
-      {:style (merge ui/input {:font-family ui/font-code, :width 140}),
+      {:style (merge ui/input {:font-family ui/font-code, :width 160}),
        :value (:text state),
        :placeholder "A color",
        :on-input (fn [e d! m!] (m! (assoc state :text (:value e))))})

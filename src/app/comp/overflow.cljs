@@ -16,7 +16,9 @@
    (list->
     {:style (merge
              ui/flex
-             {:padding "8px 16px", :overflow :auto, :background-color (hsl 0 0 94)})}
+             {:padding "8px 16px 160px 16px",
+              :overflow :auto,
+              :background-color (hsl 0 0 94)})}
     (->> templates
          (map
           (fn [[k template]]

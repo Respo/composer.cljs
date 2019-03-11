@@ -182,7 +182,7 @@
    :list ["value"],
    :input ["value" "textarea" "param"],
    :slot ["dom"],
-   :insptct ["title"],
+   :inspect ["title"],
    :popup ["visible"],
    :case ["value"],
    :element ["name"]})
