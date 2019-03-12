@@ -41,6 +41,7 @@
    {:value :divider, :kind :layout, :display "Divider"}
    {:value :button, :kind :element, :display "Button"}
    {:value :link, :kind :element, :display "Link"}
+   {:value :markdown, :kind :element, :display "Markdown"}
    {:value :icon, :kind :element, :display "Icon"}
    {:value :text, :kind :element, :display "Text"}
    {:value :input, :kind :element, :display "Input"}
