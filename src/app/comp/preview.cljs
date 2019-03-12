@@ -13,6 +13,8 @@
             [app.util :refer [neaten-templates]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
+(defn on-operation [d! op param options] (println op param (pr-str options)))
+
 (def style-number (merge ui/input {:width 56, :min-width 56, :padding "0 4px"}))
 
 (defcomp
@@ -44,10 +46,7 @@
                     :width (or (:width template) "100%"),
                     :height (or (:height template) "100%"),
                     :margin :auto}}
-           (render-markup
-            markup
-            {:data mock-data, :templates tmpls, :level 0}
-            (fn [d! op param options] (println op param (pr-str options)))))
+           (render-markup markup {:data mock-data, :templates tmpls, :level 0} on-operation))
           (span
            {:style {:color (hsl 0 0 60),
                     :font-family ui/font-fancy,

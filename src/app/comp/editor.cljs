@@ -182,10 +182,11 @@
    :list ["value"],
    :input ["value" "textarea" "param"],
    :slot ["dom"],
-   :inspect ["title"],
+   :inspect ["value"],
    :popup ["visible"],
    :case ["value"],
-   :element ["name"]})
+   :element ["name"],
+   :markdown ["text"]})
 
 (defcomp
  comp-props-hint
