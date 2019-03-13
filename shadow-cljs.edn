@@ -1,5 +1,5 @@
 
-{:source-paths ["src" "../composer/src/" "cli"]
+{:source-paths ["src" "cli"]
  :dependencies [[mvc-works/hsl          "0.1.2"]
                 [mvc-works/shell-page   "0.1.10"]
                 [mvc-works/ws-edn       "0.1.3"]
@@ -13,7 +13,6 @@
                 [respo/feather          "0.1.1"]
                 [respo/inflow-popup     "0.2.8"]
                 [respo/markdown         "0.2.4"]
-                ; [respo/composer         "0.1.1"] ; included with classpath
                 [cirru/bisection-key    "0.1.5"]
                 [cirru/favored-edn      "0.1.1"]
                 [org.clojure/core.incubator "0.1.4"]]
@@ -25,21 +24,21 @@
  :builds {:client {:output-dir "target/"
                    :asset-path "./"
                    :target :browser
-                   :modules {:client {:init-fn app.client/main!}}
-                   :devtools {:after-load app.client/reload!}
+                   :modules {:client {:init-fn composer.client/main!}}
+                   :devtools {:after-load composer.client/reload!}
                    :release {:output-dir "dist/"}
                              :module-hash-names 8
                              :build-options {:manifest-name "assets.edn"}}
           :server {:target :node-script
                    :output-to "target/server.js"
-                   :main app.server/main!
-                   :devtools {:after-load app.server/reload!}
+                   :main composer.server/main!
+                   :devtools {:after-load composer.server/reload!}
                    :release {:output-to "dist/server.js"}}
           :page {:target :node-script
                  :output-to "target/page.js"
-                 :main app.page/main!
-                 :devtools {:after-load app.page/main!}}
+                 :main composer.page/main!
+                 :devtools {:after-load composer.page/main!}}
           :upload {:target :node-script
                    :output-to "target/upload.js"
-                   :main app.upload/main!
-                   :devtools {:after-load app.upload/main!}}}}
+                   :main composer.upload/main!
+                   :devtools {:after-load composer.upload/main!}}}}

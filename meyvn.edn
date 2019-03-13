@@ -1,0 +1,9 @@
+
+{:pom {:group-id "respo",
+       :artifact-id "composer",
+       :version "0.1.1",
+       :name "Respo composer renderer library"}
+ :packaging {:jar {:enabled true
+                   :remote-repository {:id "clojars"
+                                       :url "https://clojars.org/repo"}}}
+ :scm {:enabled true}}
