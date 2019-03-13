@@ -37,21 +37,21 @@
 
 (def node-types
   [{:value :box, :kind :layout, :display "Box"}
+   {:value :text, :kind :element, :display "Text"}
    {:value :space, :kind :layout, :display "Space"}
    {:value :divider, :kind :layout, :display "Divider"}
    {:value :button, :kind :element, :display "Button"}
-   {:value :link, :kind :element, :display "Link"}
-   {:value :markdown, :kind :element, :display "Markdown"}
    {:value :icon, :kind :element, :display "Icon"}
-   {:value :text, :kind :element, :display "Text"}
    {:value :input, :kind :element, :display "Input"}
+   {:value :link, :kind :element, :display "Link"}
+   {:value :markdown, :kind :advanced, :display "Markdown"}
    {:value :some, :kind :control, :display "Some"}
    {:value :template, :kind :control, :display "Template"}
    {:value :list, :kind :control, :display "List"}
    {:value :slot, :kind :control, :display "Slot"}
    {:value :inspect, :kind :devtool, :display "Inspect"}
    {:value :popup, :kind :layout, :display "Popup"}
-   {:value :element, :kind :element, :display "Element"}])
+   {:value :element, :kind :advanced, :display "Element"}])
 
 (defn render-title [title]
   (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70), :margin-top 20}} (<> title)))
@@ -77,7 +77,16 @@
                       {:template-id template-id, :path focused-path, :type (:value result)})
                      (on-toggle m!))]
        (div
-        {:style (merge ui/row {:width 400})}
+        {:style (merge ui/row {:width 480})}
+        (div
+         {:style ui/flex}
+         (render-title "Elements")
+         (list->
+          {}
+          (->> node-types
+               (filter (fn [x] (= :element (:kind x))))
+               (map (fn [x] [(:value x) (comp-node-type x on-pick)])))))
+        (=< 16 nil)
         (div
          {:style ui/flex}
          (render-title "Layout")
@@ -86,11 +95,11 @@
           (->> node-types
                (filter (fn [x] (= :layout (:kind x))))
                (map (fn [x] [(:value x) (comp-node-type x on-pick)]))))
-         (render-title "Elements")
+         (render-title "DevTool")
          (list->
           {}
           (->> node-types
-               (filter (fn [x] (= :element (:kind x))))
+               (filter (fn [x] (= :devtool (:kind x))))
                (map (fn [x] [(:value x) (comp-node-type x on-pick)])))))
         (=< 16 nil)
         (div
@@ -101,11 +110,11 @@
           (->> node-types
                (filter (fn [x] (= :control (:kind x))))
                (map (fn [x] [(:value x) (comp-node-type x on-pick)]))))
-         (render-title "DevTool")
+         (render-title "Advanced")
          (list->
           {}
           (->> node-types
-               (filter (fn [x] (= :devtool (:kind x))))
+               (filter (fn [x] (= :advanced (:kind x))))
                (map (fn [x] [(:value x) (comp-node-type x on-pick)])))))))))
   (=< 8 nil)
   (if (= :icon (:type markup)) (comp-icon-site))))
