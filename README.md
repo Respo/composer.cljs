@@ -8,10 +8,15 @@ Introduction:
 
 * [TodoMVC in a visual way with Respo Composer](https://www.reddit.com/r/Clojure/comments/azj16g/todomvc_in_a_visual_way_with_respo_composer/)
 * [前端框架的图形化探索方向一个尝试, Respo Composer](https://zhuanlan.zhihu.com/p/58753227)
+* [Docs on `composer.core/render-markup`](https://github.com/Respo/composer.core)
 
 ### Usage
 
-![respo/composer-app](https://img.shields.io/npm/v/@respo/composer-app.svg)
+[![Clojars Project](https://img.shields.io/clojars/v/respo/composer.svg)](https://clojars.org/respo/composer) ![respo/composer-app](https://img.shields.io/npm/v/@respo/composer-app.svg)
+
+```edn
+[respo/composer "0.1.1"]
+```
 
 ```bash
 npm install -g @respo/composer-app
