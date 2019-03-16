@@ -305,34 +305,37 @@
   (let [props (:props markup)
         value (read-token (get props "visible") (:data context))
         action (get props "action" "popup-close")]
-    (if value
-      (div
-       {:style {:position :fixed,
-                :top 0,
-                :left 0,
-                :width "100%",
-                :height "100%",
-                :display :flex,
-                :overflow :auto,
-                :padding 32,
-                :background-color (hsl 0 0 0 0.7)},
-        :on-click (fn [e d! m!] (on-action d! action props nil))}
-       (list->
-        (merge
-         {:on-click (fn [e d! m!] )}
-         (eval-attrs (:attrs markup) (:data context))
-         {:style (merge
-                  {:margin :auto,
-                   :min-width 320,
-                   :min-height 200,
-                   :background-color (hsl 0 0 100)}
-                  (get-layout (:layout markup))
-                  (style-presets (:presets markup))
-                  (:style markup))})
-        (render-children (:children markup) context on-action)))
-      (span {}))))
+    (if (:hide-popup? context)
+      (comp-invalid "Popup is hidden in dev" props)
+      (if value
+        (div
+         {:style {:position :fixed,
+                  :top 0,
+                  :left 0,
+                  :width "100%",
+                  :height "100%",
+                  :display :flex,
+                  :overflow :auto,
+                  :padding 32,
+                  :background-color (hsl 0 0 0 0.7)},
+          :on-click (fn [e d! m!] (on-action d! action props nil))}
+         (list->
+          (merge
+           {:on-click (fn [e d! m!] )}
+           (eval-attrs (:attrs markup) (:data context))
+           {:style (merge
+                    {:margin :auto,
+                     :min-width 320,
+                     :min-height 200,
+                     :background-color (hsl 0 0 100)}
+                    (get-layout (:layout markup))
+                    (style-presets (:presets markup))
+                    (:style markup))})
+          (render-children (:children markup) context on-action)))
+        (span {})))))
 
 (defn render-markup [markup context on-action]
+  (println "context" (:hide-popup? context))
   (case (:type markup)
     :box (render-box markup context on-action)
     :space (render-space markup context)

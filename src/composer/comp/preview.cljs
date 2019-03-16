@@ -69,12 +69,12 @@
       (=< 8 nil)
       (a
        {:style ui/link,
-        :inner-text "100x400",
-        :on-click (fn [e d! m!] (change-size! d! 100 400))})
+        :inner-text "100x240",
+        :on-click (fn [e d! m!] (change-size! d! 100 240))})
       (a
        {:style ui/link,
-        :inner-text "400x100",
-        :on-click (fn [e d! m!] (change-size! d! 400 100))})
+        :inner-text "240x60",
+        :on-click (fn [e d! m!] (change-size! d! 240 60))})
       (a
        {:style ui/link,
         :inner-text "Full",
