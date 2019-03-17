@@ -23,7 +23,7 @@
 
 (defcomp
  comp-workspace
- (states templates focus-to)
+ (states templates settings focus-to)
  (let [tab (:tab focus-to)
        template-id (:template-id focus-to)
        template (get templates template-id)
@@ -49,7 +49,7 @@
          tab
          (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)}))))
        (case (or tab :editor)
-         :editor (cursor-> :editor comp-editor states template focused-path)
+         :editor (cursor-> :editor comp-editor states template settings focused-path)
          :mocks
            (cursor->
             :mock

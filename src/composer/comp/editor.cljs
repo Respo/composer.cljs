@@ -219,7 +219,7 @@
 
 (defcomp
  comp-editor
- (states template focused-path)
+ (states template settings focused-path)
  (div
   {:style (merge ui/flex ui/row {:overflow :auto})}
   (div
@@ -239,7 +239,14 @@
      {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
-     (cursor-> :background comp-bg-picker states template-id focused-path child)
+     (cursor->
+      :background
+      comp-bg-picker
+      states
+      template-id
+      focused-path
+      child
+      (:colors settings))
      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
      (=< nil 8)

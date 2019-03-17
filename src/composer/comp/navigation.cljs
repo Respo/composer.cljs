@@ -37,7 +37,9 @@
    (=< 16 nil)
    (comp-entry "Preview" :preview router)
    (=< 16 nil)
-   (comp-entry "Overflow" :overview router))
+   (comp-entry "Overflow" :overview router)
+   (=< 16 nil)
+   (comp-entry "Settings" :settings router))
   (div
    {:style ui/row-middle}
    (a

@@ -4,6 +4,7 @@
             [composer.updater.user :as user]
             [composer.updater.router :as router]
             [composer.updater.template :as template]
+            [composer.updater.settings :as settings]
             [composer.schema :as schema]
             [respo-message.updater :refer [update-messages]]))
 
@@ -49,5 +50,8 @@
             :template/node-attrs template/update-node-attrs
             :template/set-preview-sizes template/set-preview-sizes
             :template/mark-saved template/mark-saved
+            :settings/add-color settings/add-color
+            :settings/remove-color settings/remove-color
+            :settings/update-color settings/update-color
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))
