@@ -15,7 +15,8 @@
             [composer.config :as config]
             [composer.comp.workspace :refer [comp-workspace]]
             [composer.comp.preview :refer [comp-preview]]
-            [composer.comp.overflow :refer [comp-overview]]))
+            [composer.comp.overflow :refer [comp-overview]]
+            [composer.comp.settings :refer [comp-settings]]))
 
 (defcomp
  comp-offline
@@ -77,11 +78,12 @@
             (cursor-> :preview comp-preview states templates focus-to (:shadows? session))
           :overview (comp-overview templates)
           :profile (comp-profile (:user store) (:data router))
+          :settings (cursor-> :settings comp-settings states (:settings store))
           (<> router))
         (comp-login states))
       (comp-status-color (:color store))
       (when dev?
-        (comp-inspect "Templates" templates {:bottom 0, :left 0, :max-width "100%"}))
+        (comp-inspect "Settings" (:settings store) {:bottom 0, :left 0, :max-width "100%"}))
       (comp-messages
        (get-in store [:session :messages])
        {}

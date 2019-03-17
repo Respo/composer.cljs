@@ -335,7 +335,6 @@
         (span {})))))
 
 (defn render-markup [markup context on-action]
-  (println "context" (:hide-popup? context))
   (case (:type markup)
     :box (render-box markup context on-action)
     :space (render-space markup context)

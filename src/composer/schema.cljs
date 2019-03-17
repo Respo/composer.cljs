@@ -1,6 +1,8 @@
 
 (ns composer.schema )
 
+(def color {:id nil, :name "", :color "", :group nil})
+
 (def markup
   {:id nil,
    :type :box,
@@ -41,4 +43,5 @@
   {:sessions (do session {}),
    :users (do user {}),
    :templates (do template {}),
-   :saved-templates {}})
+   :saved-templates {},
+   :settings {:colors {}}})
