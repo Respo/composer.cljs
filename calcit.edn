@@ -35812,6 +35812,7 @@
        "y" {
         :type :expr, :by "root", :at 1545587082927, :id "HrwU6-CmsL"
         :data {
+         "D" {:type :leaf, :by "B1y7Rc-Zz", :at 1552843872086, :text ";", :id "Px1RmP0XKj"}
          "T" {:type :leaf, :by "root", :at 1545587083813, :text "sh!", :id "HrwU6-CmsLleaf"}
          "j" {
           :type :expr, :by "root", :at 1545587108203, :id "19-yTl7pcb"

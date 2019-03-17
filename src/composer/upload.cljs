@@ -10,5 +10,6 @@
   (sh!
    (<<
     "rsync -avr --progress dist/{index.html,manifest.json} ~(:upload-folder config/site)"))
-  (sh!
+  (comment
+   sh!
    (<< "rsync -avr --progress dist/{server.js,package.json} ~(:server-folder config/site)")))
