@@ -9,3 +9,6 @@
 
 (defn remove-color [db op-data sid op-id op-time]
   (update-in db [:settings :colors] (fn [colors] (dissoc colors op-data))))
+
+(defn update-color [db op-data sid op-id op-time]
+  (assoc-in db [:settings :colors (:id op-data) :color] (:color op-data)))

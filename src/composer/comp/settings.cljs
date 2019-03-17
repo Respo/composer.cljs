@@ -18,7 +18,13 @@
  (let [state (or (:data states) {:name "", :color "", :group "theme"})]
    (div
     {:style ui/column}
+    (=< nil 8)
     (div {} (<> "Add a color" {:font-family ui/font-fancy, :color (hsl 0 0 70)}))
+    (input
+     {:placeholder "group",
+      :style ui/input,
+      :value (:group state),
+      :on-input (fn [e d! m!] (m! (assoc state :group (:value e))))})
     (=< nil 8)
     (input
      {:placeholder "name",
@@ -31,12 +37,6 @@
       :style ui/input,
       :value (:color state),
       :on-input (fn [e d! m!] (m! (assoc state :color (:value e))))})
-    (=< nil 8)
-    (input
-     {:placeholder "group",
-      :style ui/input,
-      :value (:group state),
-      :on-input (fn [e d! m!] (m! (assoc state :group (:value e))))})
     (=< nil 8)
     (div
      {:style ui/row-parted}
@@ -67,7 +67,9 @@
     :initial (:color color),
     :input-style {:font-family ui/font-code},
     :text "Change color"}
-   (fn [result d! m!] (when-not (string/blank? result) (d! :settings/update-color result))))
+   (fn [result d! m!]
+     (when-not (string/blank? result)
+       (d! :settings/update-color {:id (:id color), :color result}))))
   (cursor->
    :remove
    comp-confirm

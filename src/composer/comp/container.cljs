@@ -59,6 +59,7 @@
  (let [state (:data states)
        session (:session store)
        router (:router store)
+       settings (:settings store)
        router-data (:data router)
        templates (:templates store)
        focus-to (:focus-to session)]
@@ -73,17 +74,16 @@
        (:templates-modified? store))
       (if (:logged-in? store)
         (case (:name router)
-          :home (cursor-> :workspace comp-workspace states templates focus-to)
+          :home (cursor-> :workspace comp-workspace states templates settings focus-to)
           :preview
             (cursor-> :preview comp-preview states templates focus-to (:shadows? session))
           :overview (comp-overview templates)
           :profile (comp-profile (:user store) (:data router))
-          :settings (cursor-> :settings comp-settings states (:settings store))
+          :settings (cursor-> :settings comp-settings states settings)
           (<> router))
         (comp-login states))
       (comp-status-color (:color store))
-      (when dev?
-        (comp-inspect "Settings" (:settings store) {:bottom 0, :left 0, :max-width "100%"}))
+      (when dev? (comp-inspect "Settings" settings {:bottom 0, :left 0, :max-width "100%"}))
       (comp-messages
        (get-in store [:session :messages])
        {}
