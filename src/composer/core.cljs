@@ -273,13 +273,19 @@
 (def style-unknown {"font-size" 12, "color" :red})
 
 (defn render-template [markup context on-action]
-  (let [templates (:templates context), data (:data context), props (:props markup)]
-    (if (> (:level context) 10)
-      (comp-invalid "<Bad template: too much levels>" props)
-      (render-markup
-       (get templates (get props "name"))
-       (-> context (assoc :data (read-token (get props "data") data)) (update :level inc))
-       on-action))))
+  (let [templates (:templates context)
+        data (:data context)
+        props (:props markup)
+        template-name (read-token (get props "name") (:data context))]
+    (cond
+      (> (:level context) 10) (comp-invalid "<Bad template: too much levels>" props)
+      (not (string? template-name))
+        (comp-invalid (<< "<Invalid template name: ~(pr-str template-name)>") props)
+      :else
+        (render-markup
+         (get templates template-name)
+         (-> context (assoc :data (read-token (get props "data") data)) (update :level inc))
+         on-action))))
 
 (defn render-some [markup context on-action]
   (let [props (:props markup)
