@@ -12,15 +12,8 @@
 
 (defcomp
  comp-color-panel
- (states colors initial-color template-id path on-toggle)
+ (states colors initial-color set-color! on-toggle)
  (let [state (or (:data states) {:text initial-color})
-       set-color! (fn [color d!]
-                    (d!
-                     :template/set-node-style
-                     {:template-id template-id,
-                      :path path,
-                      :property "background-color",
-                      :value color}))
        grouped-colors (group-by :group (vals colors))]
    (div
     {:style {:width 360}}
@@ -60,7 +53,14 @@
 (defcomp
  comp-bg-picker
  (states template-id path markup colors)
- (let [bg-color (or (get-in markup [:style "background-color"]) (hsl 0 0 80))]
+ (let [bg-color (or (get-in markup [:style "background-color"]) (hsl 0 0 100))
+       set-color! (fn [color d!]
+                    (d!
+                     :template/set-node-style
+                     {:template-id template-id,
+                      :path path,
+                      :property "background-color",
+                      :value color}))]
    (div
     {:style ui/row-middle}
     (<> "Background:" style/field-label)
@@ -75,4 +75,28 @@
                          :background-color bg-color,
                          :border "1px solid #ddd"}})}
      (fn [on-toggle]
-       (cursor-> :panel comp-color-panel states colors bg-color template-id path on-toggle))))))
+       (cursor-> :panel comp-color-panel states colors bg-color set-color! on-toggle))))))
+
+(defcomp
+ comp-font-picker
+ (states template-id path markup colors)
+ (let [init-color (or (get-in markup [:style "color"]) (hsl 0 0 100))
+       set-color! (fn [color d!]
+                    (d!
+                     :template/set-node-style
+                     {:template-id template-id, :path path, :property "color", :value color}))]
+   (div
+    {:style ui/row-middle}
+    (<> "Font color:" style/field-label)
+    (=< 8 nil)
+    (cursor->
+     :font-color
+     comp-popup
+     states
+     {:trigger (div
+                {:style {:width 24,
+                         :height 24,
+                         :background-color init-color,
+                         :border "1px solid #ddd"}})}
+     (fn [on-toggle]
+       (cursor-> :panel comp-color-panel states colors init-color set-color! on-toggle))))))

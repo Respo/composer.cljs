@@ -13,7 +13,7 @@
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.comp.presets :refer [comp-presets]]
             [composer.comp.type-picker :refer [comp-type-picker]]
-            [composer.comp.bg-picker :refer [comp-bg-picker]]
+            [composer.comp.bg-picker :refer [comp-bg-picker comp-font-picker]]
             [composer.comp.dict-editor :refer [comp-dict-editor]]
             [composer.style :as style]
             [bisection-key.core :as bisection])
@@ -239,6 +239,14 @@
      {:style (merge ui/flex {:overflow :auto, :padding 8})}
      (cursor-> :type comp-type-picker states template-id focused-path child)
      (cursor-> :layout comp-layout-picker states template-id focused-path child)
+     (cursor->
+      :font-color
+      comp-font-picker
+      states
+      template-id
+      focused-path
+      child
+      (:colors settings))
      (cursor->
       :background
       comp-bg-picker
