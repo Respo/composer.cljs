@@ -13,7 +13,8 @@
               a
               i
               input
-              create-list-element]]
+              create-list-element
+              img]]
             [respo.comp.space :refer [=<]]
             [hsl.core :refer [hsl]]
             ["feather-icons" :as icons]
@@ -168,6 +169,39 @@
         :innerHTML (.toSvg obj (clj->js {:width size, :height size, :color color})),
         :on event-map})
       (comp-invalid (str "No icon: " icon-name) props))))
+
+(defn render-image [markup context]
+  (let [props (:props markup)
+        src (read-token (get props "src") (:data context))
+        mode (read-token (get props "mode") (:data context))
+        width (or (read-token (get props "width") (:data context)) 80)
+        height (or (read-token (get props "height") (:data context)) 80)]
+    (cond
+      (nil? src) (comp-invalid (<< "Bad image src: ~(pr-str src)") props)
+      (= mode :img)
+        (img
+         (merge
+          {:src src, :width width, :height height}
+          (eval-attrs (:attrs markup) (:data context))
+          {:style (merge
+                   (get-layout (:layout markup))
+                   (style-presets (:presets markup))
+                   (:style markup))}))
+      (contains? #{:contain :cover} mode)
+        (div
+         (merge
+          (eval-attrs (:attrs markup) (:data context))
+          {:style (merge
+                   {:background-image (<< "url(~{src})"),
+                    :background-size mode,
+                    :width width,
+                    :height height,
+                    :background-position :center,
+                    :background-repeat :no-repeat}
+                   (get-layout (:layout markup))
+                   (style-presets (:presets markup))
+                   (:style markup))}))
+      :else (comp-invalid (<< "Bad image mode: ~(pr-str mode)") props))))
 
 (defn render-input [markup context on-action]
   (let [props (:props markup)
@@ -358,6 +392,7 @@
     :inspect (render-inspect markup context)
     :element (render-element markup context)
     :markdown (render-markdown markup context)
+    :image (render-image markup context)
     (div
      {:style style-unknown}
      (comp-invalid (str "Bad type: " (pr-str (:type markup))) markup))))

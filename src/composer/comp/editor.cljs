@@ -186,7 +186,8 @@
    :popup ["visible"],
    :case ["value"],
    :element ["name"],
-   :markdown ["text"]})
+   :markdown ["text"],
+   :image ["src" "mode" "width" "height"]})
 
 (defcomp
  comp-props-hint

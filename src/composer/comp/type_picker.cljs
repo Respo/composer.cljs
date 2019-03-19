@@ -51,7 +51,8 @@
    {:value :slot, :kind :control, :display "Slot"}
    {:value :inspect, :kind :devtool, :display "Inspect"}
    {:value :popup, :kind :layout, :display "Popup"}
-   {:value :element, :kind :advanced, :display "Element"}])
+   {:value :element, :kind :advanced, :display "Element"}
+   {:value :image, :kind :element, :display "Image"}])
 
 (defn render-title [title]
   (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70), :margin-top 20}} (<> title)))
