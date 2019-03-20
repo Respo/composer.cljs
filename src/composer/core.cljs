@@ -298,11 +298,11 @@
   (let [props (:props markup)
         width (read-token (get props "width") (:data context))
         height (read-token (get props "height") (:data context))]
-    (=< width height)))
+    (if (and (nil? width) (nil? height)) (comp-invalid "<Space nil>" props) (=< width height))))
 
 (defn render-text [markup context]
   (let [props (:props markup), value (read-token (get props "value") (:data context))]
-    (<> value (merge (style-presets (:presets markup)) (:style markup)))))
+    (<> (or value "TEXT") (merge (style-presets (:presets markup)) (:style markup)))))
 
 (def style-unknown {"font-size" 12, "color" :red})
 
@@ -333,13 +333,13 @@
                  :value (nil? value)
                  nil (nil? value)
                  (nil? value))]
-    (if (not= (count child-pair) 2)
-      (do
-       (js/console.warn "<Some> requires 2 children, but got" (count child-pair))
-       (comp-invalid "<Bad some>" props))
-      (if result
-        (render-markup (first child-pair) context on-action)
-        (render-markup (last child-pair) context on-action)))))
+    (cond
+      (not= (count child-pair) 2) (comp-invalid "<Some wants 2 children>" props)
+      (nil? (get props "value")) (comp-invalid "<Some requires a value>" props)
+      :else
+        (if result
+          (render-markup (first child-pair) context on-action)
+          (render-markup (last child-pair) context on-action)))))
 
 (defn render-popup [markup context on-action]
   (let [props (:props markup)
