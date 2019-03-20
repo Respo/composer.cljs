@@ -56,6 +56,19 @@
                        :mock-pointer mock-id})]
     (assoc-in db [:templates op-id] new-template)))
 
+(defn fork-mock [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        mock-id (:mock-id op-data)
+        new-name (:name op-data)]
+    (update-in
+     db
+     [:templates template-id :mocks]
+     (fn [mocks]
+       (let [old-mock (get mocks mock-id)
+             new-mock (merge old-mock {:id op-id, :name new-name})]
+         (println "mocks" mocks new-mock)
+         (assoc mocks op-id new-mock))))))
+
 (defn iter-merge-children [container picked-id xs]
   (if (empty? xs)
     container

@@ -38,9 +38,18 @@
    (=< 40 nil)
    (a
     {:style ui/link,
-     :inner-text "Use this",
+     :inner-text "Use it",
      :on-click (fn [e d! m!]
        (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
+   (=< 8 nil)
+   (cursor->
+    :fork
+    comp-prompt
+    states
+    {:trigger (a {:style ui/link, :inner-text "Fork"}), :text "Fork with new name:"}
+    (fn [result d! m!]
+      (when-not (string/blank? result)
+        (d! :template/fork-mock {:template-id template-id, :mock-id (:id mock), :name result}))))
    (=< 8 nil)
    (cursor->
     :remove
@@ -111,10 +120,14 @@
               (div
                {:style (merge
                         ui/row-middle
-                        {:cursor :pointer, :padding "0 8px"}
+                        {:cursor :pointer,
+                         :padding "0 8px",
+                         :border-bottom "1px solid #eee",
+                         :line-height "32px",
+                         :height "32px"}
                         (if (= focused-id (:id mock)) {:background-color (hsl 0 0 94)})),
                 :on-click (fn [e d! m!] (d! :session/focus-to {:mock-id (:id mock)}))}
-               (<> (:name mock))
+               (<> (or (:name mock) "-"))
                (=< 8 nil)
                (if (= used-mock (:id mock)) (comp-i :star 14 (hsl 0 80 70))))))))))
   (if-let [mock (get mocks focused-id)]
