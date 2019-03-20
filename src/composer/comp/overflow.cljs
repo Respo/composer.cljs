@@ -37,9 +37,7 @@
      {:style (merge ui/flex {:overflow :auto, :padding "8px 16px 160px 16px"})}
      (->> templates
           (filter
-           (fn [[k template]]
-             (println (parse-by-word (:name template) (:filter state)))
-             (:matches? (parse-by-word (:name template) (:filter state)))))
+           (fn [[k template]] (:matches? (parse-by-word (:name template) (:filter state)))))
           (map
            (fn [[k template]]
              [k
