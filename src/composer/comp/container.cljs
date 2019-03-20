@@ -77,7 +77,7 @@
           :home (cursor-> :workspace comp-workspace states templates settings focus-to)
           :preview
             (cursor-> :preview comp-preview states templates focus-to (:shadows? session))
-          :overview (comp-overview templates)
+          :overview (cursor-> :overview comp-overview states templates)
           :profile (comp-profile (:user store) (:data router))
           :settings (cursor-> :settings comp-settings states settings)
           (<> router))
