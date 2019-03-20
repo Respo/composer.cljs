@@ -44,8 +44,16 @@
 
 (defn create-template [db op-data sid op-id op-time]
   (let [markup-id "system"
+        mock-id "base"
         base-markup (merge schema/markup {:id markup-id, :type :box, :layout :row})
-        new-template (merge schema/template {:id op-id, :name op-data, :markup base-markup})]
+        new-mock (merge schema/mock {:id mock-id, :name "base", :data {}})
+        new-template (merge
+                      schema/template
+                      {:id op-id,
+                       :name op-data,
+                       :markup base-markup,
+                       :mocks {mock-id new-mock},
+                       :mock-pointer mock-id})]
     (assoc-in db [:templates op-id] new-template)))
 
 (defn iter-merge-children [container picked-id xs]
