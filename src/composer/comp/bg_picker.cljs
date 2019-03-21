@@ -40,7 +40,8 @@
                                     :width 32,
                                     :height 32,
                                     :margin 4,
-                                    :cursor :pointer}),
+                                    :cursor :pointer,
+                                    :border "1px solid #ddd"}),
                            :on-click (fn [e d! m!] (set-color! (:color color) d!))}
                           (<> (:name color) {:color :white, :font-size 10}))])))))]))))
     (div

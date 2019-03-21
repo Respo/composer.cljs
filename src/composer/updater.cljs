@@ -32,6 +32,7 @@
             :template/update-mock template/update-mock
             :template/remove-mock template/remove-mock
             :template/rename-mock template/rename-mock
+            :template/fork-mock template/fork-mock
             :template/use-mock template/use-mock
             :template/append-markup template/append-markup
             :template/prepend-markup template/prepend-markup
