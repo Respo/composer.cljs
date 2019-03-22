@@ -240,20 +240,26 @@
          :style (merge ui/input (style-presets (:presets markup)) (:style markup)),
          :on event-map})))))
 
+(def style-inspect
+  {:background-color (hsl 200 80 60),
+   :color :white,
+   :padding "0 8px",
+   :font-size 12,
+   :font-family ui/font-code,
+   :line-height "20px",
+   :min-height "20px",
+   :display :inline-block,
+   :cursor :pointer,
+   :border (str "1px solid " (hsl 0 90 64)),
+   :max-width 400,
+   :max-height 120,
+   :overflow :auto})
+
 (defn render-inspect [markup context]
   (let [props (:props markup), value (read-token (get props "value") (:data context))]
     (span
      {:inner-text (pr-str value),
-      :style {:background-color (hsl 200 80 60),
-              :color :white,
-              :padding "0 8px",
-              :font-size 12,
-              :font-family ui/font-code,
-              :line-height "20px",
-              :min-height "20px",
-              :display :inline-block,
-              :cursor :pointer,
-              :border (str "1px solid " (hsl 0 90 64))},
+      :style style-inspect,
       :on-click (fn [e d! m!] (js/console.log (clj->js (:data context))))})))
 
 (defn render-link [markup context on-action]

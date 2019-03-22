@@ -24,27 +24,66 @@
   [{:value :row, :display "Row", :kind :row}
    {:value :row-middle, :display "Row Middle", :kind :row}
    {:value :row-parted, :display "Row Parted", :kind :row}
-   {:value :row-center, :display "Row Center", :kind :row}
    {:value :column, :display "Column", :kind :column}
    {:value :column-parted, :display "Column Parted", :kind :column}
-   {:value :center, :display "Center", :column :column}])
+   {:value :center, :display "Center", :kind :center}
+   {:value :row-center, :display "Row Center", :kind :center}])
+
+(defcomp
+ comp-layout-name
+ (layout-name)
+ (let [layout (->> node-layouts (filter (fn [item] (= layout-name (:value item)))) first)]
+   (if (some? layout)
+     (<> (:display layout) {:padding "2px 8px", :background-color (hsl 0 0 94)})
+     (<> "Nothing" {:color (hsl 0 0 80), :font-family ui/font-fancy}))))
 
 (defcomp
  comp-layout-picker
  (states template-id path markup)
- (div
-  {:style ui/row-middle}
-  (<> "Layout:" style/field-label)
-  (=< 8 nil)
-  (cursor->
-   :picker
-   comp-select
-   states
-   (:layout markup)
-   node-layouts
-   {}
-   (fn [result d! m!]
-     (d! :template/node-layout {:template-id template-id, :path path, :layout result})))))
+ (let [on-pick (fn [layout d!]
+                 (d!
+                  :template/node-layout
+                  {:template-id template-id, :path path, :layout layout}))]
+   (div
+    {:style ui/row-middle}
+    (<> "Layout:" style/field-label)
+    (=< 8 nil)
+    (cursor->
+     :popup
+     comp-popup
+     states
+     {:trigger (comp-layout-name (:layout markup))}
+     (fn [on-toggle]
+       (div
+        {:style ui/column}
+        (let [render-list (fn [kind]
+                            (list->
+                             {:style ui/column}
+                             (->> node-layouts
+                                  (filter (fn [item] (= kind (:kind item))))
+                                  (map
+                                   (fn [item]
+                                     [(:value item)
+                                      (div
+                                       {:style {:margin "4px 0", :cursor :pointer},
+                                        :on-click (fn [e d! m!]
+                                          (on-pick (:value item) d!)
+                                          (on-toggle m!))}
+                                       (comp-layout-name (:value item)))])))))]
+          (div
+           {:style ui/row}
+           (render-list :row)
+           (=< 16 nil)
+           (render-list :column)
+           (=< 16 nil)
+           (render-list :center)))
+        (div
+         {:style ui/row-parted}
+         (span nil)
+         (a
+          {:style ui/link,
+           :inner-text "Clear",
+           :on-click (fn [e d! m!] (on-pick nil d!) (on-toggle m!))}))))))))
 
 (def style-element
   {:display :inline-block,
@@ -104,7 +143,8 @@
    (get-mocks (:mocks template))
    {:text "Select mock"}
    (fn [result d! m!]
-     (d! :template/use-mock {:template-id (:id template), :mock-id result})))))
+     (if (some? result)
+       (d! :template/use-mock {:template-id (:id template), :mock-id result}))))))
 
 (defcomp
  comp-operations
