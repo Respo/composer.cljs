@@ -10,7 +10,8 @@
             [clojure.set :refer [difference]]
             [composer.style :as style]))
 
-(def builtin-presets #{:flex :font-code :font-fancy :font-normal :fullscreen :scroll})
+(def builtin-presets
+  #{:expand :font-code :font-fancy :font-normal :fullscreen :scroll :global :base-padding})
 
 (defcomp
  comp-preset

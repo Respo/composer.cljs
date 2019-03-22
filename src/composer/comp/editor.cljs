@@ -16,34 +16,74 @@
             [composer.comp.bg-picker :refer [comp-bg-picker comp-font-picker]]
             [composer.comp.dict-editor :refer [comp-dict-editor]]
             [composer.style :as style]
-            [bisection-key.core :as bisection])
+            [bisection-key.core :as bisection]
+            [favored-edn.core :refer [write-edn]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def node-layouts
-  [{:value :row, :display "Row"}
-   {:value :row-middle, :display "Row Middle"}
-   {:value :row-parted, :display "Row Parted"}
-   {:value :row-center, :display "Row Center"}
-   {:value :column, :display "Column"}
-   {:value :column-parted, :display "Column Parted"}
-   {:value :center, :display "Center"}])
+  [{:value :row, :display "Row", :kind :row}
+   {:value :row-middle, :display "Row Middle", :kind :row}
+   {:value :row-parted, :display "Row Parted", :kind :row}
+   {:value :column, :display "Column", :kind :column}
+   {:value :column-parted, :display "Column Parted", :kind :column}
+   {:value :center, :display "Center", :kind :center}
+   {:value :row-center, :display "Row Center", :kind :center}])
+
+(defcomp
+ comp-layout-name
+ (layout-name)
+ (let [layout (->> node-layouts (filter (fn [item] (= layout-name (:value item)))) first)]
+   (if (some? layout)
+     (<> (:display layout) {:padding "2px 8px", :background-color (hsl 0 0 94)})
+     (<> "Nothing" {:color (hsl 0 0 80), :font-family ui/font-fancy}))))
 
 (defcomp
  comp-layout-picker
  (states template-id path markup)
- (div
-  {:style ui/row-middle}
-  (<> "Layout:" style/field-label)
-  (=< 8 nil)
-  (cursor->
-   :picker
-   comp-select
-   states
-   (:layout markup)
-   node-layouts
-   {}
-   (fn [result d! m!]
-     (d! :template/node-layout {:template-id template-id, :path path, :layout result})))))
+ (let [on-pick (fn [layout d!]
+                 (d!
+                  :template/node-layout
+                  {:template-id template-id, :path path, :layout layout}))]
+   (div
+    {:style ui/row-middle}
+    (<> "Layout:" style/field-label)
+    (=< 8 nil)
+    (cursor->
+     :popup
+     comp-popup
+     states
+     {:trigger (comp-layout-name (:layout markup))}
+     (fn [on-toggle]
+       (div
+        {:style ui/column}
+        (let [render-list (fn [kind]
+                            (list->
+                             {:style ui/column}
+                             (->> node-layouts
+                                  (filter (fn [item] (= kind (:kind item))))
+                                  (map
+                                   (fn [item]
+                                     [(:value item)
+                                      (div
+                                       {:style {:margin "4px 0", :cursor :pointer},
+                                        :on-click (fn [e d! m!]
+                                          (on-pick (:value item) d!)
+                                          (on-toggle m!))}
+                                       (comp-layout-name (:value item)))])))))]
+          (div
+           {:style ui/row}
+           (render-list :row)
+           (=< 16 nil)
+           (render-list :column)
+           (=< 16 nil)
+           (render-list :center)))
+        (div
+         {:style ui/row-parted}
+         (span nil)
+         (a
+          {:style ui/link,
+           :inner-text "Clear",
+           :on-click (fn [e d! m!] (on-pick nil d!) (on-toggle m!))}))))))))
 
 (def style-element
   {:display :inline-block,
@@ -91,7 +131,6 @@
 (defcomp
  comp-mock-picker
  (states template)
- (<> (pr-str (:mock-pointer template)))
  (div
   {:style ui/row-middle}
   (<> "Mock:" style/field-label)
@@ -104,7 +143,8 @@
    (get-mocks (:mocks template))
    {:text "Select mock"}
    (fn [result d! m!]
-     (d! :template/use-mock {:template-id (:id template), :mock-id result})))))
+     (if (some? result)
+       (d! :template/use-mock {:template-id (:id template), :mock-id result}))))))
 
 (defcomp
  comp-operations
@@ -212,11 +252,15 @@
 (def style-mock-data
   {:margin 0,
    :padding "4px 8px",
-   :font-size 12,
+   :font-size 10,
    :font-family ui/font-code,
-   :background-color (hsl 0 0 94),
-   :white-space :normal,
-   :line-height "18px"})
+   :border "1px solid #ddd",
+   :background-color (hsl 0 0 98),
+   :white-space :pre,
+   :line-height "15px",
+   :max-height 120,
+   :overflow :auto,
+   :border-radius "4px"})
 
 (defcomp
  comp-editor
@@ -260,7 +304,7 @@
      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
      (=< nil 8)
      (cursor-> :mocks comp-mock-picker states template)
-     (pre {:inner-text (pr-str mock-data), :style style-mock-data})
+     (pre {:inner-text (write-edn mock-data), :style style-mock-data})
      (comp-props-hint (:type child))
      (cursor->
       :props
