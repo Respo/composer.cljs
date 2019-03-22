@@ -16,17 +16,18 @@
             [composer.comp.bg-picker :refer [comp-bg-picker comp-font-picker]]
             [composer.comp.dict-editor :refer [comp-dict-editor]]
             [composer.style :as style]
-            [bisection-key.core :as bisection])
+            [bisection-key.core :as bisection]
+            [favored-edn.core :refer [write-edn]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def node-layouts
-  [{:value :row, :display "Row"}
-   {:value :row-middle, :display "Row Middle"}
-   {:value :row-parted, :display "Row Parted"}
-   {:value :row-center, :display "Row Center"}
-   {:value :column, :display "Column"}
-   {:value :column-parted, :display "Column Parted"}
-   {:value :center, :display "Center"}])
+  [{:value :row, :display "Row", :kind :row}
+   {:value :row-middle, :display "Row Middle", :kind :row}
+   {:value :row-parted, :display "Row Parted", :kind :row}
+   {:value :row-center, :display "Row Center", :kind :row}
+   {:value :column, :display "Column", :kind :column}
+   {:value :column-parted, :display "Column Parted", :kind :column}
+   {:value :center, :display "Center", :column :column}])
 
 (defcomp
  comp-layout-picker
@@ -91,7 +92,6 @@
 (defcomp
  comp-mock-picker
  (states template)
- (<> (pr-str (:mock-pointer template)))
  (div
   {:style ui/row-middle}
   (<> "Mock:" style/field-label)
@@ -212,11 +212,15 @@
 (def style-mock-data
   {:margin 0,
    :padding "4px 8px",
-   :font-size 12,
+   :font-size 10,
    :font-family ui/font-code,
-   :background-color (hsl 0 0 94),
-   :white-space :normal,
-   :line-height "18px"})
+   :border "1px solid #ddd",
+   :background-color (hsl 0 0 98),
+   :white-space :pre,
+   :line-height "15px",
+   :max-height 120,
+   :overflow :auto,
+   :border-radius "4px"})
 
 (defcomp
  comp-editor
@@ -260,7 +264,7 @@
      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
      (=< nil 8)
      (cursor-> :mocks comp-mock-picker states template)
-     (pre {:inner-text (pr-str mock-data), :style style-mock-data})
+     (pre {:inner-text (write-edn mock-data), :style style-mock-data})
      (comp-props-hint (:type child))
      (cursor->
       :props
