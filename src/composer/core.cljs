@@ -22,7 +22,8 @@
             [clojure.string :as string]
             [cljs.reader :refer [read-string]]
             [respo.util.detect :refer [component? element?]]
-            [respo-md.comp.md :refer [comp-md-block]])
+            [respo-md.comp.md :refer [comp-md-block]]
+            [composer.util :refer [use-string-keys]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (declare render-some)
@@ -231,13 +232,19 @@
        (merge
         attrs
         {:value value,
-         :style (merge ui/textarea (style-presets (:presets markup)) (:style markup)),
+         :style (merge
+                 (use-string-keys ui/textarea)
+                 (style-presets (:presets markup))
+                 (:style markup)),
          :on event-map}))
       (input
        (merge
         attrs
         {:value value,
-         :style (merge ui/input (style-presets (:presets markup)) (:style markup)),
+         :style (merge
+                 (use-string-keys ui/input)
+                 (style-presets (:presets markup))
+                 (:style markup)),
          :on event-map})))))
 
 (def style-inspect
