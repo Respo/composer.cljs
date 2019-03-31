@@ -18,6 +18,11 @@ button:active {
   background-color: hsl(0,0%,90%);
 }
 
+a {
+  transition-duration: 300ms;
+}
+
 a:active {
   transform: scale(1.16);
+  transition-duration: 0ms;
 }
