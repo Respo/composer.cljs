@@ -32,13 +32,13 @@
     "randomcolor": "^0.5.4",
     "shortid": "^2.2.14",
     "url-parse": "^1.4.4",
-    "ws": "^6.2.0"
+    "ws": "^6.2.1"
   },
   "devDependencies": {
     "copy-text-to-clipboard": "^2.0.0",
-    "feather-icons": "^4.19.0",
+    "feather-icons": "^4.21.0",
     "http-server": "^0.11.1",
-    "shadow-cljs": "^2.8.21",
+    "shadow-cljs": "^2.8.25",
     "source-map-support": "^0.5.11"
   }
 }
