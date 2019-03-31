@@ -19,14 +19,22 @@
 (defcomp
  comp-data-editor
  (states data on-submit)
- (let [state (or (:data states) {:draft (write-edn data), :error nil})]
+ (let [state (or (:data states) {:draft (write-edn data), :error nil})
+       submit! (fn [d! m!]
+                 (try
+                  (do (on-submit (read-string (:draft state)) d! m!) (m! nil))
+                  (catch js/Error err (.error js/console err) (m! (assoc state :error err)))))]
    (div
     {:style ui/column}
     (textarea
      {:style (merge ui/textarea style-code {:height 240, :width 600}),
       :placeholder "EDN data",
       :value (:draft state),
-      :on-input (fn [e d! m!] (m! (assoc state :draft (:value e))))})
+      :on-input (fn [e d! m!] (m! (assoc state :draft (:value e)))),
+      :on-keydown (fn [e d! m!]
+        (println "keydown")
+        (let [event (:event e)]
+          (if (and (= 13 (:keycode e)) (.-metaKey event)) (submit! d! m!))))})
     (div
      {:style (merge ui/row-parted {:margin-top 8})}
      (if (some? (:error state))
@@ -35,19 +43,14 @@
         (<> (:error state) {:color :red}))
        (span nil))
      (button
-      {:inner-text "Submit",
-       :style ui/button,
-       :on-click (fn [e d! m!]
-         (try
-          (do (on-submit (read-string (:draft state)) d! m!) (m! nil))
-          (catch js/Error err (.error js/console err) (m! (assoc state :error err)))))})))))
+      {:inner-text "Submit", :style ui/button, :on-click (fn [e d! m!] (submit! d! m!))})))))
 
 (defcomp
  comp-mock-editor
  (states template-id mock)
  (let [base-op-data {:template-id template-id, :mock-id (:id mock)}]
    (div
-    {:style (merge ui/flex ui/column)}
+    {:style (merge ui/flex ui/column {:overflow :auto})}
     (div
      {:style {:padding "4px 8px"}}
      (cursor->
@@ -99,7 +102,10 @@
                {:width "100%",
                 :margin 0,
                 :background-color (hsl 0 0 96),
-                :padding "4px 8px"}),
+                :padding "4px 8px",
+                :white-space :pre,
+                :overflow :auto,
+                :min-height 48}),
        :disabled true,
        :inner-text (write-edn (:data mock))}))
     (div
@@ -116,7 +122,7 @@
          states
          (:data mock)
          (fn [data d! m!]
-           (println "edit data" data)
+           (comment println "edit data" data)
            (d! :template/update-mock (merge base-op-data {:data data}))
            (on-toggle m!)))))))))
 
