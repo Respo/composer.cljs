@@ -112,7 +112,7 @@
     :scroll {:overflow :auto}
     :global ui/global
     :base-padding {:padding "4px 8px"}
-    (do (js/console.warning (str "Unknown preset: " preset)) nil)))
+    (do (js/console.warn (str "Unknown preset: " preset)) nil)))
 
 (defn style-presets [presets] (->> presets (map get-preset) (apply merge)))
 
