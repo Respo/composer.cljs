@@ -44,7 +44,8 @@
               (let [style-container {:background-color (hsl 0 0 100),
                                      :border "1px solid #ddd",
                                      :min-width (or (:width template) 240),
-                                     :min-height (or (:height template) 60)}]
+                                     :min-height (or (:height template) 60),
+                                     :position :relative}]
                 (div
                  {:style (merge ui/row {:margin "16px 0px"})}
                  (div

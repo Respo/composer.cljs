@@ -108,7 +108,7 @@
     :font-code {:font-family ui/font-code}
     :font-fancy {:font-family ui/font-fancy}
     :font-normal {:font-family ui/font-normal}
-    :fullscreen {:font-family ui/fullscreen}
+    :fullscreen ui/fullscreen
     :scroll {:overflow :auto}
     :global ui/global
     :base-padding {:padding "4px 8px"}

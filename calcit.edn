@@ -13357,6 +13357,13 @@
                                }
                               }
                              }
+                             "yT" {
+                              :type :expr, :by "root", :at 1554145425540, :id "UodlKCCKB"
+                              :data {
+                               "T" {:type :leaf, :by "root", :at 1554145428021, :text ":position", :id "UodlKCCKBleaf"}
+                               "j" {:type :leaf, :by "root", :at 1554145429603, :text ":relative", :id "oT4NhVnMh9"}
+                              }
+                             }
                             }
                            }
                           }
@@ -15443,6 +15450,13 @@
                             :data {
                              "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1550977958299, :text ":margin", :id "xMJXj2iWS0Z"}
                              "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1550977958299, :text ":auto", :id "0KorZEIiZqr"}
+                            }
+                           }
+                           "y" {
+                            :type :expr, :by "root", :at 1554145385589, :id "6qDGifizG"
+                            :data {
+                             "T" {:type :leaf, :by "root", :at 1554145387597, :text ":position", :id "6qDGifizGleaf"}
+                             "j" {:type :leaf, :by "root", :at 1554145389147, :text ":relative", :id "IiCuVJHsuD"}
                             }
                            }
                           }
@@ -23406,19 +23420,7 @@
           :type :expr, :by "B1y7Rc-Zz", :at 1552499329915, :id "nZUaXRQp7QPP"
           :data {
            "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1552499329915, :text ":fullscreen", :id "BlPN0fHpP7T3"}
-           "j" {
-            :type :expr, :by "B1y7Rc-Zz", :at 1552499329915, :id "rPGDyeH5680E"
-            :data {
-             "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1552499329915, :text "{}", :id "wlRSLY5ujW35"}
-             "j" {
-              :type :expr, :by "B1y7Rc-Zz", :at 1552499329915, :id "OqECFzo6bo7Y"
-              :data {
-               "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1552499329915, :text ":font-family", :id "6fCFmoGyQ0YV"}
-               "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1552499329915, :text "ui/fullscreen", :id "j4b9lH29lOaS"}
-              }
-             }
-            }
-           }
+           "j" {:type :leaf, :by "root", :at 1554145367055, :text "ui/fullscreen", :id "g92aEDs1R"}
           }
          }
          "yj" {
