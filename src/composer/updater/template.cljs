@@ -66,7 +66,6 @@
      (fn [mocks]
        (let [old-mock (get mocks mock-id)
              new-mock (merge old-mock {:id op-id, :name new-name})]
-         (println "mocks" mocks new-mock)
          (assoc mocks op-id new-mock))))))
 
 (defn iter-merge-children [container picked-id xs]

@@ -260,7 +260,9 @@
    :line-height "15px",
    :max-height 120,
    :overflow :auto,
-   :border-radius "4px"})
+   :border-radius "4px",
+   :word-break :break-all,
+   :min-height 48})
 
 (defcomp
  comp-editor

@@ -22,7 +22,8 @@
             [clojure.string :as string]
             [cljs.reader :refer [read-string]]
             [respo.util.detect :refer [component? element?]]
-            [respo-md.comp.md :refer [comp-md-block]])
+            [respo-md.comp.md :refer [comp-md-block]]
+            [composer.util :refer [use-string-keys]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (declare render-some)
@@ -107,11 +108,11 @@
     :font-code {:font-family ui/font-code}
     :font-fancy {:font-family ui/font-fancy}
     :font-normal {:font-family ui/font-normal}
-    :fullscreen {:font-family ui/fullscreen}
+    :fullscreen ui/fullscreen
     :scroll {:overflow :auto}
     :global ui/global
     :base-padding {:padding "4px 8px"}
-    (do (js/console.warning (str "Unknown preset: " preset)) nil)))
+    (do (js/console.warn (str "Unknown preset: " preset)) nil)))
 
 (defn style-presets [presets] (->> presets (map get-preset) (apply merge)))
 
@@ -168,7 +169,7 @@
                        (into {}))]
     (if (some? obj)
       (i
-       {:style {:display :inline-block, :cursor :pointer},
+       {:style (merge {:display :inline-block, :cursor :pointer} (:style markup)),
         :innerHTML (.toSvg obj (clj->js {:width size, :height size, :color color})),
         :on event-map})
       (comp-invalid (str "No icon: " icon-name) props))))
@@ -231,13 +232,19 @@
        (merge
         attrs
         {:value value,
-         :style (merge ui/textarea (style-presets (:presets markup)) (:style markup)),
+         :style (merge
+                 (use-string-keys ui/textarea)
+                 (style-presets (:presets markup))
+                 (:style markup)),
          :on event-map}))
       (input
        (merge
         attrs
         {:value value,
-         :style (merge ui/input (style-presets (:presets markup)) (:style markup)),
+         :style (merge
+                 (use-string-keys ui/input)
+                 (style-presets (:presets markup))
+                 (:style markup)),
          :on event-map})))))
 
 (def style-inspect

@@ -29,7 +29,7 @@
                        :template/set-preview-sizes
                        {:template-id template-id, :width w, :height h}))]
    (div
-    {:style (merge ui/flex ui/row {})}
+    {:style (merge ui/flex ui/row {:overflow :auto})}
     (cursor-> :templates comp-templates-list states templates template-id)
     (div
      {:style (merge ui/flex ui/column)}
@@ -45,7 +45,8 @@
             :style {:background-color (hsl 0 0 100 1),
                     :width (or (:width template) "100%"),
                     :height (or (:height template) "100%"),
-                    :margin :auto}}
+                    :margin :auto,
+                    :position :relative}}
            (render-markup markup {:data mock-data, :templates tmpls, :level 0} on-operation))
           (span
            {:style {:color (hsl 0 0 60),
