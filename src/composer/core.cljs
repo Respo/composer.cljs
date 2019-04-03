@@ -406,7 +406,7 @@
     :slot (render-slot markup context on-action)
     :popup (render-popup markup context on-action)
     :inspect (render-inspect markup context)
-    :element (render-element markup context)
+    :element (render-element markup context on-action)
     :markdown (render-markdown markup context)
     :image (render-image markup context)
     (div
