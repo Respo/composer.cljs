@@ -288,7 +288,7 @@
     (a
      (merge
       (eval-attrs (:attrs markup) (:data context))
-      {:style (merge ui/link (:style markup)),
+      {:style (merge ui/link (style-presets (:presets markup)) (:style markup)),
        :inner-text (or text "Submit"),
        :href (or href "#"),
        :on event-map}))))
