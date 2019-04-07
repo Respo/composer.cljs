@@ -51,7 +51,7 @@
 
 (defcomp
  comp-dict-editor
- (states title dict on-change)
+ (states title dict suggests on-change)
  (let [state (or (:data states) {:draft ""})
        do-focus! (fn []
                    (delay!
@@ -60,7 +60,8 @@
                       (let [target (.querySelector js/document ".pair-key")]
                         (if (some? target)
                           (.focus target)
-                          (js/console.warn ".pair-key not found!"))))))]
+                          (js/console.warn ".pair-key not found!"))))))
+       props-defaults (->> suggests (map (fn [x] [x nil])) (into {}))]
    (div
     {}
     (div
@@ -80,7 +81,7 @@
          (fn [result d! m!] (on-change (merge result {:type :set}) d! m!) (on-toggle m!))))))
     (list->
      {:style {:padding-left 16}}
-     (->> dict
+     (->> (merge props-defaults dict)
           (map
            (fn [[k v]]
              [k
@@ -92,10 +93,13 @@
                 k
                 comp-prompt
                 states
-                {:trigger (<> v), :text "new value", :initial v}
+                {:trigger (if (some? v) (<> v) (<> "nil" {:color (hsl 300 80 30 0.4)})),
+                 :text "new value",
+                 :initial v}
                 (fn [result d! m!] (on-change {:type :set, :key k, :value result} d! m!)))
                (=< 8 nil)
-               (span
-                {:style {:cursor :pointer},
-                 :on-click (fn [e d! m!] (on-change {:type :remove, :key k} d! m!))}
-                (comp-i :delete 14 (hsl 200 80 70))))])))))))
+               (if (some? v)
+                 (span
+                  {:style {:cursor :pointer},
+                   :on-click (fn [e d! m!] (on-change {:type :remove, :key k} d! m!))}
+                  (comp-i :delete 14 (hsl 200 80 70)))))])))))))

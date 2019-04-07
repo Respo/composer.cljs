@@ -314,6 +314,7 @@
       states
       "Props:"
       (:props child)
+      (get props-hints (:type child))
       (fn [change d! m!]
         (d!
          :template/node-props
@@ -324,6 +325,7 @@
       states
       "Event:"
       (:event child)
+      nil
       (fn [change d! m!]
         (d!
          :template/node-event
@@ -334,6 +336,7 @@
       states
       "Attrs:"
       (:attrs child)
+      nil
       (fn [change d! m!]
         (d!
          :template/node-attrs
@@ -344,6 +347,7 @@
       states
       "Style:"
       (:style child)
+      nil
       (fn [change d! m!]
         (d!
          :template/node-style
