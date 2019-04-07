@@ -83,7 +83,7 @@
           (<> router))
         (comp-login states))
       (comp-status-color (:color store))
-      (when dev? (comp-inspect "Settings" settings {:bottom 0, :left 0, :max-width "100%"}))
+      (when dev? (comp-inspect "States" states {:bottom 0, :left 0, :max-width "100%"}))
       (comp-messages
        (get-in store [:session :messages])
        {}
