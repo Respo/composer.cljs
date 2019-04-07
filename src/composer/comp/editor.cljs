@@ -112,7 +112,7 @@
             style-element
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
     :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
-   (<> (:type markup)))
+   (<> (name (:type markup))))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}

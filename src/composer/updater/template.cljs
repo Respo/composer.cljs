@@ -14,7 +14,7 @@
        (concat [:templates template-id :markup] (path-with-children (butlast focused-path)))
        (fn [children]
          (let [next-key (key-after children (last focused-path))]
-           (assoc children next-key (merge schema/markup {:id next-key, :type :box}))))))))
+           (assoc children next-key (merge schema/markup {:type :box}))))))))
 
 (defn append-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
@@ -23,7 +23,7 @@
      (concat [:templates template-id :markup] (path-with-children focused-path))
      (fn [children]
        (let [next-key (key-append children)]
-         (assoc children next-key (merge schema/markup {:id next-key, :type :box})))))))
+         (assoc children next-key (merge schema/markup {:type :box})))))))
 
 (defn before-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
@@ -34,7 +34,7 @@
        (concat [:templates template-id :markup] (path-with-children (butlast focused-path)))
        (fn [children]
          (let [next-key (key-before children (last focused-path))]
-           (assoc children next-key (merge schema/markup {:id next-key, :type :box}))))))))
+           (assoc children next-key (merge schema/markup {:type :box}))))))))
 
 (defn create-mock [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)
@@ -43,9 +43,8 @@
     (assoc-in db [:templates template-id :mocks op-id] new-mock)))
 
 (defn create-template [db op-data sid op-id op-time]
-  (let [markup-id "system"
-        mock-id "base"
-        base-markup (merge schema/markup {:id markup-id, :type :box, :layout :row})
+  (let [mock-id "base"
+        base-markup (merge schema/markup {:type :box, :layout :row})
         new-mock (merge schema/mock {:id mock-id, :name "base", :data {}})
         new-template (merge
                       schema/template
@@ -83,7 +82,7 @@
      (concat [:templates template-id :markup] (path-with-children focused-path))
      (fn [children]
        (let [next-key (key-prepend children)]
-         (assoc children next-key (merge schema/markup {:id next-key, :type :box})))))))
+         (assoc children next-key (merge schema/markup {:type :box})))))))
 
 (defn remove-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), path (:path op-data)]
@@ -249,5 +248,4 @@
     (update-in
      db
      (concat [:templates template-id :markup] (interleave (repeat :children) focused-path))
-     (fn [node]
-       (merge schema/markup {:id op-id, :type :box, :children {bisection/mid-id node}})))))
+     (fn [node] (merge schema/markup {:type :box, :children {bisection/mid-id node}})))))

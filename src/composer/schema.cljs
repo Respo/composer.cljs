@@ -4,14 +4,7 @@
 (def color {:id nil, :name "", :color "", :group nil})
 
 (def markup
-  {:id nil,
-   :type :box,
-   :props {},
-   :attrs {},
-   :layout nil,
-   :presets #{},
-   :style {},
-   :children {}})
+  {:type :box, :props {}, :attrs {}, :layout nil, :presets #{}, :style {}, :children {}})
 
 (def mock {:id nil, :data nil, :name nil})
 
