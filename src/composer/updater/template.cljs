@@ -75,6 +75,25 @@
 
 (defn mark-saved [db op-data sid op-id op-time] (assoc db :saved-templates (:templates db)))
 
+(defn move-order [db op-data sid op-id op-time]
+  (let [from-id (:from op-data), to-id (:to op-data)]
+    (if (= from-id to-id)
+      db
+      (update
+       db
+       :templates
+       (fn [templates]
+         (let [sort-dict (->> templates
+                              (map (fn [[k template]] [(:sort-key template) k]))
+                              (into {}))
+               from-key (get-in templates [from-id :sort-key])
+               to-key (get-in templates [to-id :sort-key])
+               next-key (case (compare from-key to-key)
+                          -1 (key-after sort-dict to-key)
+                          1 (key-before sort-dict to-key)
+                          to-key)]
+           (assoc-in templates [from-id :sort-key] next-key)))))))
+
 (defn prepend-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]
     (update-in

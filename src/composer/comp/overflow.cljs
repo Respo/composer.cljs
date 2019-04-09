@@ -38,6 +38,7 @@
      (->> templates
           (filter
            (fn [[k template]] (:matches? (parse-by-word (:name template) (:filter state)))))
+          (sort-by (fn [[k template]] (:sort-key template)))
           (map
            (fn [[k template]]
              [k
