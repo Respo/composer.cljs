@@ -46,13 +46,18 @@
   (let [mock-id "base"
         base-markup (merge schema/markup {:type :box, :layout :row})
         new-mock (merge schema/mock {:id mock-id, :name "base", :data {}})
+        sort-dict (->> (:templates db)
+                       (map (fn [[k template]] [(:sort-key template) k]))
+                       (into {}))
+        next-key (key-prepend sort-dict)
         new-template (merge
                       schema/template
                       {:id op-id,
                        :name op-data,
                        :markup base-markup,
                        :mocks {mock-id new-mock},
-                       :mock-pointer mock-id})]
+                       :mock-pointer mock-id,
+                       :sort-key next-key})]
     (assoc-in db [:templates op-id] new-template)))
 
 (defn fork-mock [db op-data sid op-id op-time]
