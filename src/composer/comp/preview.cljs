@@ -10,7 +10,8 @@
             [composer.core :refer [render-markup]]
             [respo-alerts.comp.alerts :refer [comp-select]]
             [composer.comp.templates-list :refer [comp-templates-list]]
-            [composer.util :refer [neaten-templates]])
+            [composer.util :refer [neaten-templates]]
+            [clojure.string :as string])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defn on-operation [d! op param options] (println op param (pr-str options)))
@@ -30,7 +31,14 @@
                        {:template-id template-id, :width w, :height h}))
        active-templates (->> focuses
                              (map (fn [[k info]] (get-in info [:focus :template-id])))
-                             (set))]
+                             (set))
+       focus-in-template (->> focuses
+                              (filter
+                               (fn [[k info]]
+                                 (= template-id (get-in info [:focus :template-id])))))
+       active-names (->> focus-in-template
+                         (map (fn [[k info]] (get-in info [:user :name])))
+                         (string/join ", "))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
     (cursor-> :templates comp-templates-list states templates template-id active-templates)
@@ -58,36 +66,42 @@
                     :margin :auto},
             :inner-text "No selected template."}))))
      (div
-      {:style ui/row-middle}
-      (input
-       {:style style-number,
-        :type "number",
-        :value (:width template),
-        :on-input (fn [e d! m!] (change-size! d! (:value e) (:height template)))})
-      (=< 8 nil)
-      (input
-       {:style style-number,
-        :type "number",
-        :value (:height template),
-        :on-input (fn [e d! m!] (change-size! d! (:width template) (:value e)))})
-      (=< 8 nil)
-      (a
-       {:style ui/link,
-        :inner-text "100x240",
-        :on-click (fn [e d! m!] (change-size! d! 100 240))})
-      (a
-       {:style ui/link,
-        :inner-text "240x60",
-        :on-click (fn [e d! m!] (change-size! d! 240 60))})
-      (a
-       {:style ui/link,
-        :inner-text "Full",
-        :on-click (fn [e d! m!] (change-size! d! nil nil))})
-      (=< 8 nil)
-      (input
-       {:type "checkbox",
-        :style {:cursor :pointer},
-        :checked shadows?,
-        :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))}))))))
+      {:style ui/row-parted}
+      (div
+       {:style ui/row-middle}
+       (input
+        {:style style-number,
+         :type "number",
+         :value (:width template),
+         :on-input (fn [e d! m!] (change-size! d! (:value e) (:height template)))})
+       (=< 8 nil)
+       (input
+        {:style style-number,
+         :type "number",
+         :value (:height template),
+         :on-input (fn [e d! m!] (change-size! d! (:width template) (:value e)))})
+       (=< 8 nil)
+       (a
+        {:style ui/link,
+         :inner-text "100x240",
+         :on-click (fn [e d! m!] (change-size! d! 100 240))})
+       (a
+        {:style ui/link,
+         :inner-text "240x60",
+         :on-click (fn [e d! m!] (change-size! d! 240 60))})
+       (a
+        {:style ui/link,
+         :inner-text "Full",
+         :on-click (fn [e d! m!] (change-size! d! nil nil))})
+       (=< 8 nil)
+       (input
+        {:type "checkbox",
+         :style {:cursor :pointer},
+         :checked shadows?,
+         :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))})
+       (<> "shadows?" {:color (hsl 0 0 70)}))
+      (<>
+       active-names
+       {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70), :margin-right 8}))))))
 
 (defn get-mocks [mocks] (->> mocks (map (fn [[k m]] {:value k, :display (:name m)}))))
