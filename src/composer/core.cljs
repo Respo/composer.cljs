@@ -104,14 +104,14 @@
 (defn get-preset [preset]
   (case preset
     :flex ui/flex
-    :expand (merge ui/flex {:scroll :auto})
-    :font-code {:font-family ui/font-code}
-    :font-fancy {:font-family ui/font-fancy}
-    :font-normal {:font-family ui/font-normal}
-    :fullscreen ui/fullscreen
-    :scroll {:overflow :auto}
-    :global ui/global
-    :base-padding {:padding "4px 8px"}
+    :expand (merge (use-string-keys ui/flex) {"scroll" :auto})
+    :font-code {"font-family" ui/font-code}
+    :font-fancy {"font-family" ui/font-fancy}
+    :font-normal {"font-family" ui/font-normal}
+    :fullscreen (use-string-keys ui/fullscreen)
+    :scroll {"overflow" :auto}
+    :global (use-string-keys ui/global)
+    :base-padding {"padding" "4px 8px"}
     (do (js/console.warn (str "Unknown preset: " preset)) nil)))
 
 (defn style-presets [presets] (->> presets (map get-preset) (apply merge)))
