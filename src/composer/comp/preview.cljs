@@ -19,7 +19,7 @@
 
 (defcomp
  comp-preview
- (states templates focus-to shadows?)
+ (states templates focus-to shadows? focuses)
  (let [template-id (:template-id focus-to)
        template (get templates template-id)
        mock-id (:mock-pointer template)
@@ -27,10 +27,13 @@
        change-size! (fn [d! w h]
                       (d!
                        :template/set-preview-sizes
-                       {:template-id template-id, :width w, :height h}))]
+                       {:template-id template-id, :width w, :height h}))
+       active-templates (->> focuses
+                             (map (fn [[k info]] (get-in info [:focus :template-id])))
+                             (set))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :templates comp-templates-list states templates template-id)
+    (cursor-> :templates comp-templates-list states templates template-id active-templates)
     (div
      {:style (merge ui/flex ui/column)}
      (div

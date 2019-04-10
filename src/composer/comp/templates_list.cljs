@@ -15,7 +15,7 @@
 
 (defcomp
  comp-templates-list
- (states templates template-id)
+ (states templates template-id active-templates)
  (let [state (or (:data states) {:name nil})]
    (div
     {:style {:padding "8px 16px", :width 160, :border-right "1px solid #eee"}}
@@ -41,9 +41,12 @@
                          {:cursor :pointer,
                           :padding "0px 8px",
                           :line-height "32px",
-                          :border-bottom "1px solid #eee"}
+                          :border-bottom "1px solid #eee",
+                          :border-color (hsl 0 0 94)}
+                         (if (contains? active-templates (:id template))
+                           {:border-color (hsl 200 80 80)})
                          (if (= template-id (:id template))
-                           {:background-color (hsl 0 0 90)})),
+                           {:background-color (hsl 200 80 90)})),
                  :on-click (fn [e d! m!]
                    (d!
                     :session/focus-to

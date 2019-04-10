@@ -16,11 +16,12 @@
  (db session records)
  (let [logged-in? (some? (:user-id session))
        router (:router session)
-       base-data {:logged-in? logged-in?, :session session, :reel-length (count records)}]
+       base-data {:logged-in? logged-in?, :session session, :reel-length (count records)}
+       user (get-in db [:users (:user-id session)])]
    (merge
     base-data
     (if logged-in?
-      {:user (twig-user (get-in db [:users (:user-id session)])),
+      {:user (twig-user user),
        :router (assoc
                 router
                 :data
@@ -33,5 +34,9 @@
        :color (color/randomColor),
        :templates (:templates db),
        :templates-modified? (not (identical? (:templates db) (:saved-templates db))),
-       :settings (:settings db)}
+       :settings (:settings db),
+       :focuses (->> (:sessions db)
+                     (filter (fn [[k s]] (not= k (:id session))))
+                     (map (fn [[k s]] [k {:user (twig-user user), :focus (:focus-to s)}]))
+                     (into {}))}
       nil))))

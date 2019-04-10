@@ -23,14 +23,17 @@
 
 (defcomp
  comp-workspace
- (states templates settings focus-to)
+ (states templates settings focus-to focuses)
  (let [tab (:tab focus-to)
        template-id (:template-id focus-to)
        template (get templates template-id)
-       focused-path (:path focus-to)]
+       focused-path (:path focus-to)
+       active-templates (->> focuses
+                             (map (fn [[k info]] (get-in info [:focus :template-id])))
+                             (set))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :list comp-templates-list states templates template-id)
+    (cursor-> :list comp-templates-list states templates template-id active-templates)
     (if (nil? template)
       (div
        {:style (merge
