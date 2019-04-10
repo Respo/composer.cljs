@@ -86,7 +86,7 @@
              focus-to
              (:shadows? session)
              focuses)
-          :overview (cursor-> :overview comp-overview states templates)
+          :overview (cursor-> :overview comp-overview states templates focuses)
           :profile (comp-profile (:user store) (:data router))
           :settings (cursor-> :settings comp-settings states settings)
           (<> router))
