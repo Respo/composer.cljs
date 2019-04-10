@@ -30,7 +30,13 @@
        focused-path (:path focus-to)
        active-templates (->> focuses
                              (map (fn [[k info]] (get-in info [:focus :template-id])))
-                             (set))]
+                             (set))
+       active-paths (->> focuses
+                         (filter
+                          (fn [[k info]]
+                            (= template-id (get-in info [:focus :template-id]))))
+                         (map (fn [[k info]] (get-in info [:focus :path])))
+                         (set))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
     (cursor-> :list comp-templates-list states templates template-id active-templates)
@@ -52,7 +58,8 @@
          tab
          (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)}))))
        (case (or tab :editor)
-         :editor (cursor-> :editor comp-editor states template settings focused-path)
+         :editor
+           (cursor-> :editor comp-editor states template settings focused-path active-paths)
          :mocks
            (cursor->
             :mock

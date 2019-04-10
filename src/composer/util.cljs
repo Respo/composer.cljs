@@ -1,6 +1,16 @@
 
 (ns composer.util )
 
+(defn path-includes? [xs ys]
+  (if (empty? ys)
+    true
+    (if (empty? xs) false (if (= (first xs) (first ys)) (recur (rest xs) (rest ys)) false))))
+
+(defn filter-path-set [paths p]
+  (let [result (->> paths (filter (fn [path] (path-includes? p path))) (set))]
+    (println paths p result)
+    result))
+
 (defn neaten-templates [templates]
   (->> templates vals (map (fn [template] [(:name template) (:markup template)])) (into {})))
 

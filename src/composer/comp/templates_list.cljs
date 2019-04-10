@@ -46,7 +46,7 @@
                          (if (contains? active-templates (:id template))
                            {:border-color (hsl 200 80 80)})
                          (if (= template-id (:id template))
-                           {:background-color (hsl 200 80 90)})),
+                           {:background-color (hsl 0 0 94)})),
                  :on-click (fn [e d! m!]
                    (d!
                     :session/focus-to
