@@ -46,13 +46,18 @@
   (let [mock-id "base"
         base-markup (merge schema/markup {:type :box, :layout :row})
         new-mock (merge schema/mock {:id mock-id, :name "base", :data {}})
+        sort-dict (->> (:templates db)
+                       (map (fn [[k template]] [(:sort-key template) k]))
+                       (into {}))
+        next-key (key-prepend sort-dict)
         new-template (merge
                       schema/template
                       {:id op-id,
                        :name op-data,
                        :markup base-markup,
                        :mocks {mock-id new-mock},
-                       :mock-pointer mock-id})]
+                       :mock-pointer mock-id,
+                       :sort-key next-key})]
     (assoc-in db [:templates op-id] new-template)))
 
 (defn fork-mock [db op-data sid op-id op-time]
@@ -74,6 +79,25 @@
       (recur next-container (key-after next-container picked-id) (rest xs)))))
 
 (defn mark-saved [db op-data sid op-id op-time] (assoc db :saved-templates (:templates db)))
+
+(defn move-order [db op-data sid op-id op-time]
+  (let [from-id (:from op-data), to-id (:to op-data)]
+    (if (= from-id to-id)
+      db
+      (update
+       db
+       :templates
+       (fn [templates]
+         (let [sort-dict (->> templates
+                              (map (fn [[k template]] [(:sort-key template) k]))
+                              (into {}))
+               from-key (get-in templates [from-id :sort-key])
+               to-key (get-in templates [to-id :sort-key])
+               next-key (case (compare from-key to-key)
+                          -1 (key-after sort-dict to-key)
+                          1 (key-before sort-dict to-key)
+                          to-key)]
+           (assoc-in templates [from-id :sort-key] next-key)))))))
 
 (defn prepend-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), focused-path (:path op-data)]

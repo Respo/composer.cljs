@@ -33,6 +33,7 @@
       (list->
        {}
        (->> templates
+            (sort-by (fn [[k template]] (:sort-key template)))
             (map-val
              (fn [template]
                (div
@@ -46,5 +47,15 @@
                  :on-click (fn [e d! m!]
                    (d!
                     :session/focus-to
-                    {:template-id (:id template), :path [], :mock-id nil}))}
-                (<> (:name template)))))))))))
+                    {:template-id (:id template), :path [], :mock-id nil})),
+                 :draggable true,
+                 :on-dragstart (fn [e d! m!]
+                   (-> e :event .-dataTransfer (.setData "text" (:id template)))),
+                 :on-dragover (fn [e d! m!] (.preventDefault (:event e))),
+                 :on-drop (fn [e d! m!]
+                   (let [drag-id (-> e :event .-dataTransfer (.getData "text"))]
+                     (d! :template/move-order {:from drag-id, :to (:id template)})))}
+                (<> (:name template))
+                (<>
+                 (:sort-key template)
+                 {:color (hsl 0 0 90), :font-size 12, :margin-left 4}))))))))))

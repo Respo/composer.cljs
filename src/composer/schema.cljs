@@ -28,7 +28,8 @@
    :mock-pointer nil,
    :markup (do markup nil),
    :width 400,
-   :height 400})
+   :height 400,
+   :sort-key nil})
 
 (def user {:name nil, :id nil, :nickname nil, :avatar nil, :password nil})
 
