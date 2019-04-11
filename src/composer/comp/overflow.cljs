@@ -14,7 +14,7 @@
 
 (defcomp
  comp-overview
- (states templates)
+ (states templates focuses)
  (let [tmpls (neaten-templates templates), state (or (:data states) {:filter ""})]
    (div
     {:style (merge ui/flex ui/column {:overflow :auto, :background-color (hsl 0 0 94)})}
@@ -50,8 +50,22 @@
                 (div
                  {:style (merge ui/row {:margin "16px 0px"})}
                  (div
-                  {:style {:font-family ui/font-fancy, :font-size 20, :min-width 120}}
-                  (<> (:name template)))
+                  {:style (merge ui/column {:min-width 120, :max-width 240})}
+                  (<> (:name template) {:font-family ui/font-fancy, :font-size 20})
+                  (let [active-names (->> focuses
+                                          (map last)
+                                          (filter
+                                           (fn [info]
+                                             (= k (get-in info [:focus :template-id]))))
+                                          (map (fn [info] (get-in info [:user :name])))
+                                          (string/join ", "))]
+                    (<>
+                     active-names
+                     {:word-break :break-all,
+                      :font-size 12,
+                      :font-family ui/font-fancy,
+                      :line-height "16px",
+                      :color (hsl 0 0 70)})))
                  (if (empty? (:mocks template))
                    (div
                     {:style {:padding 8}}

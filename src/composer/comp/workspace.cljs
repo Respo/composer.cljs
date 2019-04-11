@@ -23,14 +23,27 @@
 
 (defcomp
  comp-workspace
- (states templates settings focus-to)
+ (states templates settings focus-to focuses)
  (let [tab (:tab focus-to)
        template-id (:template-id focus-to)
        template (get templates template-id)
-       focused-path (:path focus-to)]
+       focused-path (:path focus-to)
+       active-templates (->> focuses
+                             (map (fn [[k info]] (get-in info [:focus :template-id])))
+                             (set))
+       focus-in-template (->> focuses
+                              (filter
+                               (fn [[k info]]
+                                 (= template-id (get-in info [:focus :template-id])))))
+       active-names (->> focus-in-template
+                         (map (fn [[k info]] (get-in info [:user :name])))
+                         (string/join ", "))
+       active-paths (->> focus-in-template
+                         (map (fn [[k info]] (get-in info [:focus :path])))
+                         (set))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :list comp-templates-list states templates template-id)
+    (cursor-> :list comp-templates-list states templates template-id active-templates)
     (if (nil? template)
       (div
        {:style (merge
@@ -43,13 +56,17 @@
       (div
        {:style (merge ui/flex ui/column {:overflow :auto})}
        (div
-        {:style {:border-bottom "1px solid #ddd", :padding-top "8px"}}
+        {:style (merge
+                 ui/row-parted
+                 {:border-bottom "1px solid #ddd", :padding-top "8px", :padding-right 8})}
         (comp-tabs
          template-tabs
          tab
-         (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)}))))
+         (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)})))
+        (<> active-names {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70)}))
        (case (or tab :editor)
-         :editor (cursor-> :editor comp-editor states template settings focused-path)
+         :editor
+           (cursor-> :editor comp-editor states template settings focused-path active-paths)
          :mocks
            (cursor->
             :mock

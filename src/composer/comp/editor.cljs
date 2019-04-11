@@ -17,7 +17,8 @@
             [composer.comp.dict-editor :refer [comp-dict-editor]]
             [composer.style :as style]
             [bisection-key.core :as bisection]
-            [favored-edn.core :refer [write-edn]])
+            [favored-edn.core :refer [write-edn]]
+            [composer.util :refer [filter-path-set]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def node-layouts
@@ -98,15 +99,16 @@
 
 (defcomp
  comp-markup
- (markup path focused-path)
+ (markup path focused-path active-paths)
  (div
   {:style (merge
            {:padding "4px 4px 1px 4px",
-            :border (<< "1px solid ~(hsl 0 0 88)"),
-            :border-bottom nil,
-            :border-right nil}
+            :border-style "solid",
+            :border-width "1px 0 0 1px",
+            :border-color (hsl 0 0 94)}
+           (if (contains? active-paths path) {:border-color (hsl 200 80 80)})
            (if (empty? (:children markup)) {:display :inline-block})
-           (if (empty? path) {:border :none, :padding 0}))}
+           (if (and false (empty? path)) {:border :none, :padding 0}))}
   (div
    {:style (merge
             style-element
@@ -118,13 +120,20 @@
             {:padding-left 8, :margin-left 8}
             (let [amount (count (:children markup))]
               (if (or (<= amount 1)
-                      (and (<= amount 5 )
+                      (and (<= amount 5)
                            (every? (fn [x] (empty? (:children markup))) (:children markup))))
                 {:display :inline-block})))}
    (->> (:children markup)
         (sort-by (fn [[k child-markup]] k))
         (map
-         (fn [[k child-markup]] [k (comp-markup child-markup (conj path k) focused-path)]))))))
+         (fn [[k child-markup]]
+           (let [next-path (conj path k)]
+             [k
+              (comp-markup
+               child-markup
+               next-path
+               focused-path
+               (filter-path-set active-paths next-path))])))))))
 
 (defn get-mocks [mocks] (->> mocks (map (fn [[k m]] {:value k, :display (:name m)}))))
 
@@ -266,7 +275,7 @@
 
 (defcomp
  comp-editor
- (states template settings focused-path)
+ (states template settings focused-path active-paths)
  (div
   {:style (merge ui/flex ui/row {:overflow :auto})}
   (div
@@ -275,7 +284,7 @@
    (cursor-> :operations comp-operations states (:id template) (or focused-path []))
    (div
     {:style (merge ui/flex {:overflow :auto, :padding "0 8px"})}
-    (comp-markup (:markup template) [] focused-path)
+    (comp-markup (:markup template) [] focused-path active-paths)
     (when config/dev? (comp-inspect "Markup" (:markup template) {:bottom 0}))))
   (div {:style {:width 1, :background-color "#eee"}})
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
