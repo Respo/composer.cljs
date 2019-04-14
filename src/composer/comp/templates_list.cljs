@@ -27,7 +27,9 @@
       comp-prompt
       states
       {:trigger (comp-icon :plus {:font-size 15, :color (hsl 0 0 30), :cursor :pointer} nil)}
-      (fn [result d! m!] (when-not (string/blank? result) (d! :template/create result)))))
+      (fn [result d! m!]
+        (when-not (string/blank? result)
+          (d! :template/create {:name result, :template-id template-id})))))
     (if (empty? templates)
       (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70)}} (<> "No templates"))
       (list->
