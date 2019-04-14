@@ -222,7 +222,7 @@
   {:box ["param"],
    :space ["width" "height"],
    :divider ["kind" "color"],
-   :text ["value"],
+   :text ["value" "data"],
    :some ["value" "kind"],
    :button ["text" "param"],
    :link ["text" "href" "param"],
@@ -233,7 +233,7 @@
    :slot ["dom"],
    :inspect ["value"],
    :popup ["visible"],
-   :case ["value"],
+   :case ["value" "options"],
    :element ["name"],
    :markdown ["text"],
    :image ["src" "mode" "width" "height"]})

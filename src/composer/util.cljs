@@ -9,6 +9,11 @@
 (defn filter-path-set [paths p]
   (->> paths (filter (fn [path] (path-includes? path p))) (set)))
 
+(defn index-of
+  ([xs y] (index-of 0 xs y))
+  ([idx xs y]
+   (cond (empty? xs) nil (= (first xs) y) idx :else (recur (inc idx) (rest xs) y))))
+
 (defn neaten-templates [templates]
   (->> templates vals (map (fn [template] [(:name template) (:markup template)])) (into {})))
 

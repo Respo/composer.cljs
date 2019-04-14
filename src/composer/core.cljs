@@ -23,7 +23,7 @@
             [cljs.reader :refer [read-string]]
             [respo.util.detect :refer [component? element?]]
             [respo-md.comp.md :refer [comp-md-block]]
-            [composer.util :refer [use-string-keys]])
+            [composer.util :refer [use-string-keys index-of]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (declare render-some)
@@ -41,6 +41,8 @@
 (declare render-template)
 
 (declare read-by-marks)
+
+(declare render-case)
 
 (declare render-list)
 
@@ -317,8 +319,12 @@
     (if (and (nil? width) (nil? height)) (comp-invalid "<Space nil>" props) (=< width height))))
 
 (defn render-text [markup context]
-  (let [props (:props markup), value (read-token (get props "value") (:data context))]
-    (<> (or value "TEXT") (merge (style-presets (:presets markup)) (:style markup)))))
+  (let [props (:props markup)
+        value (read-token (get props "value") (:data context))
+        data (read-token (get props "data") (:data context))]
+    (<>
+     (or (string/replace value "~{data}" data) "TEXT")
+     (merge (style-presets (:presets markup)) (:style markup)))))
 
 (def style-unknown {"font-size" 12, "color" :red})
 
@@ -409,9 +415,11 @@
     :element (render-element markup context on-action)
     :markdown (render-markdown markup context)
     :image (render-image markup context)
-    (div
-     {:style style-unknown}
-     (comp-invalid (str "Bad type: " (pr-str (:type markup))) markup))))
+    :case (render-case markup context on-action)
+    :rende
+      (div
+       {:style style-unknown}
+       (comp-invalid (str "Bad type: " (pr-str (:type markup))) markup))))
 
 (defn render-list [markup context on-action]
   (let [props (:props markup)
@@ -470,6 +478,25 @@
   (->> children
        (sort-by first)
        (map (fn [[k child]] [k (render-markup child context on-action)]))))
+
+(defn render-case [markup context on-action]
+  (let [props (:props markup)
+        value (read-token (get props "value") (:data context))
+        options (read-token (get props "options") (:data context))
+        options-size (count options)
+        children-size (count (:children markup))
+        children-vec (->> (:children markup) (sort-by first) (map last) (vec))]
+    (cond
+      (not (vector? options)) (comp-invalid "Options need to be a vector" props)
+      (not= children-size (inc options-size))
+        (comp-invalid
+         (<< "Children size ~{children-size} not matchhing 1+~{options-size}")
+         props)
+      :else
+        (let [idx (index-of options value)]
+          (if (nil? idx)
+            (render-markup (first children-vec) context on-action)
+            (render-markup (get children-vec (inc idx)) context on-action))))))
 
 (defn render-box [markup context on-action]
   (let [props (:props markup)
