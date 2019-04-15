@@ -49,11 +49,16 @@
         sort-dict (->> (:templates db)
                        (map (fn [[k template]] [(:sort-key template) k]))
                        (into {}))
-        next-key (key-prepend sort-dict)
+        new-name (:name op-data)
+        base-template-id (:template-id op-data)
+        base-sort-key (get-in db [:templates base-template-id :sort-key])
+        next-key (if (some? base-sort-key)
+                   (key-before sort-dict base-sort-key)
+                   (key-prepend sort-dict))
         new-template (merge
                       schema/template
                       {:id op-id,
-                       :name op-data,
+                       :name new-name,
                        :markup base-markup,
                        :mocks {mock-id new-mock},
                        :mock-pointer mock-id,

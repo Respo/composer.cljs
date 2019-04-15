@@ -49,6 +49,7 @@
    {:value :template, :kind :control, :display "Template"}
    {:value :list, :kind :control, :display "List"}
    {:value :slot, :kind :control, :display "Slot"}
+   {:value :case, :kind :control, :display "Case"}
    {:value :inspect, :kind :devtool, :display "Inspect"}
    {:value :popup, :kind :layout, :display "Popup"}
    {:value :element, :kind :advanced, :display "Element"}
