@@ -93,28 +93,33 @@
        (into {})))
 
 (defn get-layout [layout]
-  (case layout
-    :row ui/row
-    :row-center ui/row-center
-    :center ui/center
-    :row-middle ui/row-middle
-    :row-parted ui/row-parted
-    :column ui/column
-    :column-parted ui/column-parted
-    {}))
+  (use-string-keys
+   (case layout
+     :row ui/row
+     :row-center ui/row-center
+     :center ui/center
+     :row-middle ui/row-middle
+     :row-parted ui/row-parted
+     :column ui/column
+     :column-parted ui/column-parted
+     {})))
 
 (defn get-preset [preset]
-  (case preset
-    :flex ui/flex
-    :expand (merge (use-string-keys ui/flex) {"scroll" :auto})
-    :font-code {"font-family" ui/font-code}
-    :font-fancy {"font-family" ui/font-fancy}
-    :font-normal {"font-family" ui/font-normal}
-    :fullscreen (use-string-keys ui/fullscreen)
-    :scroll {"overflow" :auto}
-    :global (use-string-keys ui/global)
-    :base-padding {"padding" "4px 8px"}
-    (do (js/console.warn (str "Unknown preset: " preset)) nil)))
+  (use-string-keys
+   (case preset
+     :flex ui/flex
+     :expand (merge ui/flex {"scroll" :auto})
+     :font-code {"font-family" ui/font-code}
+     :font-fancy {"font-family" ui/font-fancy}
+     :font-normal {"font-family" ui/font-normal}
+     :fullscreen ui/fullscreen
+     :scroll {"overflow" :auto}
+     :global ui/global
+     :base-padding {"padding" "4px 8px"}
+     (do (js/console.warn (str "Unknown preset: " preset)) nil))))
+
+(defn read-styles [style data]
+  (->> style (map (fn [[k v]] [k (read-token v data)])) (into {})))
 
 (defn style-presets [presets] (->> presets (map get-preset) (apply merge)))
 
@@ -136,7 +141,10 @@
     (button
      (merge
       (eval-attrs (:attrs markup) (:data context))
-      {:style (merge ui/button (style-presets (:presets markup)) (:style markup)),
+      {:style (merge
+               ui/button
+               (style-presets (:presets markup))
+               (read-styles (:style markup) (:data context))),
        :inner-text (or text "Submit"),
        :on event-map}))))
 
@@ -171,7 +179,7 @@
                        (into {}))]
     (if (some? obj)
       (i
-       {:style (merge {:display :inline-block, :cursor :pointer} (:style markup)),
+       {:style (merge {"display" :inline-block, "cursor" :pointer} (:style markup)),
         :innerHTML (.toSvg obj (clj->js {:width size, :height size, :color color})),
         :on event-map})
       (comp-invalid (str "No icon: " icon-name) props))))
@@ -192,21 +200,22 @@
           {:style (merge
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
-                   (:style markup))}))
+                   (read-styles (:style markup) (:data context)))}))
       (contains? #{:contain :cover} mode)
         (div
          (merge
           (eval-attrs (:attrs markup) (:data context))
           {:style (merge
-                   {:background-image (<< "url(~{src})"),
-                    :background-size mode,
-                    :width width,
-                    :height height,
-                    :background-position :center,
-                    :background-repeat :no-repeat}
+                   (use-string-keys
+                    {:background-image (<< "url(~{src})"),
+                     :background-size mode,
+                     :width width,
+                     :height height,
+                     :background-position :center,
+                     :background-repeat :no-repeat})
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
-                   (:style markup))}))
+                   (read-styles (:style markup) (:data context)))}))
       :else (comp-invalid (<< "Bad image mode: ~(pr-str mode)") props))))
 
 (defn render-input [markup context on-action]
@@ -237,7 +246,7 @@
          :style (merge
                  (use-string-keys ui/textarea)
                  (style-presets (:presets markup))
-                 (:style markup)),
+                 (read-styles (:style markup) (:data context))),
          :on event-map}))
       (input
        (merge
@@ -246,7 +255,7 @@
          :style (merge
                  (use-string-keys ui/input)
                  (style-presets (:presets markup))
-                 (:style markup)),
+                 (read-styles (:style markup) (:data context))),
          :on event-map})))))
 
 (def style-inspect
@@ -290,7 +299,10 @@
     (a
      (merge
       (eval-attrs (:attrs markup) (:data context))
-      {:style (merge ui/link (style-presets (:presets markup)) (:style markup)),
+      {:style (merge
+               (use-string-keys ui/link)
+               (style-presets (:presets markup))
+               (read-styles (:style markup) (:data context))),
        :inner-text (or text "Submit"),
        :href (or href "#"),
        :on event-map}))))
@@ -301,7 +313,9 @@
         class-name (get props "class")]
     (comp-md-block
      value
-     {:style (merge (style-presets (:presets markup)) (:style markup)),
+     {:style (merge
+              (style-presets (:presets markup))
+              (read-styles (:style markup) (:data context))),
       :class-name class-name})))
 
 (defn render-slot [markup context on-action]
@@ -324,7 +338,7 @@
         data (read-token (get props "data") (:data context))]
     (<>
      (or (string/replace value "~{data}" data) "TEXT")
-     (merge (style-presets (:presets markup)) (:style markup)))))
+     (merge (style-presets (:presets markup)) (read-styles (:style markup) (:data context))))))
 
 (def style-unknown {"font-size" 12, "color" :red})
 
@@ -386,13 +400,14 @@
            {:on-click (fn [e d! m!] )}
            (eval-attrs (:attrs markup) (:data context))
            {:style (merge
-                    {:margin :auto,
-                     :min-width 320,
-                     :min-height 200,
-                     :background-color (hsl 0 0 100)}
+                    (use-string-keys
+                     {:margin :auto,
+                      :min-width 320,
+                      :min-height 200,
+                      :background-color (hsl 0 0 100)})
                     (get-layout (:layout markup))
                     (style-presets (:presets markup))
-                    (:style markup))})
+                    (read-styles (:style markup) (:data context)))})
           (render-children (:children markup) context on-action)))
         (span {})))))
 
@@ -436,7 +451,7 @@
           {:style (merge
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
-                   (:style markup))})
+                   (read-styles (:style markup) (:data context)))})
          (->> value
               (map-indexed
                (fn [idx x]
@@ -470,7 +485,7 @@
       {:style (merge
                (get-layout (:layout markup))
                (style-presets (:presets markup))
-               (:style markup)),
+               (read-styles (:style markup) (:data context))),
        :on event-map})
      (render-children (:children markup) context on-action))))
 
@@ -518,6 +533,6 @@
       {:style (merge
                (get-layout (:layout markup))
                (style-presets (:presets markup))
-               (:style markup)),
+               (read-styles (:style markup) (:data context))),
        :on event-map})
      (render-children (:children markup) context on-action))))
