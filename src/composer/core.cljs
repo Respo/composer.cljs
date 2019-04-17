@@ -337,7 +337,9 @@
         value (read-token (get props "value") (:data context))
         data (read-token (get props "data") (:data context))]
     (<>
-     (or (string/replace value "~{data}" data) "TEXT")
+     (if (some? value)
+       (if (and (string? value) (some? data)) (string/replace value "~{data}" data) value)
+       "TEXT")
      (merge (style-presets (:presets markup)) (read-styles (:style markup) (:data context))))))
 
 (def style-unknown {"font-size" 12, "color" :red})
