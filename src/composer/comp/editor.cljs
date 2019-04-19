@@ -13,7 +13,7 @@
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.comp.presets :refer [comp-presets]]
             [composer.comp.type-picker :refer [comp-type-picker]]
-            [composer.comp.bg-picker :refer [comp-bg-picker comp-font-picker]]
+            [composer.comp.bg-picker :refer [comp-bg-picker comp-font-color-picker]]
             [composer.comp.dict-editor :refer [comp-dict-editor]]
             [composer.style :as style]
             [bisection-key.core :as bisection]
@@ -21,6 +21,27 @@
             [composer.util :refer [filter-path-set]]
             [composer.comp.operations :refer [comp-operations]])
   (:require-macros [clojure.core.strint :refer [<<]]))
+
+(def fontface-choices
+  [{:value ui/font-fancy, :display "Fancy"}
+   {:value ui/font-code, :display "Code"}
+   {:value ui/font-normal, :display "Normal"}])
+
+(defcomp
+ comp-fontface-picker
+ (states fontface on-select)
+ (div
+  {:style ui/row-middle}
+  (<> "Font family:" style/field-label)
+  (=< 8 nil)
+  (cursor->
+   :font-color
+   comp-select
+   states
+   fontface
+   fontface-choices
+   {:text "Select fontface"}
+   (fn [result d! m!] (on-select result d! m!)))))
 
 (defcomp
  comp-layout-name
@@ -203,9 +224,9 @@
         mock-id (:mock-pointer template)
         mock-data (if (nil? mock-id) nil (get-in template [:mocks mock-id :data]))]
     (div
-     {:style (merge ui/flex ui/row {:overflow :auto, :padding 8})}
+     {:style (merge ui/flex ui/row {:overflow :auto})}
      (div
-      {:style ui/expand}
+      {:style (merge ui/expand {:padding 8})}
       (cursor-> :type comp-type-picker states template-id focused-path child)
       (cursor-> :layout comp-layout-picker states template-id focused-path child)
       (when config/dev? (comp-inspect "Node" child {:bottom 0}))
@@ -255,19 +276,30 @@
           :template/node-style
           (merge {:template-id template-id, :path focused-path} change)))))
      (div
-      {:style ui/expand}
+      {:style (merge ui/expand {:border-left "1px solid #f4f4f4", :padding 8})}
       (cursor-> :mocks comp-mock-picker states template)
       (pre {:inner-text (write-edn mock-data), :style style-mock-data})
       (=< nil 8)
       (comp-props-hint (:type child))
       (cursor->
        :font-color
-       comp-font-picker
+       comp-font-color-picker
        states
        template-id
        focused-path
        child
        (:colors settings))
+      (cursor->
+       :fontface
+       comp-fontface-picker
+       states
+       (get-in child [:style "font-family"])
+       (fn [result d! m!]
+         (d!
+          :template/node-style
+          (merge
+           {:template-id template-id, :path focused-path}
+           {:type :set, :key "font-family", :value result}))))
       (cursor->
        :background
        comp-bg-picker
