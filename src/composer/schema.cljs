@@ -39,3 +39,32 @@
    :templates (do template {}),
    :saved-templates {},
    :settings {:colors {}}})
+
+(def node-layouts
+  [{:value :row, :display "Row", :kind :row}
+   {:value :row-middle, :display "Row Middle", :kind :row}
+   {:value :row-parted, :display "Row Parted", :kind :row}
+   {:value :column, :display "Column", :kind :column}
+   {:value :column-parted, :display "Column Parted", :kind :column}
+   {:value :center, :display "Center", :kind :center}
+   {:value :row-center, :display "Row Center", :kind :center}])
+
+(def props-hints
+  {:box ["param"],
+   :space ["width" "height"],
+   :divider ["kind" "color"],
+   :text ["value" "data"],
+   :some ["value" "kind"],
+   :button ["text" "param"],
+   :link ["text" "href" "param"],
+   :icon ["name" "color" "param"],
+   :template ["name" "data"],
+   :list ["value"],
+   :input ["value" "textarea" "param"],
+   :slot ["dom"],
+   :inspect ["value"],
+   :popup ["visible"],
+   :case ["value" "options"],
+   :element ["name"],
+   :markdown ["text"],
+   :image ["src" "mode" "width" "height"]})
