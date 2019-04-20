@@ -1,6 +1,6 @@
 {
   "name": "@respo/composer-app",
-  "version": "0.1.6-a1",
+  "version": "0.1.6-a4",
   "description": "Composer app creator for Respo",
   "main": "index.js",
   "bin": {
@@ -16,6 +16,7 @@
     "serve": "http-server dist -s",
     "ln": "cd target && rm -f entry && ln -s ../entry",
     "pkg": "rm -rf dist && shadow-cljs release server",
+    "prepare": "yarn pkg",
     "prod": "yarn install --production"
   },
   "repository": {

@@ -15,7 +15,8 @@
             [recollect.diff :refer [diff-twig]]
             [recollect.twig :refer [render-twig]]
             [ws-edn.server :refer [wss-serve! wss-send! wss-each!]]
-            [favored-edn.core :refer [write-edn]])
+            [favored-edn.core :refer [write-edn]]
+            [composer.util :refer [pick-port! specified-port!]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defonce *client-caches (atom {}))
@@ -94,9 +95,9 @@
     (sync-clients! @*reader-reel))
   (delay! 0.12 render-loop!))
 
-(defn run-server! []
+(defn run-server! [port]
   (wss-serve!
-   (:port config/site)
+   port
    {:on-open (fn [sid socket]
       (dispatch! :session/connect nil sid)
       (js/console.info "New client.")),
@@ -111,12 +112,15 @@
 
 (defn main! []
   (println "Running mode:" (if config/dev? "dev" "release"))
-  (run-server!)
+  (pick-port!
+   (or (specified-port!) (:port config/site))
+   (fn [port]
+     (run-server! port)
+     (let [link (.blue chalk (<< "http://composer.respo-mvc.org?port=~{port}"))]
+       (println (<< "port ~{port} is ok, please edit on ~{link}")))))
   (render-loop!)
   (js/process.on "SIGINT" on-exit!)
   (comment repeat! 600 #(persist-db!))
-  (println
-   (<< "Server started. Open ~(.blue chalk \"http://composer.respo-mvc.org/\") to edit."))
   (check-version!))
 
 (defn reload! []
