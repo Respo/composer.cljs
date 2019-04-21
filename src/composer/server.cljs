@@ -16,7 +16,9 @@
             [recollect.twig :refer [render-twig]]
             [ws-edn.server :refer [wss-serve! wss-send! wss-each!]]
             [favored-edn.core :refer [write-edn]]
-            [composer.util :refer [pick-port! specified-port!]])
+            [composer.util :refer [specified-port!]]
+            [clojure.core.async :refer [go <!]]
+            [cumulo-util.file :refer [chan-pick-port]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defonce *client-caches (atom {}))
@@ -112,9 +114,8 @@
 
 (defn main! []
   (println "Running mode:" (if config/dev? "dev" "release"))
-  (pick-port!
-   (or (specified-port!) (:port config/site))
-   (fn [port]
+  (go
+   (let [port (<! (chan-pick-port (or (specified-port!) (:port config/site))))]
      (run-server! port)
      (let [link (.blue chalk (<< "http://composer.respo-mvc.org?port=~{port}"))]
        (println (<< "port ~{port} is ok, please edit on ~{link}")))))
