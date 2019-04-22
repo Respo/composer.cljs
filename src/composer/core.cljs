@@ -109,9 +109,6 @@
    (case preset
      :flex ui/flex
      :expand (merge ui/flex {"scroll" :auto})
-     :font-code {"font-family" ui/font-code}
-     :font-fancy {"font-family" ui/font-fancy}
-     :font-normal {"font-family" ui/font-normal}
      :fullscreen ui/fullscreen
      :scroll {"overflow" :auto}
      :global ui/global

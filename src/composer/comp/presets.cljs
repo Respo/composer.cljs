@@ -11,9 +11,7 @@
             [composer.style :as style]))
 
 (def builtin-presets
-  {"Fonts" [:font-code :font-fancy :font-normal],
-   "Layouts" [:expand :fullscreen :base-padding],
-   "Features" [:scroll :global]})
+  {"Layouts" [:expand :fullscreen :base-padding], "Features" [:scroll :global]})
 
 (defcomp
  comp-preset

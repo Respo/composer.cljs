@@ -79,7 +79,7 @@
        (cursor-> :panel comp-color-panel states colors bg-color set-color! on-toggle))))))
 
 (defcomp
- comp-font-picker
+ comp-font-color-picker
  (states template-id path markup colors)
  (let [init-color (or (get-in markup [:style "color"]) (hsl 0 0 100))
        set-color! (fn [color d!]

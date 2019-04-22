@@ -1,5 +1,5 @@
 
-(ns composer.util )
+(ns composer.util (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defn path-includes? [xs ys]
   (if (empty? ys)
@@ -18,5 +18,8 @@
   (->> templates vals (map (fn [template] [(:name template) (:markup template)])) (into {})))
 
 (defn path-with-children [path] (concat [:children] (interleave path (repeat :children))))
+
+(defn specified-port! []
+  (let [raw js/process.env.port] (if (some? raw) (js/parseInt raw) nil)))
 
 (defn use-string-keys [x] (->> x (map (fn [[k v]] [(name k) v])) (into {})))
