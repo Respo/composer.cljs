@@ -345,16 +345,24 @@
   (let [templates (:templates context)
         data (:data context)
         props (:props markup)
-        template-name (read-token (get props "name") (:data context))]
+        template-name (read-token (get props "name") (:data context))
+        data-prop (get props "data")]
     (cond
       (> (:level context) 10) (comp-invalid "<Bad template: too much levels>" props)
       (not (string? template-name))
         (comp-invalid (<< "<Invalid template name: ~(pr-str template-name)>") props)
+      (and (nil? data-prop) (empty? (:attrs markup)))
+        (comp-invalid (<< "<template data missing, no data, no attrs>") props)
       :else
-        (render-markup
-         (get templates template-name)
-         (-> context (assoc :data (read-token (get props "data") data)) (update :level inc))
-         on-action))))
+        (let [template-props (if (some? data-prop)
+                               (read-token data-prop data)
+                               (->> (:attrs markup)
+                                    (map (fn [[k v]] [(keyword k) (read-token v data)]))
+                                    (into {})))]
+          (render-markup
+           (get templates template-name)
+           (-> context (assoc :data template-props) (update :level inc))
+           on-action)))))
 
 (defn render-some [markup context on-action]
   (let [props (:props markup)
