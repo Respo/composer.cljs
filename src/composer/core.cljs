@@ -448,7 +448,8 @@
         value (read-token (get props "value") (:data context))
         only-child (first (vals (:children markup)))]
     (cond
-      (not (sequential? value)) (comp-invalid (<< "<Bad list: ~(pr-str value)>") props)
+      (not (or (sequential? value) (map? value)))
+        (comp-invalid (<< "<Bad list value: ~(pr-str value)>") props)
       (> (count (:children markup)) 1) (comp-invalid "<Bad list: too many children>" props)
       (nil? only-child) (comp-invalid (<< "<Bad list: no children>") props)
       :else
@@ -459,15 +460,19 @@
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
                    (read-styles (:style markup) (:data context)))})
-         (->> value
-              (map-indexed
-               (fn [idx x]
-                 [idx
-                  (let [new-context (assoc
-                                     context
-                                     :data
-                                     {:index idx, :outer (:data context), :item x})]
-                    (render-markup only-child new-context on-action))])))))))
+         (let [pairs (if (map? value)
+                       (->> value (sort-by (fn [[k v]] k)))
+                       (->> value (map-indexed (fn [idx v] [idx v]))))]
+           (->> pairs
+                (map
+                 (fn [[k x]]
+                   (println "child" k x)
+                   [k
+                    (let [new-context (assoc
+                                       context
+                                       :data
+                                       {:index k, :outer (:data context), :item x})]
+                      (render-markup only-child new-context on-action))]))))))))
 
 (defn render-element [markup context on-action]
   (let [props (:props markup)
