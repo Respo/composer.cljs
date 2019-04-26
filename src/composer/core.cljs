@@ -466,7 +466,6 @@
            (->> pairs
                 (map
                  (fn [[k x]]
-                   (println "child" k x)
                    [k
                     (let [new-context (assoc
                                        context
