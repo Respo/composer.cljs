@@ -315,14 +315,6 @@
               (read-styles (:style markup) (:data context))),
       :class-name class-name})))
 
-(defn render-slot [markup context on-action]
-  (let [props (:props markup), dom (or (get props "dom") (:dom props))]
-    (cond
-      (component? dom) dom
-      (element? dom) dom
-      (some? dom) (<> (str "<Bad slot: " (pr-str dom) ">"))
-      :else (comp-invalid "<Empty slot>" props))))
-
 (defn render-space [markup context]
   (let [props (:props markup)
         width (read-token (get props "width") (:data context))
@@ -431,7 +423,6 @@
     :template (render-template markup context on-action)
     :input (render-input markup context on-action)
     :list (render-list markup context on-action)
-    :slot (render-slot markup context on-action)
     :popup (render-popup markup context on-action)
     :inspect (render-inspect markup context)
     :element (render-element markup context on-action)

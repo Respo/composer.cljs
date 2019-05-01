@@ -48,12 +48,12 @@
    {:value :some, :kind :control, :display "Some"}
    {:value :template, :kind :control, :display "Template"}
    {:value :list, :kind :control, :display "List"}
-   {:value :slot, :kind :control, :display "Slot"}
    {:value :case, :kind :control, :display "Case"}
    {:value :inspect, :kind :devtool, :display "Inspect"}
    {:value :popup, :kind :layout, :display "Popup"}
-   {:value :element, :kind :advanced, :display "Element"}
-   {:value :image, :kind :element, :display "Image"}])
+   {:value :element, :kind :element, :display "Element"}
+   {:value :image, :kind :element, :display "Image"}
+   {:value :func, :kind :advanced, :display "Function"}])
 
 (defn render-title [title]
   (div {:style {:font-family ui/font-fancy, :color (hsl 0 0 70), :margin-top 20}} (<> title)))

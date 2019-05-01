@@ -61,7 +61,6 @@
    :template ["name" "data"],
    :list ["value"],
    :input ["value" "textarea" "param"],
-   :slot ["dom"],
    :inspect ["value"],
    :popup ["visible"],
    :case ["value" "options"],
