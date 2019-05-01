@@ -60,7 +60,17 @@
                      :height (or (:height template) "100%"),
                      :margin :auto,
                      :position :relative})}
-           (render-markup markup {:data mock-data, :templates tmpls, :level 0} on-operation))
+           (render-markup
+            markup
+            {:data mock-data,
+             :templates tmpls,
+             :level 0,
+             :functions {:preview (fn [param style on-action children]
+                           (println "funcition" param style on-action children)
+                           (<>
+                            "No preview for function"
+                            {:color 'white, :background-color (hsl 200 80 80)}))}}
+            on-operation))
           (span
            {:style {:color (hsl 0 0 60),
                     :font-family ui/font-fancy,

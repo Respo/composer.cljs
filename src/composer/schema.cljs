@@ -66,4 +66,5 @@
    :case ["value" "options"],
    :element ["name"],
    :markdown ["text"],
-   :image ["src" "mode" "width" "height"]})
+   :image ["src" "mode" "width" "height"],
+   :function ["name" "param"]})
