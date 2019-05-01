@@ -111,7 +111,12 @@
          :style {:cursor :pointer},
          :checked shadows?,
          :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))})
-       (<> "shadows?" {:color (hsl 0 0 70)}))
+       (<> "shadows?" {:color (hsl 0 0 70)})
+       (=< 8 nil)
+       (a
+        {:style ui/link,
+         :inner-text "Emulate",
+         :on-click (fn [e d! m!] (d! :router/change {:name :emulate, :data template-id}))}))
       (<>
        active-names
        {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70), :margin-right 8}))))))

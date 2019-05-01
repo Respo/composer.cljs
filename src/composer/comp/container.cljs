@@ -16,7 +16,8 @@
             [composer.comp.workspace :refer [comp-workspace]]
             [composer.comp.preview :refer [comp-preview]]
             [composer.comp.overflow :refer [comp-overview]]
-            [composer.comp.settings :refer [comp-settings]]))
+            [composer.comp.settings :refer [comp-settings]]
+            [composer.comp.emulate :refer [comp-emulate]]))
 
 (defcomp
  comp-offline
@@ -64,39 +65,41 @@
        templates (:templates store)
        focus-to (:focus-to session)
        focuses (:focuses store)]
-   (if (nil? store)
-     (comp-offline)
-     (div
-      {:style (merge ui/global ui/fullscreen ui/column)}
-      (comp-navigation
-       (:logged-in? store)
-       (:count store)
-       router
-       (:templates-modified? store))
-      (if (:logged-in? store)
-        (case (:name router)
-          :home
-            (cursor-> :workspace comp-workspace states templates settings focus-to focuses)
-          :preview
-            (cursor->
-             :preview
-             comp-preview
-             states
-             templates
-             focus-to
-             (:shadows? session)
-             focuses)
-          :overview (cursor-> :overview comp-overview states templates focuses)
-          :profile (comp-profile (:user store) (:data router))
-          :settings (cursor-> :settings comp-settings states settings)
-          (<> router))
-        (comp-login states))
-      (comp-status-color (:color store))
-      (when dev? (comp-inspect "Store" store {:bottom 0, :left 0, :max-width "100%"}))
-      (comp-messages
-       (get-in store [:session :messages])
-       {}
-       (fn [info d! m!] (d! :session/remove-message info)))
-      (when dev? (comp-reel (:reel-length store) {:bottom 60}))))))
+   (cond
+     (nil? store) (comp-offline)
+     (= :emulate (:name router)) (comp-emulate templates (get-in session [:router :data]))
+     :else
+       (div
+        {:style (merge ui/global ui/fullscreen ui/column)}
+        (comp-navigation
+         (:logged-in? store)
+         (:count store)
+         router
+         (:templates-modified? store))
+        (if (:logged-in? store)
+          (case (:name router)
+            :home
+              (cursor-> :workspace comp-workspace states templates settings focus-to focuses)
+            :preview
+              (cursor->
+               :preview
+               comp-preview
+               states
+               templates
+               focus-to
+               (:shadows? session)
+               focuses)
+            :overview (cursor-> :overview comp-overview states templates focuses)
+            :profile (comp-profile (:user store) (:data router))
+            :settings (cursor-> :settings comp-settings states settings)
+            (<> router))
+          (comp-login states))
+        (comp-status-color (:color store))
+        (when dev? (comp-inspect "Store" store {:bottom 0, :left 0, :max-width "100%"}))
+        (comp-messages
+         (get-in store [:session :messages])
+         {}
+         (fn [info d! m!] (d! :session/remove-message info)))
+        (when dev? (comp-reel (:reel-length store) {:bottom 60}))))))
 
 (def style-body {:padding "8px 16px"})
