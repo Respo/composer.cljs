@@ -24294,7 +24294,7 @@
           :type :expr, :by "root", :at 1527867511986, :id "r1gxKOykeQ"
           :data {
            "T" {:type :leaf, :by "root", :at 1527867512819, :text ":icon", :id "r1gxKOykeQleaf"}
-           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1549626260736, :text "\"http://cdn.tiye.me/logo/respo.png", :id "B1SY_yJx7"}
+           "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1556778058730, :text "\"http://cdn.tiye.me/logo/composer.png", :id "B1SY_yJx7"}
           }
          }
          "v" {
