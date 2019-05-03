@@ -19,7 +19,7 @@
 (def site
   {:port 6011,
    :title "Composer",
-   :icon "http://cdn.tiye.me/logo/respo.png",
+   :icon "http://cdn.tiye.me/logo/composer.png",
    :dev-ui "http://localhost:8100/main.css",
    :release-ui "http://cdn.tiye.me/favored-fonts/main.css",
    :cdn-url "http://cdn.tiye.me/composer-app/",

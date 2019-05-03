@@ -19,7 +19,8 @@
             [bisection-key.core :as bisection]
             [favored-edn.core :refer [write-edn]]
             [composer.util :refer [filter-path-set]]
-            [composer.comp.operations :refer [comp-operations]])
+            [composer.comp.operations :refer [comp-operations]]
+            [feather.core :refer [comp-icon]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def fontface-choices
@@ -168,7 +169,12 @@
    {:text "Select mock"}
    (fn [result d! m!]
      (if (some? result)
-       (d! :template/use-mock {:template-id (:id template), :mock-id result}))))))
+       (d! :template/use-mock {:template-id (:id template), :mock-id result}))))
+  (=< 8 nil)
+  (comp-icon
+   :edit
+   {:font-size 14, :color (hsl 200 80 80), :cursor :pointer}
+   (fn [e d! m!] (d! :session/focus-to {:tab :mocks, :mock-id (:mock-pointer template)})))))
 
 (defcomp
  comp-props-hint

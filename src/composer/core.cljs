@@ -48,6 +48,8 @@
 
 (declare render-markup)
 
+(declare render-function)
+
 (defcomp
  comp-invalid
  (title props)
@@ -114,6 +116,11 @@
      :global ui/global
      :base-padding {"padding" "4px 8px"}
      (do (js/console.warn (str "Unknown preset: " preset)) nil))))
+
+(defn get-template-props [data-prop attrs data]
+  (if (some? data-prop)
+    (read-token data-prop data)
+    (->> attrs (map (fn [[k v]] [(keyword k) (read-token v data)])) (into {}))))
 
 (defn read-styles [style data]
   (->> style (map (fn [[k v]] [k (read-token v data)])) (into {})))
@@ -315,14 +322,6 @@
               (read-styles (:style markup) (:data context))),
       :class-name class-name})))
 
-(defn render-slot [markup context on-action]
-  (let [props (:props markup), dom (or (get props "dom") (:dom props))]
-    (cond
-      (component? dom) dom
-      (element? dom) dom
-      (some? dom) (<> (str "<Bad slot: " (pr-str dom) ">"))
-      :else (comp-invalid "<Empty slot>" props))))
-
 (defn render-space [markup context]
   (let [props (:props markup)
         width (read-token (get props "width") (:data context))
@@ -354,11 +353,7 @@
       (and (nil? data-prop) (empty? (:attrs markup)))
         (comp-invalid (<< "<template data missing, no data, no attrs>") props)
       :else
-        (let [template-props (if (some? data-prop)
-                               (read-token data-prop data)
-                               (->> (:attrs markup)
-                                    (map (fn [[k v]] [(keyword k) (read-token v data)]))
-                                    (into {})))]
+        (let [template-props (get-template-props data-prop (:attrs markup) data)]
           (render-markup
            (get templates template-name)
            (-> context (assoc :data template-props) (update :level inc))
@@ -431,17 +426,16 @@
     :template (render-template markup context on-action)
     :input (render-input markup context on-action)
     :list (render-list markup context on-action)
-    :slot (render-slot markup context on-action)
     :popup (render-popup markup context on-action)
     :inspect (render-inspect markup context)
     :element (render-element markup context on-action)
     :markdown (render-markdown markup context)
     :image (render-image markup context)
     :case (render-case markup context on-action)
-    :rende
-      (div
-       {:style style-unknown}
-       (comp-invalid (str "Bad type: " (pr-str (:type markup))) markup))))
+    :function (render-function markup context on-action)
+    (div
+     {:style style-unknown}
+     (comp-invalid (str "Bad type: " (pr-str (:type markup))) markup))))
 
 (defn render-list [markup context on-action]
   (let [props (:props markup)
@@ -472,6 +466,22 @@
                                        :data
                                        {:index k, :outer (:data context), :item x})]
                       (render-markup only-child new-context on-action))]))))))))
+
+(defn render-function [markup context on-action]
+  (let [props (:props markup)
+        param (read-token (get props "param") (:data context))
+        func-name (read-token (get props "name") (:data context))
+        styles (merge
+                (get-layout (:layout markup))
+                (style-presets (:presets markup))
+                (read-styles (:style markup) (:data context)))
+        func (get-in context [:functions func-name])
+        children (render-children (:children markup) context on-action)]
+    (cond
+      (nil? func-name) (comp-invalid "No function defined" (:props markup))
+      (not (fn? func))
+        (comp-invalid (<< "No function for ~(pr-str func-name)") (:functions context))
+      :else (func param styles on-action children))))
 
 (defn render-element [markup context on-action]
   (let [props (:props markup)

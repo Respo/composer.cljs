@@ -60,7 +60,17 @@
                      :height (or (:height template) "100%"),
                      :margin :auto,
                      :position :relative})}
-           (render-markup markup {:data mock-data, :templates tmpls, :level 0} on-operation))
+           (render-markup
+            markup
+            {:data mock-data,
+             :templates tmpls,
+             :level 0,
+             :functions {:preview (fn [param style on-action children]
+                           (println "funcition" param style on-action children)
+                           (<>
+                            "No preview for function"
+                            {:color 'white, :background-color (hsl 200 80 80)}))}}
+            on-operation))
           (span
            {:style {:color (hsl 0 0 60),
                     :font-family ui/font-fancy,
@@ -101,7 +111,12 @@
          :style {:cursor :pointer},
          :checked shadows?,
          :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))})
-       (<> "shadows?" {:color (hsl 0 0 70)}))
+       (<> "shadows?" {:color (hsl 0 0 70)})
+       (=< 8 nil)
+       (a
+        {:style ui/link,
+         :inner-text "Emulate",
+         :on-click (fn [e d! m!] (d! :router/change {:name :emulate, :data template-id}))}))
       (<>
        active-names
        {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70), :margin-right 8}))))))

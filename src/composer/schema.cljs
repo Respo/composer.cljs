@@ -49,6 +49,13 @@
    {:value :center, :display "Center", :kind :center}
    {:value :row-center, :display "Row Center", :kind :center}])
 
+(def node-types
+  {:element [:text :button :icon :input :link :image :element],
+   :layout [:box :space :divider :popup],
+   :control [:template :some :list :case],
+   :advanced [:markdown :function],
+   :devtool [:inspect]})
+
 (def props-hints
   {:box ["param"],
    :space ["width" "height"],
@@ -61,10 +68,10 @@
    :template ["name" "data"],
    :list ["value"],
    :input ["value" "textarea" "param"],
-   :slot ["dom"],
    :inspect ["value"],
    :popup ["visible"],
    :case ["value" "options"],
    :element ["name"],
    :markdown ["text"],
-   :image ["src" "mode" "width" "height"]})
+   :image ["src" "mode" "width" "height"],
+   :function ["name" "param"]})
