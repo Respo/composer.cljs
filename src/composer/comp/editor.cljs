@@ -20,7 +20,8 @@
             [favored-edn.core :refer [write-edn]]
             [composer.util :refer [filter-path-set]]
             [composer.comp.operations :refer [comp-operations]]
-            [feather.core :refer [comp-icon]])
+            [feather.core :refer [comp-icon]]
+            [clojure.string :as string])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def fontface-choices
@@ -102,12 +103,14 @@
            :inner-text "Clear",
            :on-click (fn [e d! m!] (on-pick nil d!) (on-toggle m!))}))))))))
 
+(defn display-props [xs] (->> xs (map (fn [[k v]] v)) (string/join "; ")))
+
 (def style-element
   {:display :inline-block,
    :cursor :pointer,
    :padding "0 8px",
    :margin-bottom 4,
-   :background-color (hsl 0 0 88),
+   :background-color (hsl 160 30 60),
    :color :white,
    :border-radius "4px",
    :vertical-align :top,
@@ -130,7 +133,9 @@
             style-element
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
     :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
-   (<> (name (:type markup))))
+   (<> (name (:type markup)))
+   (=< 8 nil)
+   (<> (display-props (:props markup)) {:font-size 10, :font-family ui/font-code}))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}
