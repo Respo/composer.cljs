@@ -165,10 +165,10 @@
 
 (defn render-icon [markup context on-action]
   (let [props (:props markup)
-        icon-name (get props "name" "feather")
+        icon-name (or (read-token (get props "name") (:data context)) :feather)
         size (js/parseFloat (get props "size" "16"))
         color (get props "color" (hsl 200 80 70))
-        obj (aget (.-icons icons) icon-name)
+        obj (aget (.-icons icons) (name icon-name))
         param (read-token (get props "param") (:data context))
         event-map (->> (:event markup)
                        (map
@@ -366,6 +366,7 @@
         child-pair (->> (:children markup) (sort-by first) (vals))
         result (case kind
                  :list (empty? value)
+                 :map (empty? value)
                  :boolean (or (= value false) (nil? value))
                  :string (string/blank? value)
                  :value (nil? value)
