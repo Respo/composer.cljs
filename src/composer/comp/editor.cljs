@@ -20,7 +20,8 @@
             [favored-edn.core :refer [write-edn]]
             [composer.util :refer [filter-path-set]]
             [composer.comp.operations :refer [comp-operations]]
-            [feather.core :refer [comp-icon]])
+            [feather.core :refer [comp-icon]]
+            [clojure.string :as string])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def fontface-choices
@@ -102,12 +103,14 @@
            :inner-text "Clear",
            :on-click (fn [e d! m!] (on-pick nil d!) (on-toggle m!))}))))))))
 
+(defn display-props [xs] (->> xs (map (fn [[k v]] v)) (string/join "; ")))
+
 (def style-element
   {:display :inline-block,
    :cursor :pointer,
    :padding "0 8px",
    :margin-bottom 4,
-   :background-color (hsl 0 0 88),
+   :background-color (hsl 160 30 60),
    :color :white,
    :border-radius "4px",
    :vertical-align :top,
@@ -130,7 +133,9 @@
             style-element
             (if (= path focused-path) {:background-color (hsl 200 80 70)})),
     :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
-   (<> (name (:type markup))))
+   (<> (name (:type markup)))
+   (=< 8 nil)
+   (<> (display-props (:props markup)) {:font-size 10, :font-family ui/font-code}))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}
@@ -205,7 +210,6 @@
    :background-color (hsl 0 0 98),
    :white-space :pre,
    :line-height "15px",
-   :max-height 120,
    :overflow :auto,
    :border-radius "4px",
    :word-break :break-all,
@@ -230,87 +234,95 @@
         mock-id (:mock-pointer template)
         mock-data (if (nil? mock-id) nil (get-in template [:mocks mock-id :data]))]
     (div
-     {:style (merge ui/flex ui/row {:overflow :auto})}
+     {:style (merge ui/flex ui/column {:overflow :auto})}
      (div
-      {:style (merge ui/expand {:padding 8})}
-      (cursor-> :type comp-type-picker states template-id focused-path child)
-      (cursor-> :layout comp-layout-picker states template-id focused-path child)
-      (when config/dev? (comp-inspect "Node" child {:bottom 0}))
-      (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
-      (cursor->
-       :props
-       comp-dict-editor
-       states
-       "Props:"
-       (:props child)
-       (get schema/props-hints (:type child))
-       (fn [change d! m!]
-         (d!
-          :template/node-props
-          (merge {:template-id template-id, :path focused-path} change))))
-      (cursor->
-       :event
-       comp-dict-editor
-       states
-       "Event:"
-       (:event child)
-       nil
-       (fn [change d! m!]
-         (d!
-          :template/node-event
-          (merge {:template-id template-id, :path focused-path} change))))
-      (cursor->
-       :attrs
-       comp-dict-editor
-       states
-       "Attrs:"
-       (:attrs child)
-       nil
-       (fn [change d! m!]
-         (d!
-          :template/node-attrs
-          (merge {:template-id template-id, :path focused-path} change))))
-      (cursor->
-       :style
-       comp-dict-editor
-       states
-       "Style:"
-       (:style child)
-       nil
-       (fn [change d! m!]
-         (d!
-          :template/node-style
-          (merge {:template-id template-id, :path focused-path} change)))))
+      {:style (merge ui/flex ui/row {:overflow :auto})}
+      (div
+       {:style (merge ui/expand {:padding 8})}
+       (cursor-> :type comp-type-picker states template-id focused-path child)
+       (cursor-> :layout comp-layout-picker states template-id focused-path child)
+       (when config/dev? (comp-inspect "Node" child {:bottom 0}))
+       (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
+       (cursor->
+        :props
+        comp-dict-editor
+        states
+        "Props:"
+        (:props child)
+        (get schema/props-hints (:type child))
+        (fn [change d! m!]
+          (d!
+           :template/node-props
+           (merge {:template-id template-id, :path focused-path} change))))
+       (cursor->
+        :event
+        comp-dict-editor
+        states
+        "Event:"
+        (:event child)
+        nil
+        (fn [change d! m!]
+          (d!
+           :template/node-event
+           (merge {:template-id template-id, :path focused-path} change))))
+       (cursor->
+        :attrs
+        comp-dict-editor
+        states
+        "Attrs:"
+        (:attrs child)
+        nil
+        (fn [change d! m!]
+          (d!
+           :template/node-attrs
+           (merge {:template-id template-id, :path focused-path} change))))
+       (comp-props-hint (:type child)))
+      (div
+       {:style (merge ui/expand {:border-left "1px solid #f4f4f4", :padding 8})}
+       (cursor->
+        :font-color
+        comp-font-color-picker
+        states
+        template-id
+        focused-path
+        child
+        (:colors settings))
+       (cursor->
+        :fontface
+        comp-fontface-picker
+        states
+        (get-in child [:style "font-family"])
+        (fn [result d! m!]
+          (d!
+           :template/node-style
+           (merge
+            {:template-id template-id, :path focused-path}
+            {:type :set, :key "font-family", :value result}))))
+       (cursor->
+        :background
+        comp-bg-picker
+        states
+        template-id
+        focused-path
+        child
+        (:colors settings))
+       (cursor->
+        :style
+        comp-dict-editor
+        states
+        "Style:"
+        (:style child)
+        nil
+        (fn [change d! m!]
+          (d!
+           :template/node-style
+           (merge {:template-id template-id, :path focused-path} change))))))
      (div
-      {:style (merge ui/expand {:border-left "1px solid #f4f4f4", :padding 8})}
+      {:style (merge
+               ui/flex
+               ui/column
+               {:padding 8, :overflow :auto, :border-top (str "1px solid " (hsl 0 0 94))})}
       (cursor-> :mocks comp-mock-picker states template)
-      (pre {:inner-text (write-edn mock-data), :style style-mock-data})
-      (=< nil 8)
-      (comp-props-hint (:type child))
-      (cursor->
-       :font-color
-       comp-font-color-picker
-       states
-       template-id
-       focused-path
-       child
-       (:colors settings))
-      (cursor->
-       :fontface
-       comp-fontface-picker
-       states
-       (get-in child [:style "font-family"])
-       (fn [result d! m!]
-         (d!
-          :template/node-style
-          (merge
-           {:template-id template-id, :path focused-path}
-           {:type :set, :key "font-family", :value result}))))
-      (cursor->
-       :background
-       comp-bg-picker
-       states
-       template-id
-       focused-path
-       child
-       (:colors settings)))))))
+      (pre
+       {:inner-text (write-edn mock-data),
+        :style (merge ui/flex style-mock-data {:overflow :auto})}))))))
