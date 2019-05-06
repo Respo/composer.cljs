@@ -110,9 +110,9 @@
    :cursor :pointer,
    :padding "0 8px",
    :margin-bottom 4,
-   :background-color (hsl 160 30 60),
-   :color :white,
-   :border-radius "4px",
+   :background-color (hsl 160 0 94),
+   :color (hsl 0 0 50),
+   :border-radius "0px",
    :vertical-align :top,
    :line-height "24px"})
 
@@ -131,7 +131,7 @@
   (div
    {:style (merge
             style-element
-            (if (= path focused-path) {:background-color (hsl 200 80 70)})),
+            (if (= path focused-path) {:background-color (hsl 200 80 76), :color :white})),
     :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
    (<> (name (:type markup)))
    (=< 8 nil)
