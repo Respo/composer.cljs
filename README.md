@@ -15,7 +15,7 @@ Introduction:
 [![Clojars Project](https://img.shields.io/clojars/v/respo/composer.svg)](https://clojars.org/respo/composer) ![respo/composer-app](https://img.shields.io/npm/v/@respo/composer-app.svg)
 
 ```edn
-[respo/composer "0.1.8"]
+[respo/composer "0.1.10"]
 ```
 
 ```bash
@@ -32,6 +32,8 @@ Elements tree editor:
 Templates overview:
 
 ![](http://wx4.sinaimg.cn/large/62752320gy1g0r8etufhwj20yq0u0n2o.jpg)
+
+Explainations for the properties are documented at https://github.com/Respo/composer.core .
 
 ### Workflow
 

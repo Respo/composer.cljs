@@ -383,7 +383,8 @@
 (defn render-popup [markup context on-action]
   (let [props (:props markup)
         value (read-token (get props "visible") (:data context))
-        action (get props "action" "popup-close")]
+        backdrop-click-action (get-in markup [:event "backdrop-click"])
+        param (read-token (get props "param") (:data context))]
     (if (:hide-popup? context)
       (comp-invalid "Popup is hidden in dev" props)
       (if value
@@ -397,7 +398,13 @@
                   :overflow :auto,
                   :padding 32,
                   :background-color (hsl 0 0 0 0.7)},
-          :on-click (fn [e d! m!] (on-action d! action props nil))}
+          :on-click (fn [e d! m!]
+            (if (some? backdrop-click-action)
+              (on-action
+               d!
+               (read-token backdrop-click-action (:data context))
+               param
+               {:event (:event e), :props props, :data (:data context)})))}
          (list->
           (merge
            {:on-click (fn [e d! m!] )}
