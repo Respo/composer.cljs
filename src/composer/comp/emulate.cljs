@@ -31,7 +31,8 @@
                     (println "funcition" param style on-action children)
                     (<>
                      "No preview for function"
-                     {:color 'white, :background-color (hsl 200 80 80)}))}}
+                     {:color 'white, :background-color (hsl 200 80 80)}))},
+      :template-name (:name template)}
      (fn [d! op param options] (println op param (pr-str options))))
     (comp-icon
      :x

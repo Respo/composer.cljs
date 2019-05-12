@@ -6,7 +6,7 @@
 (def markup
   {:type :box, :props {}, :attrs {}, :layout nil, :presets #{}, :style {}, :children {}})
 
-(def mock {:id nil, :data nil, :name nil})
+(def mock {:id nil, :data nil, :state nil, :name nil})
 
 (def router {:name nil, :title nil, :data {}, :router nil})
 
@@ -65,7 +65,7 @@
    :button ["text" "param"],
    :link ["text" "href" "param"],
    :icon ["name" "color" "param"],
-   :template ["name" "data"],
+   :template ["name" "data" "state-key"],
    :list ["value"],
    :input ["value" "textarea" "param"],
    :inspect ["value"],

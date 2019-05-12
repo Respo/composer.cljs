@@ -69,7 +69,10 @@
                            (println "funcition" param style on-action children)
                            (<>
                             "No preview for function"
-                            {:color 'white, :background-color (hsl 200 80 80)}))}}
+                            {:color 'white, :background-color (hsl 200 80 80)}))},
+             :template-name (:name template),
+             :state-path [],
+             :states nil}
             on-operation))
           (span
            {:style {:color (hsl 0 0 60),
