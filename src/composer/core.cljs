@@ -259,7 +259,8 @@
                                :value (:value e),
                                :event (:event e),
                                :data (:data context),
-                               :template-name (:template-name context)}))]))
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (if textarea?
       (textarea
@@ -323,7 +324,8 @@
                               {:event (:event e),
                                :props props,
                                :data (:data context),
-                               :template-name (:template-name context)}))]))
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (a
      (merge
@@ -454,7 +456,8 @@
                {:event (:event e),
                 :props props,
                 :data (:data context),
-                :template-name (:template-name context)})))}
+                :template-name (:template-name context),
+                :state-path (:state-path context)})))}
          (list->
           (merge
            {:on-click (fn [e d! m!] )}
@@ -561,7 +564,8 @@
                               {:event (:event e),
                                :props props,
                                :data (:data context),
-                               :template-name (:template-name context)}))]))
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (create-list-element
      tag-name
@@ -615,7 +619,8 @@
                               {:event (:event e),
                                :props props,
                                :data (:data context),
-                               :template-name (:template-name context)}))]))
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (list->
      (merge
