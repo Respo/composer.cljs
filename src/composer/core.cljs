@@ -68,10 +68,10 @@
     (cond
       (string/starts-with? x "@")
         (let [chunks (filter (fn [x] (not (string/blank? x))) (string/split (subs x 1) " "))]
-          (read-by-marks chunks scope state))
+          (read-by-marks chunks scope))
       (string/starts-with? x "#")
         (let [chunks (filter (fn [x] (not (string/blank? x))) (string/split (subs x 1) " "))]
-          (read-by-marks chunks scope state))
+          (read-by-marks chunks state))
       (string/starts-with? x ":") (keyword (subs x 1))
       (string/starts-with? x "~") (read-string (subs x 1))
       (string/starts-with? x "|") (subs x 1)
@@ -80,13 +80,12 @@
       :else x)
     nil))
 
-(defn read-by-marks [xs scope state]
+(defn read-by-marks [xs scope]
   (if (nil? scope)
     nil
     (if (empty? xs)
       scope
-      (let [x (first xs), v (read-token x scope state)]
-        (recur (rest xs) (get scope v) state)))))
+      (let [x (first xs), v (read-token x scope {})] (recur (rest xs) (get scope v))))))
 
 (defn eval-attrs [attrs data state]
   (->> attrs (map (fn [[k v]] [k (read-token v data state)])) (into {})))
@@ -391,7 +390,8 @@
                               data-prop
                               (:attrs markup)
                               data
-                              (:data states))]
+                              (:data states))
+              state-fn (get-in context [:state-fns template-name])]
           (render-markup
            (get templates template-name)
            (-> context
@@ -403,7 +403,12 @@
                 (fn [path] (if (some? state-key) (conj (vec path) state-key) (vec path))))
                (update
                 :states
-                (fn [states] (if (some? state-key) (get states state-key) states))))
+                (fn [states]
+                  (let [states-here (if (some? state-key) (get states state-key) states)]
+                    (update
+                     states-here
+                     :data
+                     (fn [state] (if (fn? state-fn) (state-fn template-props state) state)))))))
            on-action)))))
 
 (defn render-some [markup context on-action]
