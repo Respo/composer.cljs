@@ -68,10 +68,10 @@
     (cond
       (string/starts-with? x "@")
         (let [chunks (filter (fn [x] (not (string/blank? x))) (string/split (subs x 1) " "))]
-          (read-by-marks chunks state))
+          (read-by-marks chunks scope state))
       (string/starts-with? x "#")
         (let [chunks (filter (fn [x] (not (string/blank? x))) (string/split (subs x 1) " "))]
-          (read-by-marks chunks state))
+          (read-by-marks chunks scope state))
       (string/starts-with? x ":") (keyword (subs x 1))
       (string/starts-with? x "~") (read-string (subs x 1))
       (string/starts-with? x "|") (subs x 1)
@@ -80,12 +80,13 @@
       :else x)
     nil))
 
-(defn read-by-marks [xs scope]
+(defn read-by-marks [xs scope state]
   (if (nil? scope)
     nil
     (if (empty? xs)
       scope
-      (let [x (first xs), v (read-token x scope scope)] (recur (rest xs) (get scope v))))))
+      (let [x (first xs), v (read-token x scope state)]
+        (recur (rest xs) (get scope v) state)))))
 
 (defn eval-attrs [attrs data state]
   (->> attrs (map (fn [[k v]] [k (read-token v data state)])) (into {})))
