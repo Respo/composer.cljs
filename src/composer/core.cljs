@@ -303,7 +303,8 @@
     (span
      {:inner-text (pr-str value),
       :style style-inspect,
-      :on-click (fn [e d! m!] (js/console.log (clj->js (:data context))))})))
+      :on-click (fn [e d! m!]
+        (js/console.log (clj->js (:data context)) (clj->js (:state context))))})))
 
 (defn render-link [markup context on-action]
   (let [props (:props markup)

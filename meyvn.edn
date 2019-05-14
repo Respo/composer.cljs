@@ -1,7 +1,7 @@
 
 {:pom {:group-id "respo",
        :artifact-id "composer",
-       :version "0.1.12-a2+i",
+       :version "0.1.12-a2+2i",
        :name "Respo composer renderer library"}
  :packaging {:jar {:enabled true
                    :remote-repository {:id "clojars"
