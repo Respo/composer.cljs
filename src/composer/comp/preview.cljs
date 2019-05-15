@@ -25,6 +25,7 @@
        template (get templates template-id)
        mock-id (:mock-pointer template)
        mock-data (if (some? mock-id) (get-in template [:mocks mock-id :data]) nil)
+       mock-state (if (some? mock-id) (get-in template [:mocks mock-id :state]) nil)
        change-size! (fn [d! w h]
                       (d!
                        :template/set-preview-sizes
@@ -69,7 +70,10 @@
                            (println "funcition" param style on-action children)
                            (<>
                             "No preview for function"
-                            {:color 'white, :background-color (hsl 200 80 80)}))}}
+                            {:color 'white, :background-color (hsl 200 80 80)}))},
+             :template-name (:name template),
+             :state-path [],
+             :states mock-state}
             on-operation))
           (span
            {:style {:color (hsl 0 0 60),

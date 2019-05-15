@@ -193,8 +193,8 @@
              (iter-merge-children container last-id (vals children)))))))))
 
 (defn update-mock [db op-data sid op-id op-time]
-  (let [template-id (:template-id op-data), mock-id (:mock-id op-data), data (:data op-data)]
-    (assoc-in db [:templates template-id :mocks mock-id :data] data)))
+  (let [template-id (:template-id op-data), mock-id (:mock-id op-data)]
+    (update-in db [:templates template-id :mocks mock-id] (fn [mock] (merge mock op-data)))))
 
 (defn update-node-attrs [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)

@@ -45,6 +45,17 @@
      (button
       {:inner-text "Submit", :style ui/button, :on-click (fn [e d! m!] (submit! d! m!))})))))
 
+(def style-code-preview
+  (merge
+   style-code
+   {:width "100%",
+    :margin 0,
+    :background-color (hsl 0 0 96),
+    :padding "4px 8px",
+    :white-space :pre,
+    :overflow :auto,
+    :min-height 48}))
+
 (defcomp
  comp-mock-editor
  (states template-id mock)
@@ -96,18 +107,7 @@
         (d! :template/remove-mock {:template-id template-id, :mock-id (:id mock)}))))
     (div
      {:style {:padding "0px 8px", :max-height 320, :overflow :auto}}
-     (pre
-      {:style (merge
-               style-code
-               {:width "100%",
-                :margin 0,
-                :background-color (hsl 0 0 96),
-                :padding "4px 8px",
-                :white-space :pre,
-                :overflow :auto,
-                :min-height 48}),
-       :disabled true,
-       :inner-text (write-edn (:data mock))}))
+     (pre {:style style-code-preview, :disabled true, :inner-text (write-edn (:data mock))}))
     (div
      {:style {:padding 8}}
      (cursor->
@@ -124,6 +124,27 @@
          (fn [data d! m!]
            (comment println "edit data" data)
            (d! :template/update-mock (merge base-op-data {:data data}))
+           (on-toggle m!))))))
+    (div
+     {:style {:padding "0px 8px", :max-height 320, :overflow :auto}}
+     (pre
+      {:style style-code-preview, :disabled true, :inner-text (write-edn (:state mock))}))
+    (div
+     {:style {:padding 8}}
+     (cursor->
+      :edit-state
+      comp-popup
+      states
+      {:trigger (a {:style ui/link, :inner-text "Edit state"}), :style nil}
+      (fn [on-toggle]
+        (cursor->
+         :edit-data
+         comp-data-editor
+         states
+         (:state mock)
+         (fn [data d! m!]
+           (comment println "edit data" data)
+           (d! :template/update-mock (merge base-op-data {:state data}))
            (on-toggle m!)))))))))
 
 (defcomp

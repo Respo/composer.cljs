@@ -75,7 +75,11 @@
                      {:style style-container}
                      (render-markup
                       (:markup template)
-                      {:data nil, :templates tmpls, :level 0, :hide-popup? true}
+                      {:data nil,
+                       :templates tmpls,
+                       :level 0,
+                       :hide-popup? true,
+                       :template-name (:name template)}
                       (fn [d! op param options] (println op param (pr-str options))))))
                    (list->
                     {:style (merge ui/flex {})}
@@ -97,7 +101,8 @@
                                 {:data (:data mock),
                                  :templates tmpls,
                                  :level 0,
-                                 :hide-popup? true}
+                                 :hide-popup? true,
+                                 :template-name (:name template)}
                                 (fn [d! op param options]
                                   (println op param (pr-str options)))))
                               (div

@@ -232,7 +232,8 @@
   (let [child (get-in (:markup template) (interleave (repeat :children) focused-path))
         template-id (:id template)
         mock-id (:mock-pointer template)
-        mock-data (if (nil? mock-id) nil (get-in template [:mocks mock-id :data]))]
+        mock-data (if (nil? mock-id) nil (get-in template [:mocks mock-id :data]))
+        mock-state (if (nil? mock-id) nil (get-in template [:mocks mock-id :state]))]
     (div
      {:style (merge ui/flex ui/column {:overflow :auto})}
      (div
@@ -325,4 +326,7 @@
       (cursor-> :mocks comp-mock-picker states template)
       (pre
        {:inner-text (write-edn mock-data),
+        :style (merge style-mock-data {:overflow :auto, :flex 2})})
+      (pre
+       {:inner-text (write-edn mock-state),
         :style (merge ui/flex style-mock-data {:overflow :auto})}))))))

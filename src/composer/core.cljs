@@ -63,12 +63,15 @@
    :inner-text title,
    :on-click (fn [e d! m!] (js/console.log (clj->js props)))}))
 
-(defn read-token [x scope]
+(defn read-token [x scope state]
   (if (string? x)
     (cond
       (string/starts-with? x "@")
         (let [chunks (filter (fn [x] (not (string/blank? x))) (string/split (subs x 1) " "))]
           (read-by-marks chunks scope))
+      (string/starts-with? x "#")
+        (let [chunks (filter (fn [x] (not (string/blank? x))) (string/split (subs x 1) " "))]
+          (read-by-marks chunks state))
       (string/starts-with? x ":") (keyword (subs x 1))
       (string/starts-with? x "~") (read-string (subs x 1))
       (string/starts-with? x "|") (subs x 1)
@@ -82,10 +85,10 @@
     nil
     (if (empty? xs)
       scope
-      (let [x (first xs), v (read-token x scope)] (recur (rest xs) (get scope v))))))
+      (let [x (first xs), v (read-token x scope {})] (recur (rest xs) (get scope v))))))
 
-(defn eval-attrs [attrs data]
-  (->> attrs (map (fn [[k v]] [k (read-token v data)])) (into {})))
+(defn eval-attrs [attrs data state]
+  (->> attrs (map (fn [[k v]] [k (read-token v data state)])) (into {})))
 
 (defn extract-templates [db]
   (->> db
@@ -117,20 +120,21 @@
      :base-padding {"padding" "4px 8px"}
      (do (js/console.warn (str "Unknown preset: " preset)) nil))))
 
-(defn get-template-props [data-prop attrs data]
+(defn get-template-props [data-prop attrs data state]
   (if (some? data-prop)
-    (read-token data-prop data)
-    (->> attrs (map (fn [[k v]] [(keyword k) (read-token v data)])) (into {}))))
+    (read-token data-prop data state)
+    (->> attrs (map (fn [[k v]] [(keyword k) (read-token v data state)])) (into {}))))
 
-(defn read-styles [style data]
-  (->> style (map (fn [[k v]] [k (read-token v data)])) (into {})))
+(defn read-styles [style data state]
+  (->> style (map (fn [[k v]] [k (read-token v data state)])) (into {})))
 
 (defn style-presets [presets] (->> presets (map get-preset) (apply merge)))
 
 (defn render-button [markup context on-action]
   (let [props (:props markup)
-        text (read-token (get props "text") (:data context))
-        param (read-token (get props "param") (:data context))
+        states (:states context)
+        text (read-token (get props "text") (:data context) (:data states))
+        param (read-token (get props "param") (:data context) (:data states))
         event-map (->> (:event markup)
                        (map
                         (fn [[name action]]
@@ -138,26 +142,31 @@
                            (fn [e d! m!]
                              (on-action
                               d!
-                              (read-token action (:data context))
+                              (read-token action (:data context) (:data states))
                               param
-                              {:event (:event e), :props props, :data (:data context)}))]))
+                              {:event (:event e),
+                               :props props,
+                               :data (:data context),
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (button
      (merge
-      (eval-attrs (:attrs markup) (:data context))
+      (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                ui/button
                (style-presets (:presets markup))
-               (read-styles (:style markup) (:data context))),
+               (read-styles (:style markup) (:data context) (:data states))),
        :inner-text (or text "Submit"),
        :on event-map}))))
 
 (defn render-divider [markup context]
   (let [props (:props markup)
+        states (:states context)
         vertical? (contains?
                    #{:vertical :v}
-                   (read-token (get props "kind") (:data context)))
-        color (get props "color" "#eee")]
+                   (read-token (get props "kind") (:data context) (:data states)))
+        color (or (read-token (get props "color") (:data context) (:data states)) "#eee")]
     (div
      {:style (if vertical?
         {:background-color color, :width 1, :height "auto"}
@@ -165,11 +174,13 @@
 
 (defn render-icon [markup context on-action]
   (let [props (:props markup)
-        icon-name (or (read-token (get props "name") (:data context)) :feather)
+        states (:states context)
+        icon-name (or (read-token (get props "name") (:data context) (:data states))
+                      :feather)
         size (js/parseFloat (get props "size" "16"))
         color (get props "color" (hsl 200 80 70))
         obj (aget (.-icons icons) (name icon-name))
-        param (read-token (get props "param") (:data context))
+        param (read-token (get props "param") (:data context) (:data states))
         event-map (->> (:event markup)
                        (map
                         (fn [[name action]]
@@ -177,9 +188,13 @@
                            (fn [e d! m!]
                              (on-action
                               d!
-                              (read-token action (:data context))
+                              (read-token action (:data context) (:data states))
                               param
-                              {:event (:event e), :props props, :data (:data context)}))]))
+                              {:event (:event e),
+                               :props props,
+                               :data (:data context),
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (if (some? obj)
       (i
@@ -190,25 +205,26 @@
 
 (defn render-image [markup context]
   (let [props (:props markup)
-        src (read-token (get props "src") (:data context))
-        mode (read-token (get props "mode") (:data context))
-        width (or (read-token (get props "width") (:data context)) 80)
-        height (or (read-token (get props "height") (:data context)) 80)]
+        states (:states context)
+        src (read-token (get props "src") (:data context) (:data states))
+        mode (read-token (get props "mode") (:data context) (:data states))
+        width (or (read-token (get props "width") (:data context) (:data states)) 80)
+        height (or (read-token (get props "height") (:data context) (:data states)) 80)]
     (cond
       (nil? src) (comp-invalid (<< "Bad image src: ~(pr-str src)") props)
       (= mode :img)
         (img
          (merge
           {:src src, :width width, :height height}
-          (eval-attrs (:attrs markup) (:data context))
+          (eval-attrs (:attrs markup) (:data context) (:data states))
           {:style (merge
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
-                   (read-styles (:style markup) (:data context)))}))
+                   (read-styles (:style markup) (:data context) (:data states)))}))
       (contains? #{:contain :cover} mode)
         (div
          (merge
-          (eval-attrs (:attrs markup) (:data context))
+          (eval-attrs (:attrs markup) (:data context) (:data states))
           {:style (merge
                    (use-string-keys
                     {:background-image (<< "url(~{src})"),
@@ -219,15 +235,16 @@
                      :background-repeat :no-repeat})
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
-                   (read-styles (:style markup) (:data context)))}))
+                   (read-styles (:style markup) (:data context) (:data states)))}))
       :else (comp-invalid (<< "Bad image mode: ~(pr-str mode)") props))))
 
 (defn render-input [markup context on-action]
   (let [props (:props markup)
-        value (read-token (get props "value") (:data context))
+        states (:states context)
+        value (read-token (get props "value") (:data context) (:data states))
         textarea? (some? (get props "textarea"))
-        param (read-token (get props "param") (:data context))
-        attrs (eval-attrs (:attrs markup) (:data context))
+        param (read-token (get props "param") (:data context) (:data states))
+        attrs (eval-attrs (:attrs markup) (:data context) (:data states))
         event-map (->> (:event markup)
                        (map
                         (fn [[name action]]
@@ -235,12 +252,14 @@
                            (fn [e d! m!]
                              (on-action
                               d!
-                              (read-token action (:data context))
+                              (read-token action (:data context) (:data states))
                               param
                               {:props props,
                                :value (:value e),
                                :event (:event e),
-                               :data (:data context)}))]))
+                               :data (:data context),
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (if textarea?
       (textarea
@@ -250,7 +269,7 @@
          :style (merge
                  (use-string-keys ui/textarea)
                  (style-presets (:presets markup))
-                 (read-styles (:style markup) (:data context))),
+                 (read-styles (:style markup) (:data context) (:data states))),
          :on event-map}))
       (input
        (merge
@@ -259,7 +278,7 @@
          :style (merge
                  (use-string-keys ui/input)
                  (style-presets (:presets markup))
-                 (read-styles (:style markup) (:data context))),
+                 (read-styles (:style markup) (:data context) (:data states))),
          :on event-map})))))
 
 (def style-inspect
@@ -278,17 +297,21 @@
    :overflow :auto})
 
 (defn render-inspect [markup context]
-  (let [props (:props markup), value (read-token (get props "value") (:data context))]
+  (let [props (:props markup)
+        states (:states context)
+        value (read-token (get props "value") (:data context) (:data states))]
     (span
      {:inner-text (pr-str value),
       :style style-inspect,
-      :on-click (fn [e d! m!] (js/console.log (clj->js (:data context))))})))
+      :on-click (fn [e d! m!]
+        (js/console.log (clj->js (:data context)) (clj->js (:state context))))})))
 
 (defn render-link [markup context on-action]
   (let [props (:props markup)
-        text (read-token (get props "text") (:data context))
-        href (read-token (get props "href") (:data context))
-        param (read-token (get props "param") (:data context))
+        states (:data context)
+        text (read-token (get props "text") (:data context) (:data states))
+        href (read-token (get props "href") (:data context) (:data states))
+        param (read-token (get props "param") (:data context) (:data states))
         event-map (->> (:event markup)
                        (map
                         (fn [[name action]]
@@ -296,55 +319,66 @@
                            (fn [e d! m!]
                              (on-action
                               d!
-                              (read-token action (:data context))
+                              (read-token action (:data context) (:data states))
                               param
-                              {:event (:event e), :props props, :data (:data context)}))]))
+                              {:event (:event e),
+                               :props props,
+                               :data (:data context),
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (a
      (merge
-      (eval-attrs (:attrs markup) (:data context))
+      (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                (use-string-keys ui/link)
                (style-presets (:presets markup))
-               (read-styles (:style markup) (:data context))),
+               (read-styles (:style markup) (:data context) (:data states))),
        :inner-text (or text "Submit"),
        :href (or href "#"),
        :on event-map}))))
 
 (defn render-markdown [markup context]
   (let [props (:props markup)
-        value (read-token (get props "text") (:data context))
+        states (:states context)
+        value (read-token (get props "text") (:data context) (:data states))
         class-name (get props "class")]
     (comp-md-block
      value
      {:style (merge
               (style-presets (:presets markup))
-              (read-styles (:style markup) (:data context))),
+              (read-styles (:style markup) (:data context) (:data states))),
       :class-name class-name})))
 
 (defn render-space [markup context]
   (let [props (:props markup)
-        width (read-token (get props "width") (:data context))
-        height (read-token (get props "height") (:data context))]
+        states (:state context)
+        width (read-token (get props "width") (:data context) (:data states))
+        height (read-token (get props "height") (:data context) (:data states))]
     (if (and (nil? width) (nil? height)) (comp-invalid "<Space nil>" props) (=< width height))))
 
 (defn render-text [markup context]
   (let [props (:props markup)
-        value (read-token (get props "value") (:data context))
-        data (read-token (get props "data") (:data context))]
+        states (:states context)
+        value (read-token (get props "value") (:data context) (:data states))
+        data (read-token (get props "data") (:data context) (:data states))]
     (<>
      (if (some? value)
        (if (and (string? value) (some? data)) (string/replace value "~{data}" data) value)
        "TEXT")
-     (merge (style-presets (:presets markup)) (read-styles (:style markup) (:data context))))))
+     (merge
+      (style-presets (:presets markup))
+      (read-styles (:style markup) (:data context) (:data states))))))
 
 (def style-unknown {"font-size" 12, "color" :red})
 
 (defn render-template [markup context on-action]
   (let [templates (:templates context)
         data (:data context)
+        states (:states context)
         props (:props markup)
-        template-name (read-token (get props "name") (:data context))
+        template-name (read-token (get props "name") (:data context) (:data states))
+        state-key (read-token (get props "state-key") (:data context) (:data states))
         data-prop (get props "data")]
     (cond
       (> (:level context) 10) (comp-invalid "<Bad template: too much levels>" props)
@@ -353,16 +387,36 @@
       (and (nil? data-prop) (empty? (:attrs markup)))
         (comp-invalid (<< "<template data missing, no data, no attrs>") props)
       :else
-        (let [template-props (get-template-props data-prop (:attrs markup) data)]
+        (let [template-props (get-template-props
+                              data-prop
+                              (:attrs markup)
+                              data
+                              (:data states))
+              state-fn (get-in context [:state-fns template-name])]
           (render-markup
            (get templates template-name)
-           (-> context (assoc :data template-props) (update :level inc))
+           (-> context
+               (assoc :data template-props)
+               (update :level inc)
+               (assoc :template-name template-name)
+               (update
+                :state-path
+                (fn [path] (if (some? state-key) (conj (vec path) state-key) (vec path))))
+               (update
+                :states
+                (fn [states]
+                  (let [states-here (if (some? state-key) (get states state-key) states)]
+                    (update
+                     states-here
+                     :data
+                     (fn [state] (if (fn? state-fn) (state-fn template-props state) state)))))))
            on-action)))))
 
 (defn render-some [markup context on-action]
   (let [props (:props markup)
-        value (read-token (get props "value") (:data context))
-        kind (read-token (get props "kind") (:data context))
+        states (:context context)
+        value (read-token (get props "value") (:data context) (:data states))
+        kind (read-token (get props "kind") (:data context) (:data states))
         child-pair (->> (:children markup) (sort-by first) (vals))
         result (case kind
                  :list (empty? value)
@@ -382,9 +436,10 @@
 
 (defn render-popup [markup context on-action]
   (let [props (:props markup)
-        value (read-token (get props "visible") (:data context))
+        states (:states context)
+        value (read-token (get props "visible") (:data context) (:data states))
         backdrop-click-action (get-in markup [:event "backdrop-click"])
-        param (read-token (get props "param") (:data context))]
+        param (read-token (get props "param") (:data context) (:data states))]
     (if (:hide-popup? context)
       (comp-invalid "Popup is hidden in dev" props)
       (if value
@@ -402,13 +457,17 @@
             (if (some? backdrop-click-action)
               (on-action
                d!
-               (read-token backdrop-click-action (:data context))
+               (read-token backdrop-click-action (:data context) (:data states))
                param
-               {:event (:event e), :props props, :data (:data context)})))}
+               {:event (:event e),
+                :props props,
+                :data (:data context),
+                :template-name (:template-name context),
+                :state-path (:state-path context)})))}
          (list->
           (merge
            {:on-click (fn [e d! m!] )}
-           (eval-attrs (:attrs markup) (:data context))
+           (eval-attrs (:attrs markup) (:data context) (:data states))
            {:style (merge
                     (use-string-keys
                      {:margin :auto,
@@ -417,7 +476,7 @@
                       :background-color (hsl 0 0 100)})
                     (get-layout (:layout markup))
                     (style-presets (:presets markup))
-                    (read-styles (:style markup) (:data context)))})
+                    (read-styles (:style markup) (:data context) (:data states)))})
           (render-children (:children markup) context on-action)))
         (span {})))))
 
@@ -447,7 +506,8 @@
 
 (defn render-list [markup context on-action]
   (let [props (:props markup)
-        value (read-token (get props "value") (:data context))
+        states (:states context)
+        value (read-token (get props "value") (:data context) (:data states))
         only-child (first (vals (:children markup)))]
     (cond
       (not (or (sequential? value) (map? value)))
@@ -457,11 +517,11 @@
       :else
         (list->
          (merge
-          (eval-attrs (:attrs markup) (:data context))
+          (eval-attrs (:attrs markup) (:data context) (:data states))
           {:style (merge
                    (get-layout (:layout markup))
                    (style-presets (:presets markup))
-                   (read-styles (:style markup) (:data context)))})
+                   (read-styles (:style markup) (:data context) (:data states)))})
          (let [pairs (if (map? value)
                        (->> value (sort-by (fn [[k v]] k)))
                        (->> value (map-indexed (fn [idx v] [idx v]))))]
@@ -477,12 +537,13 @@
 
 (defn render-function [markup context on-action]
   (let [props (:props markup)
-        param (read-token (get props "param") (:data context))
-        func-name (read-token (get props "name") (:data context))
+        states (:states context)
+        param (read-token (get props "param") (:data context) (:data states))
+        func-name (read-token (get props "name") (:data context) (:data states))
         styles (merge
                 (get-layout (:layout markup))
                 (style-presets (:presets markup))
-                (read-styles (:style markup) (:data context)))
+                (read-styles (:style markup) (:data context) (:data states)))
         func (get-in context [:functions func-name])
         children (render-children (:children markup) context on-action)]
     (cond
@@ -493,9 +554,10 @@
 
 (defn render-element [markup context on-action]
   (let [props (:props markup)
-        value (read-token (get props "name") (:data context))
+        states (:states context)
+        value (read-token (get props "name") (:data context) (:data states))
         tag-name (keyword (or value "div"))
-        param (read-token (get props "param") (:data context))
+        param (read-token (get props "param") (:data context) (:data states))
         event-map (->> (:event markup)
                        (map
                         (fn [[name action]]
@@ -503,18 +565,22 @@
                            (fn [e d! m!]
                              (on-action
                               d!
-                              (read-token action (:data context))
+                              (read-token action (:data context) (:data states))
                               param
-                              {:event (:event e), :props props, :data (:data context)}))]))
+                              {:event (:event e),
+                               :props props,
+                               :data (:data context),
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (create-list-element
      tag-name
      (merge
-      (eval-attrs (:attrs markup) (:data context))
+      (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                (get-layout (:layout markup))
                (style-presets (:presets markup))
-               (read-styles (:style markup) (:data context))),
+               (read-styles (:style markup) (:data context) (:data states))),
        :on event-map})
      (render-children (:children markup) context on-action))))
 
@@ -525,8 +591,9 @@
 
 (defn render-case [markup context on-action]
   (let [props (:props markup)
-        value (read-token (get props "value") (:data context))
-        options (read-token (get props "options") (:data context))
+        states (:states context)
+        value (read-token (get props "value") (:data context) (:data states))
+        options (read-token (get props "options") (:data context) (:data states))
         options-size (count options)
         children-size (count (:children markup))
         children-vec (->> (:children markup) (sort-by first) (map last) (vec))]
@@ -544,7 +611,8 @@
 
 (defn render-box [markup context on-action]
   (let [props (:props markup)
-        param (read-token (get props "param") (:data context))
+        states (:states context)
+        param (read-token (get props "param") (:data context) (:data states))
         event-map (->> (:event markup)
                        (map
                         (fn [[name action]]
@@ -552,16 +620,20 @@
                            (fn [e d! m!]
                              (on-action
                               d!
-                              (read-token action (:data context))
+                              (read-token action (:data context) (:data states))
                               param
-                              {:event (:event e), :props props, :data (:data context)}))]))
+                              {:event (:event e),
+                               :props props,
+                               :data (:data context),
+                               :template-name (:template-name context),
+                               :state-path (:state-path context)}))]))
                        (into {}))]
     (list->
      (merge
-      (eval-attrs (:attrs markup) (:data context))
+      (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                (get-layout (:layout markup))
                (style-presets (:presets markup))
-               (read-styles (:style markup) (:data context))),
+               (read-styles (:style markup) (:data context) (:data states))),
        :on event-map})
      (render-children (:children markup) context on-action))))
