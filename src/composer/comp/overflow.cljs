@@ -80,7 +80,7 @@
                        :level 0,
                        :hide-popup? true,
                        :template-name (:name template)}
-                      (fn [d! op param options] (println op param (pr-str options))))))
+                      (fn [d! op context options] (println op context (pr-str options))))))
                    (list->
                     {:style (merge ui/flex {})}
                     (->> (:mocks template)
