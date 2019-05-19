@@ -33,7 +33,7 @@
                      "No preview for function"
                      {:color 'white, :background-color (hsl 200 80 80)}))},
       :template-name (:name template)}
-     (fn [d! op param options] (println op param (pr-str options))))
+     (fn [d! op context options] (println op context (pr-str options))))
     (comp-icon
      :x
      {:font-size 14, :color (hsl 0 0 80), :position :fixed, :bottom 8, :right 8}

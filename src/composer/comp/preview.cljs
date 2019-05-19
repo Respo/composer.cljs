@@ -14,7 +14,7 @@
             [clojure.string :as string])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
-(defn on-operation [d! op param options] (println op param (pr-str options)))
+(defn on-operation [d! op context options] (println op context (pr-str options)))
 
 (def style-number (merge ui/input {:width 56, :min-width 56, :padding "0 4px"}))
 

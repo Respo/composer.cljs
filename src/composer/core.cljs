@@ -143,12 +143,8 @@
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
-                              param
-                              {:event (:event e),
-                               :props props,
-                               :data (:data context),
-                               :template-name (:template-name context),
-                               :state-path (:state-path context)}))]))
+                              context
+                              {:event (:event e), :props props, :param param}))]))
                        (into {}))]
     (button
      (merge
@@ -189,12 +185,8 @@
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
-                              param
-                              {:event (:event e),
-                               :props props,
-                               :data (:data context),
-                               :template-name (:template-name context),
-                               :state-path (:state-path context)}))]))
+                              context
+                              {:event (:event e), :props props, :param param}))]))
                        (into {}))]
     (if (some? obj)
       (i
@@ -253,13 +245,11 @@
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
-                              param
+                              context
                               {:props props,
                                :value (:value e),
                                :event (:event e),
-                               :data (:data context),
-                               :template-name (:template-name context),
-                               :state-path (:state-path context)}))]))
+                               :param param}))]))
                        (into {}))]
     (if textarea?
       (textarea
@@ -320,12 +310,8 @@
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
-                              param
-                              {:event (:event e),
-                               :props props,
-                               :data (:data context),
-                               :template-name (:template-name context),
-                               :state-path (:state-path context)}))]))
+                              context
+                              {:event (:event e), :props props, :param param}))]))
                        (into {}))]
     (a
      (merge
@@ -458,12 +444,8 @@
               (on-action
                d!
                (read-token backdrop-click-action (:data context) (:data states))
-               param
-               {:event (:event e),
-                :props props,
-                :data (:data context),
-                :template-name (:template-name context),
-                :state-path (:state-path context)})))}
+               context
+               {:event (:event e), :props props, :param param})))}
          (list->
           (merge
            {:on-click (fn [e d! m!] )}
@@ -566,12 +548,8 @@
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
-                              param
-                              {:event (:event e),
-                               :props props,
-                               :data (:data context),
-                               :template-name (:template-name context),
-                               :state-path (:state-path context)}))]))
+                              context
+                              {:event (:event e), :props props, :param param}))]))
                        (into {}))]
     (create-list-element
      tag-name
@@ -621,12 +599,8 @@
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
-                              param
-                              {:event (:event e),
-                               :props props,
-                               :data (:data context),
-                               :template-name (:template-name context),
-                               :state-path (:state-path context)}))]))
+                              context
+                              {:param param, :event (:event e), :props props}))]))
                        (into {}))]
     (list->
      (merge
