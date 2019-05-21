@@ -103,6 +103,8 @@
            :inner-text "Clear",
            :on-click (fn [e d! m!] (on-pick nil d!) (on-toggle m!))}))))))))
 
+(defn display-events [xs] (->> xs (map last) (string/join "; ")))
+
 (defn display-props [xs] (->> xs (map (fn [[k v]] v)) (string/join "; ")))
 
 (def style-element
@@ -135,7 +137,16 @@
     :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
    (<> (name (:type markup)))
    (=< 8 nil)
-   (<> (display-props (:props markup)) {:font-size 10, :font-family ui/font-code}))
+   (<> (display-props (:props markup)) {:font-size 10, :font-family ui/font-code})
+   (if (not (empty? (:event markup)))
+     (<>
+      (display-events (:event markup))
+      {:font-size 10,
+       :font-family ui/font-code,
+       :margin-left 8,
+       :background-color (hsl 280 80 60),
+       :color :white,
+       :padding "0 4px"})))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}
@@ -145,7 +156,7 @@
                            (every? (fn [x] (empty? (:children markup))) (:children markup))))
                 {:display :inline-block})))}
    (->> (:children markup)
-        (sort-by (fn [[k child-markup]] k))
+        (sort-by first)
         (map
          (fn [[k child-markup]]
            (let [next-path (conj path k)]
