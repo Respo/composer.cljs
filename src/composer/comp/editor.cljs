@@ -146,7 +146,18 @@
        :margin-left 8,
        :background-color (hsl 280 80 60),
        :color :white,
-       :padding "0 4px"})))
+       :padding "0 4px"}))
+   (if (and (= :template (:type markup)) (string? (get-in markup [:props "name"])))
+     (comp-icon
+      :map-pin
+      (merge
+       {:font-size 12,
+        :color (hsl 200 80 50),
+        :cursor :pointer,
+        :margin-left "4px",
+        :vertical-align :middle}
+       (if (= path focused-path) {:color "white"}))
+      (fn [e d! m!] (d! :session/jump-template (get-in markup [:props "name"]))))))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}

@@ -18,6 +18,21 @@
 (defn focus-to [db op-data sid op-id op-time]
   (update-in db [:sessions sid :focus-to] (fn [settings] (merge settings op-data))))
 
+(defn jump-template [db op-data sid op-id op-time]
+  (let [target (->> (vals (:templates db))
+                    (filter (fn [template] (= (str "\"" (:name template)) op-data)))
+                    (first))]
+    (if (some? target)
+      (update-in
+       db
+       [:sessions sid :focus-to]
+       (fn [settings] (merge settings {:template-id (:id target), :path [], :mock-id nil})))
+      (update-in
+       db
+       [:sessions sid :messages]
+       (fn [messages]
+         (assoc messages op-id {:id op-id, :text (str "Unknown template: " op-data)}))))))
+
 (defn paste-markup [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data)
         focused-path (:path op-data)
