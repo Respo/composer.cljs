@@ -18,7 +18,9 @@
             [favored-edn.core :refer [write-edn]]
             [composer.util :refer [specified-port!]]
             [clojure.core.async :refer [go <!]]
-            [cumulo-util.file :refer [chan-pick-port]])
+            [cumulo-util.file :refer [chan-pick-port]]
+            ["gaze" :as gaze]
+            ["md5" :as md5])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defonce *client-caches (atom {}))
@@ -39,6 +41,8 @@
       {:base db, :db db}))))
 
 (defonce *reader-reel (atom @*reel))
+
+(defonce *snapshot-md5 (atom nil))
 
 (defn check-version! []
   (let [pkg (.parse js/JSON (fs/readFileSync (path/join js/__dirname "../package.json")))
@@ -63,7 +67,10 @@
 
 (defn dispatch! [op op-data sid]
   (let [op-id (id!), op-time (unix-time!)]
-    (if config/dev? (println "Dispatch!" (str op) op-data sid))
+    (if config/dev?
+      (if (= op :snapshot/reset)
+        (println "reset...")
+        (println "Dispatch!" (str op) (pr-str op-data) sid)))
     (try
      (cond
        (= op :effect/persist) (do (dispatch! :template/mark-saved nil sid) (persist-db!))
@@ -74,6 +81,13 @@
   (persist-db!)
   (comment println "exit code is:" (pr-str code))
   (js/process.exit))
+
+(defn on-file-change! [filepath]
+  (let [content (fs/readFileSync filepath "utf8"), new-md5 (md5 content)]
+    (when (not= new-md5 @*snapshot-md5)
+      (println "File changed by comparing md5")
+      (reset! *snapshot-md5 new-md5)
+      (dispatch! :snapshot/reset (read-string content) nil))))
 
 (defn sync-clients! [reel]
   (wss-each!
@@ -112,6 +126,16 @@
       (dispatch! :session/disconnect nil sid)),
     :on-error (fn [error] (.error js/console error))}))
 
+(defn watch-snapshot! []
+  (let [filepath storage-file]
+    (reset! *snapshot-md5 (md5 (fs/readFileSync filepath "utf8")))
+    (gaze
+     filepath
+     (fn [error watcher]
+       (if (some? error)
+         (js/console.error error)
+         (.on ^js watcher "changed" (fn [_] (on-file-change! filepath))))))))
+
 (defn main! []
   (println "Running mode:" (if config/dev? "dev" "release"))
   (go
@@ -122,7 +146,8 @@
   (render-loop!)
   (js/process.on "SIGINT" on-exit!)
   (comment repeat! 600 #(persist-db!))
-  (check-version!))
+  (check-version!)
+  (watch-snapshot!))
 
 (defn reload! []
   (println "Code updated.")
