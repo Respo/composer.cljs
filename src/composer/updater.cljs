@@ -17,6 +17,7 @@
             :session/paste-markup session/paste-markup
             :session/focus-to session/focus-to
             :session/toggle-shadows session/toggle-shadows
+            :session/jump-template session/jump-template
             :user/log-in user/log-in
             :user/sign-up user/sign-up
             :user/log-out user/log-out
