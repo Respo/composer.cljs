@@ -5,6 +5,7 @@
             [composer.updater.router :as router]
             [composer.updater.template :as template]
             [composer.updater.settings :as settings]
+            [composer.updater.snapshot :as snapshot]
             [composer.schema :as schema]
             [respo-message.updater :refer [update-messages]]))
 
@@ -56,5 +57,6 @@
             :settings/add-color settings/add-color
             :settings/remove-color settings/remove-color
             :settings/update-color settings/update-color
+            :snapshot/reset snapshot/reset-version
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))
