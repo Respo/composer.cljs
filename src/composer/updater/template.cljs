@@ -139,6 +139,19 @@
   (let [id (:id op-data), new-name (:name op-data)]
     (update-in db [:templates id] (fn [template] (assoc template :name new-name)))))
 
+(defn replace-markup [db op-data sid op-id op-time]
+  (let [template-id (:template-id op-data)
+        focused-path (:path op-data)
+        the-markup (:data op-data)]
+    (if (nil? the-markup)
+      db
+      (assoc-in
+       db
+       (concat
+        [:templates template-id :markup]
+        (interleave (repeat :children) focused-path))
+       the-markup))))
+
 (defn set-node-layout [db op-data sid op-id op-time]
   (let [template-id (:template-id op-data), path (:path op-data), layout (:layout op-data)]
     (assoc-in

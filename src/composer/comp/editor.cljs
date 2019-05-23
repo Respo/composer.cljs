@@ -245,7 +245,7 @@
   (div
    {:style (merge ui/flex ui/column {:overflow :auto})}
    (=< nil 4)
-   (cursor-> :operations comp-operations states (:id template) (or focused-path []))
+   (cursor-> :operations comp-operations states template (or focused-path []))
    (div
     {:style (merge ui/flex {:overflow :auto, :padding "0 8px"})}
     (comp-markup (:markup template) [] focused-path active-paths)

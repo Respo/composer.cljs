@@ -52,6 +52,7 @@
             :template/node-event template/update-node-event
             :template/node-attrs template/update-node-attrs
             :template/set-preview-sizes template/set-preview-sizes
+            :template/replace template/replace-markup
             :template/mark-saved template/mark-saved
             :template/move-order template/move-order
             :settings/add-color settings/add-color
