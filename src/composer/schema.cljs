@@ -59,7 +59,7 @@
 (def node-types
   {:element [:text :button :icon :input :link :image :element],
    :layout [:box :space :divider :popup],
-   :control [:template :some :list :case],
+   :control [:template :some :list :case :comment],
    :advanced [:markdown :function],
    :devtool [:inspect]})
 
