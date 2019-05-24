@@ -482,6 +482,7 @@
     :image (render-image markup context)
     :case (render-case markup context on-action)
     :function (render-function markup context on-action)
+    :comment (span nil)
     (div
      {:style style-unknown}
      (comp-invalid (str "Bad type: " (pr-str (:type markup))) markup))))

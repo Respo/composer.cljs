@@ -12,67 +12,86 @@
             [composer.util :refer [path-with-children]]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.style :as style]
-            [bisection-key.core :as bisection]))
+            [bisection-key.core :as bisection]
+            ["copy-text-to-clipboard" :as copy!]
+            [favored-edn.core :refer [write-edn]]
+            [cljs.reader :refer [read-string]]))
 
 (defcomp
  comp-operations
- (states template-id focused-path)
- (div
-  {:style (merge ui/row {:padding "0 8px"})}
-  (div {} (<> "Operations:" style/field-label))
-  (div
-   {:style (merge ui/flex)}
-   (a
-    {:style style/link,
-     :inner-text "Append",
-     :on-click (fn [e d! m!]
-       (d! :template/append-markup {:template-id template-id, :path focused-path})
-       (d! :router/move-append nil))})
-   (a
-    {:style style/link,
-     :inner-text "After",
-     :on-click (fn [e d! m!]
-       (d! :template/after-markup {:template-id template-id, :path focused-path})
-       (d! :router/move-after nil))})
-   (a
-    {:style style/link,
-     :inner-text "Prepend",
-     :on-click (fn [e d! m!]
-       (d! :template/prepend-markup {:template-id template-id, :path focused-path})
-       (d! :router/move-prepend nil))})
-   (a
-    {:style style/link,
-     :inner-text "Before",
-     :on-click (fn [e d! m!]
-       (d! :template/before-markup {:template-id template-id, :path focused-path})
-       (d! :router/move-before nil))})
-   (cursor->
-    :remove
-    comp-confirm
-    states
-    {:trigger (a {:style ui/link, :inner-text "Remove"})}
-    (fn [e d! m!]
-      (d! :template/remove-markup {:template-id template-id, :path focused-path})
-      (d! :session/focus-to {:path (vec (butlast focused-path))})))
-   (a
-    {:style style/link,
-     :inner-text "Wrap",
-     :on-click (fn [e d! m!]
-       (d! :template/wrap-markup {:template-id template-id, :path focused-path})
-       (d! :session/focus-to {:path (conj focused-path bisection/mid-id)}))})
-   (a
-    {:style style/link,
-     :inner-text "Spread",
-     :on-click (fn [e d! m!]
-       (d! :template/spread-markup {:template-id template-id, :path focused-path})
-       (d! :router/move-before nil))})
-   (a
-    {:style style/link,
-     :inner-text "Copy",
-     :on-click (fn [e d! m!]
-       (d! :session/copy-markup {:template-id template-id, :path focused-path}))})
-   (a
-    {:style style/link,
-     :inner-text "Paste",
-     :on-click (fn [e d! m!]
-       (d! :session/paste-markup {:template-id template-id, :path focused-path}))}))))
+ (states template focused-path)
+ (let [template-id (:id template)]
+   (div
+    {:style (merge ui/row {:padding "0 8px"})}
+    (div {} (<> "Operations:" style/field-label))
+    (div
+     {:style (merge ui/flex)}
+     (a
+      {:style style/link,
+       :inner-text "Append",
+       :on-click (fn [e d! m!]
+         (d! :template/append-markup {:template-id template-id, :path focused-path})
+         (d! :router/move-append nil))})
+     (a
+      {:style style/link,
+       :inner-text "After",
+       :on-click (fn [e d! m!]
+         (d! :template/after-markup {:template-id template-id, :path focused-path})
+         (d! :router/move-after nil))})
+     (a
+      {:style style/link,
+       :inner-text "Prepend",
+       :on-click (fn [e d! m!]
+         (d! :template/prepend-markup {:template-id template-id, :path focused-path})
+         (d! :router/move-prepend nil))})
+     (a
+      {:style style/link,
+       :inner-text "Before",
+       :on-click (fn [e d! m!]
+         (d! :template/before-markup {:template-id template-id, :path focused-path})
+         (d! :router/move-before nil))})
+     (cursor->
+      :remove
+      comp-confirm
+      states
+      {:trigger (a {:style ui/link, :inner-text "Remove"})}
+      (fn [e d! m!]
+        (d! :template/remove-markup {:template-id template-id, :path focused-path})
+        (d! :session/focus-to {:path (vec (butlast focused-path))})))
+     (a
+      {:style style/link,
+       :inner-text "Wrap",
+       :on-click (fn [e d! m!]
+         (d! :template/wrap-markup {:template-id template-id, :path focused-path})
+         (d! :session/focus-to {:path (conj focused-path bisection/mid-id)}))})
+     (a
+      {:style style/link,
+       :inner-text "Spread",
+       :on-click (fn [e d! m!]
+         (d! :template/spread-markup {:template-id template-id, :path focused-path})
+         (d! :router/move-before nil))})
+     (a
+      {:style style/link,
+       :inner-text "Copy",
+       :on-click (fn [e d! m!]
+         (let [branch (get-in (:markup template) (interleave (repeat :children) focused-path))]
+           (copy! (write-edn branch)))
+         (d! :session/copy-markup {:template-id template-id, :path focused-path}))})
+     (a
+      {:style style/link,
+       :inner-text "Paste",
+       :on-click (fn [e d! m!]
+         (d! :session/paste-markup {:template-id template-id, :path focused-path}))})
+     (cursor->
+      :replace
+      comp-prompt
+      states
+      {:trigger (a {:style style/link, :inner-text "Replace"}),
+       :text "Replace markup",
+       :multiline? true,
+       :input-style {:font-family ui/font-code, :font-size 12, :min-height 200}}
+      (fn [result d! m!]
+        (let [data (read-string result)]
+          (if (map? data)
+            (d! :template/replace {:path focused-path, :template-id template-id, :data data})
+            (js/console.error "Invalid data")))))))))
