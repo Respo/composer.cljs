@@ -15,7 +15,8 @@
             [bisection-key.core :as bisection]
             ["copy-text-to-clipboard" :as copy!]
             [favored-edn.core :refer [write-edn]]
-            [cljs.reader :refer [read-string]]))
+            [cljs.reader :refer [read-string]]
+            [clojure.string :as string]))
 
 (defcomp
  comp-operations
@@ -89,7 +90,11 @@
       {:trigger (a {:style style/link, :inner-text "Replace"}),
        :text "Replace markup",
        :multiline? true,
-       :input-style {:font-family ui/font-code, :font-size 12, :min-height 200}}
+       :input-style {:font-family ui/font-code, :font-size 12, :min-height 200},
+       :validator (fn [content]
+         (if (string/blank? content)
+           "Can't be empty"
+           (try (do (read-string content) nil) (catch js/Error e (str e)))))}
       (fn [result d! m!]
         (let [data (read-string result)]
           (if (map? data)
