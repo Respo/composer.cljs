@@ -17,6 +17,9 @@
    [:settings :color-groups op-id]
    (merge schema/color-group {:id op-id, :name op-data})))
 
+(defn create-preset [db op-data sid op-id op-time]
+  (assoc-in db [:settings :presets op-id] (merge schema/preset {:id op-id, :name op-data})))
+
 (defn remove-color [db op-data sid op-id op-time]
   (update-in
    db

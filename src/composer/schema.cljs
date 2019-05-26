@@ -47,7 +47,7 @@
    :users (do user {}),
    :templates (do template {}),
    :saved-templates {},
-   :settings {:colors-groups (do color-group {})}})
+   :settings {:colors-groups (do color-group {}), :presets {}}})
 
 (def node-layouts
   [{:value :row, :display "Row", :kind :row}
@@ -64,6 +64,8 @@
    :control [:template :some :list :case :comment],
    :advanced [:markdown :function],
    :devtool [:inspect]})
+
+(def preset {:id nil, :name "", :style {}})
 
 (def props-hints
   {:box ["param"],
