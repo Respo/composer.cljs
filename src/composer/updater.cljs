@@ -56,6 +56,9 @@
             :template/mark-saved template/mark-saved
             :template/move-order template/move-order
             :settings/add-color settings/add-color
+            :settings/add-color-group settings/add-color-group
+            :settings/rename-color-group settings/rename-color-group
+            :settings/remove-color-group settings/remove-color-group
             :settings/remove-color settings/remove-color
             :settings/update-color settings/update-color
             :snapshot/reset snapshot/reset-version
