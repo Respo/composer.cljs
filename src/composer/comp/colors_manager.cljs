@@ -6,7 +6,7 @@
             [respo.core :refer [defcomp cursor-> list-> <> span div button input]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
-            [feather.core :refer [comp-i]]
+            [feather.core :refer [comp-i comp-icon]]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [respo.util.list :refer [map-val]]
             [respo-alerts.comp.alerts :refer [comp-confirm comp-prompt]]
@@ -90,7 +90,7 @@
  comp-color-group
  (states color-group)
  (div
-  {}
+  {:style {:border-top (str "1px solid " (hsl 0 0 96)), :margin-bottom 16, :padding 8}}
   (div
    {:style ui/row-parted}
    (div
@@ -103,7 +103,7 @@
      :rename
      comp-prompt
      states
-     {:trigger (comp-i :edit 20 (hsl 200 100 80)),
+     {:trigger (comp-i :edit-2 14 (hsl 200 100 80)),
       :style {:display :inline-block},
       :initial (:name color-group),
       :text "New name for this group:"}
@@ -122,7 +122,9 @@
     :remove
     comp-confirm
     states
-    {:trigger (comp-i "x" 20 (hsl 0 100 80)), :style {:display :inline-block}}
+    {:trigger (comp-i "x" 20 (hsl 0 100 80)),
+     :style {:display :inline-block},
+     :text (<< "Remove the whole group \"~(:name color-group)\"?")}
     (fn [e d! m!] (d! :settings/remove-color-group (:id color-group)))))
   (list->
    {:style ui/row}
@@ -161,22 +163,30 @@
  comp-colors-manager
  (states color-groups)
  (div
-  {}
+  {:style (merge ui/expand {:padding 16})}
   (div
    {:style (merge
             ui/row-middle
             {:font-family ui/font-fancy, :font-size 20, :color (hsl 0 0 70)})}
-   (<> "Colors")
-   (=< 8 nil)
+   (<> "Colors"))
+  (list->
+   {:style {}}
+   (->> color-groups
+        (map-val
+         (fn [color-group] (cursor-> (:id color-group) comp-color-group states color-group)))))
+  (=< nil 16)
+  (div
+   {}
    (cursor->
     :create-group
     comp-popup
     states
-    {:trigger (comp-i "plus" 20 (hsl 200 100 80)),
+    {:trigger (button
+               {:style (merge ui/row-middle ui/button)}
+               (comp-icon
+                :plus
+                {:font-size 20, :color (hsl 200 100 80), :vertical-align :middle}
+                nil)
+               (<> "Add group")),
      :on-popup (fn [e d! m!] (focus-element! ".group-name"))}
-    (fn [on-toggle] (cursor-> :group-creator comp-group-creator states on-toggle))))
-  (list->
-   {:style {:margin-left 16}}
-   (->> color-groups
-        (map-val
-         (fn [color-group] (cursor-> (:id color-group) comp-color-group states color-group)))))))
+    (fn [on-toggle] (cursor-> :group-creator comp-group-creator states on-toggle))))))

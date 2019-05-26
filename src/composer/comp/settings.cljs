@@ -19,5 +19,5 @@
  comp-settings
  (states settings)
  (div
-  {:style {:padding 16}}
+  {:style (merge ui/flex ui/column)}
   (cursor-> :colors comp-colors-manager states (:color-groups settings))))
