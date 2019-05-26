@@ -1,7 +1,9 @@
 
 (ns composer.schema )
 
-(def color {:id nil, :name "", :color "", :group nil})
+(def color {:id nil, :name "", :color ""})
+
+(def color-group {:id nil, :name "", :colors (do color {})})
 
 (def markup
   {:type :box,
@@ -45,7 +47,7 @@
    :users (do user {}),
    :templates (do template {}),
    :saved-templates {},
-   :settings {:colors {}}})
+   :settings {:colors-groups (do color-group {})}})
 
 (def node-layouts
   [{:value :row, :display "Row", :kind :row}

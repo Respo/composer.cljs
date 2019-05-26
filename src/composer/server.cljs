@@ -44,6 +44,10 @@
 
 (defonce *snapshot-md5 (atom nil))
 
+(defn check-settings! []
+  (when (some? (get-in (:db @*reel) [:settings :colors]))
+    (println (.yellow chalk "Old colors config detected. Please migrate to color groups!"))))
+
 (defn check-version! []
   (let [pkg (.parse js/JSON (fs/readFileSync (path/join js/__dirname "../package.json")))
         version (.-version pkg)]
@@ -147,6 +151,7 @@
   (js/process.on "SIGINT" on-exit!)
   (comment repeat! 600 #(persist-db!))
   (check-version!)
+  (check-settings!)
   (watch-snapshot!))
 
 (defn reload! []
