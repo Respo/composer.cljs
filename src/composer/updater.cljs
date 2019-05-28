@@ -62,6 +62,9 @@
             :settings/remove-color settings/remove-color
             :settings/update-color settings/update-color
             :settings/create-preset settings/create-preset
+            :settings/update-preset settings/update-preset
+            :settings/rename-preset settings/rename-preset
+            :settings/remove-preset settings/remove-preset
             :snapshot/reset snapshot/reset-version
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))

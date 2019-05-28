@@ -29,11 +29,20 @@
 (defn remove-color-group [db op-data sid op-id op-time]
   (update-in db [:settings :color-groups] (fn [groups] (dissoc groups op-data))))
 
+(defn remove-preset [db op-data sid op-id op-time]
+  (update-in db [:settings :presets] (fn [presets] (dissoc presets op-data))))
+
 (defn rename-color-group [db op-data sid op-id op-time]
   (assoc-in db [:settings :color-groups (:id op-data) :name] (:name op-data)))
+
+(defn rename-preset [db op-data sid op-id op-time]
+  (assoc-in db [:settings :presets (:id op-data) :name] (:name op-data)))
 
 (defn update-color [db op-data sid op-id op-time]
   (update-in
    db
    [:settings :color-groups (:group-id op-data) :colors (:id op-data)]
    (fn [color] (assoc color :color (:color op-data)))))
+
+(defn update-preset [db op-data sid op-id op-time]
+  (assoc-in db [:settings :presets (:id op-data) :style] (:style op-data)))
