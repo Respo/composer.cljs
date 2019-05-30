@@ -16731,14 +16731,7 @@
                           :type :expr, :by "B1y7Rc-Zz", :at 1550989457962, :id "OCu7sbH8oz"
                           :data {
                            "D" {:type :leaf, :by "B1y7Rc-Zz", :at 1550989458983, :text ":path", :id "MPI0sar0dF"}
-                           "T" {
-                            :type :expr, :by "B1y7Rc-Zz", :at 1550510607508, :id "dIAyEGdjkN"
-                            :data {
-                             "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1550510608178, :text "conj", :id "HoulIeTfktf"}
-                             "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1550510610181, :text "focused-path", :id "zn7-3njl4T"}
-                             "r" {:type :leaf, :by "B1y7Rc-Zz", :at 1550510614985, :text "bisection/mid-id", :id "nMBjSAZJ35"}
-                            }
-                           }
+                           "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1550510610181, :text "focused-path", :id "zn7-3njl4T"}
                           }
                          }
                         }

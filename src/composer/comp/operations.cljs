@@ -64,7 +64,7 @@
        :inner-text "Wrap",
        :on-click (fn [e d! m!]
          (d! :template/wrap-markup {:template-id template-id, :path focused-path})
-         (d! :session/focus-to {:path (conj focused-path bisection/mid-id)}))})
+         (d! :session/focus-to {:path focused-path}))})
      (a
       {:style style/link,
        :inner-text "Spread",
