@@ -8,42 +8,40 @@
              [defcomp <> action-> list-> cursor-> span div input button a]]
             [composer.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
-            [composer.style :as style]))
+            [composer.style :as style]
+            [respo.util.list :refer [map-val]]))
 
 (defcomp
  comp-color-panel
- (states colors initial-color set-color! on-toggle)
- (let [state (or (:data states) {:text initial-color})
-       grouped-colors (group-by :group (vals colors))]
+ (states color-groups initial-color set-color! on-toggle)
+ (let [state (or (:data states) {:text initial-color})]
    (div
     {:style {:width 360}}
     (div {} (<> "Pick a color" {:font-family ui/font-fancy}))
     (list->
      {}
-     (->> grouped-colors
-          (map
-           (fn [[group-name colors]]
-             [group-name
-              (div
-               {}
-               (div {} (<> (or group-name "theme") {:font-family ui/font-fancy}))
-               (list->
-                {:style ui/row}
-                (->> colors
-                     (map
-                      (fn [color]
-                        [(:id color)
-                         (div
-                          {:style (merge
-                                   ui/center
-                                   {:background-color (:color color),
-                                    :width 32,
-                                    :height 32,
-                                    :margin 4,
-                                    :cursor :pointer,
-                                    :border "1px solid #ddd"}),
-                           :on-click (fn [e d! m!] (set-color! (:color color) d!))}
-                          (<> (:name color) {:color :white, :font-size 10}))])))))]))))
+     (->> color-groups
+          (map-val
+           (fn [color-group]
+             (div
+              {}
+              (div {} (<> (or (:name color-group) "theme") {:font-family ui/font-fancy}))
+              (list->
+               {:style ui/row}
+               (->> (:colors color-group)
+                    (map-val
+                     (fn [color]
+                       (div
+                        {:style (merge
+                                 ui/center
+                                 {:background-color (:color color),
+                                  :width 32,
+                                  :height 32,
+                                  :margin 4,
+                                  :cursor :pointer,
+                                  :border "1px solid #ddd"}),
+                         :on-click (fn [e d! m!] (set-color! (:color color) d!))}
+                        (<> (:name color) {:color :white, :font-size 10})))))))))))
     (div
      {}
      (a
@@ -53,7 +51,7 @@
 
 (defcomp
  comp-bg-picker
- (states template-id path markup colors)
+ (states template-id path markup color-groups)
  (let [bg-color (or (get-in markup [:style "background-color"]) (hsl 0 0 100))
        set-color! (fn [color d!]
                     (d!
@@ -76,11 +74,11 @@
                          :background-color bg-color,
                          :border "1px solid #ddd"}})}
      (fn [on-toggle]
-       (cursor-> :panel comp-color-panel states colors bg-color set-color! on-toggle))))))
+       (cursor-> :panel comp-color-panel states color-groups bg-color set-color! on-toggle))))))
 
 (defcomp
  comp-font-color-picker
- (states template-id path markup colors)
+ (states template-id path markup color-groups)
  (let [init-color (or (get-in markup [:style "color"]) (hsl 0 0 100))
        set-color! (fn [color d!]
                     (d!
@@ -100,4 +98,4 @@
                          :background-color init-color,
                          :border "1px solid #ddd"}})}
      (fn [on-toggle]
-       (cursor-> :panel comp-color-panel states colors init-color set-color! on-toggle))))))
+       (cursor-> :panel comp-color-panel states color-groups init-color set-color! on-toggle))))))

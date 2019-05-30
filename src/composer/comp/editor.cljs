@@ -309,7 +309,7 @@
         template-id
         focused-path
         child
-        (:colors settings))
+        (:color-groups settings))
        (cursor->
         :fontface
         comp-fontface-picker
@@ -328,7 +328,7 @@
         template-id
         focused-path
         child
-        (:colors settings))
+        (:color-groups settings))
        (cursor->
         :style
         comp-dict-editor
