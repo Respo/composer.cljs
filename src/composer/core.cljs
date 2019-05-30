@@ -400,7 +400,7 @@
 
 (defn render-some [markup context on-action]
   (let [props (:props markup)
-        states (:context context)
+        states (:states context)
         value (read-token (get props "value") (:data context) (:data states))
         kind (read-token (get props "kind") (:data context) (:data states))
         child-pair (->> (:children markup) (sort-by first) (vals))
