@@ -102,7 +102,9 @@
                                  :templates tmpls,
                                  :level 0,
                                  :hide-popup? true,
-                                 :template-name (:name template)}
+                                 :template-name (:name template),
+                                 :state-path [],
+                                 :states (:state mock)}
                                 (fn [d! op param options]
                                   (println op param (pr-str options)))))
                               (div
