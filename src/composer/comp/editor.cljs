@@ -265,7 +265,14 @@
        (cursor-> :type comp-type-picker states template-id focused-path child)
        (cursor-> :layout comp-layout-picker states template-id focused-path child)
        (when config/dev? (comp-inspect "Node" child {:bottom 0}))
-       (cursor-> :presets comp-presets states (:presets child) template-id focused-path)
+       (cursor->
+        :presets
+        comp-presets
+        states
+        (:presets child)
+        (:presets settings)
+        template-id
+        focused-path)
        (cursor->
         :props
         comp-dict-editor

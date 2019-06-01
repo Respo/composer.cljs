@@ -47,7 +47,7 @@
      (a
       {:style ui/link,
        :inner-text "Add colors",
-       :on-click (fn [e d! m!] (d! :router/change {:name :settings}))})))))
+       :on-click (fn [e d! m!] (d! :router/change {:name :settings, :data {:tab :colors}}))})))))
 
 (defcomp
  comp-bg-picker

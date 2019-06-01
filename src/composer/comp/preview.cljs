@@ -20,7 +20,7 @@
 
 (defcomp
  comp-preview
- (states templates focus-to shadows? focuses)
+ (states templates focus-to shadows? focuses settings)
  (let [template-id (:template-id focus-to)
        template (get templates template-id)
        mock-id (:mock-pointer template)
@@ -73,7 +73,8 @@
                             {:color 'white, :background-color (hsl 200 80 80)}))},
              :template-name (:name template),
              :state-path [],
-             :states mock-state}
+             :states mock-state,
+             :presets (:presets settings)}
             on-operation))
           (span
            {:style {:color (hsl 0 0 60),
