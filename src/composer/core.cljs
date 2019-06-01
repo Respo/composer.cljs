@@ -109,17 +109,6 @@
      :column-parted ui/column-parted
      {})))
 
-(defn get-preset [preset]
-  (use-string-keys
-   (case preset
-     :flex ui/flex
-     :expand (merge ui/flex {"scroll" :auto})
-     :fullscreen ui/fullscreen
-     :scroll {"overflow" :auto}
-     :global ui/global
-     :base-padding {"padding" "4px 8px"}
-     (do (js/console.warn (str "Unknown preset: " preset)) nil))))
-
 (defn get-template-props [data-prop attrs data state]
   (if (some? data-prop)
     (read-token data-prop data state)
@@ -128,7 +117,14 @@
 (defn read-styles [style data state]
   (->> style (map (fn [[k v]] [k (read-token v data state)])) (into {})))
 
-(defn style-presets [presets] (->> presets (map get-preset) (apply merge)))
+(defn style-presets [preset-ids presets]
+  (->> preset-ids
+       (map
+        (fn [preset-id]
+          (println :presets presets)
+          (let [preset (get presets preset-id)]
+            (if (some? preset) (:style preset) (js/console.warn "Unknown preset:" preset-id)))))
+       (apply merge)))
 
 (defn render-button [markup context on-action]
   (let [props (:props markup)
@@ -151,7 +147,7 @@
       (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                ui/button
-               (style-presets (:presets markup))
+               (style-presets (:presets markup) (:presets context))
                (read-styles (:style markup) (:data context) (:data states))),
        :inner-text (or text "Submit"),
        :on event-map}))))
@@ -211,7 +207,7 @@
           (eval-attrs (:attrs markup) (:data context) (:data states))
           {:style (merge
                    (get-layout (:layout markup))
-                   (style-presets (:presets markup))
+                   (style-presets (:presets markup) (:presets context))
                    (read-styles (:style markup) (:data context) (:data states)))}))
       (contains? #{:contain :cover} mode)
         (div
@@ -226,7 +222,7 @@
                      :background-position :center,
                      :background-repeat :no-repeat})
                    (get-layout (:layout markup))
-                   (style-presets (:presets markup))
+                   (style-presets (:presets markup) (:presets context))
                    (read-styles (:style markup) (:data context) (:data states)))}))
       :else (comp-invalid (<< "Bad image mode: ~(pr-str mode)") props))))
 
@@ -258,7 +254,7 @@
         {:value value,
          :style (merge
                  (use-string-keys ui/textarea)
-                 (style-presets (:presets markup))
+                 (style-presets (:presets markup) (:presets context))
                  (read-styles (:style markup) (:data context) (:data states))),
          :on event-map}))
       (input
@@ -267,7 +263,7 @@
         {:value value,
          :style (merge
                  (use-string-keys ui/input)
-                 (style-presets (:presets markup))
+                 (style-presets (:presets markup) (:presets context))
                  (read-styles (:style markup) (:data context) (:data states))),
          :on event-map})))))
 
@@ -318,7 +314,7 @@
       (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                (use-string-keys ui/link)
-               (style-presets (:presets markup))
+               (style-presets (:presets markup) (:presets context))
                (read-styles (:style markup) (:data context) (:data states))),
        :inner-text (or text "Submit"),
        :href (or href "#"),
@@ -332,7 +328,7 @@
     (comp-md-block
      value
      {:style (merge
-              (style-presets (:presets markup))
+              (style-presets (:presets markup) (:presets context))
               (read-styles (:style markup) (:data context) (:data states))),
       :class-name class-name})))
 
@@ -353,7 +349,7 @@
        (if (and (string? value) (some? data)) (string/replace value "~{data}" data) value)
        "TEXT")
      (merge
-      (style-presets (:presets markup))
+      (style-presets (:presets markup) (:presets context))
       (read-styles (:style markup) (:data context) (:data states))))))
 
 (def style-unknown {"font-size" 12, "color" :red})
@@ -457,12 +453,13 @@
                       :min-height 200,
                       :background-color (hsl 0 0 100)})
                     (get-layout (:layout markup))
-                    (style-presets (:presets markup))
+                    (style-presets (:presets markup) (:presets context))
                     (read-styles (:style markup) (:data context) (:data states)))})
           (render-children (:children markup) context on-action)))
         (span {})))))
 
 (defn render-markup [markup context on-action]
+  (println "presets" (:presets context))
   (case (:type markup)
     :box (render-box markup context on-action)
     :space (render-space markup context)
@@ -503,7 +500,7 @@
           (eval-attrs (:attrs markup) (:data context) (:data states))
           {:style (merge
                    (get-layout (:layout markup))
-                   (style-presets (:presets markup))
+                   (style-presets (:presets markup) (:presets context))
                    (read-styles (:style markup) (:data context) (:data states)))})
          (let [pairs (if (map? value)
                        (->> value (sort-by (fn [[k v]] k)))
@@ -525,7 +522,7 @@
         func-name (read-token (get props "name") (:data context) (:data states))
         styles (merge
                 (get-layout (:layout markup))
-                (style-presets (:presets markup))
+                (style-presets (:presets markup) (:presets context))
                 (read-styles (:style markup) (:data context) (:data states)))
         func (get-in context [:functions func-name])
         children (render-children (:children markup) context on-action)]
@@ -558,7 +555,7 @@
       (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                (get-layout (:layout markup))
-               (style-presets (:presets markup))
+               (style-presets (:presets markup) (:presets context))
                (read-styles (:style markup) (:data context) (:data states))),
        :on event-map})
      (render-children (:children markup) context on-action))))
@@ -608,7 +605,7 @@
       (eval-attrs (:attrs markup) (:data context) (:data states))
       {:style (merge
                (get-layout (:layout markup))
-               (style-presets (:presets markup))
+               (style-presets (:presets markup) (:presets context))
                (read-styles (:style markup) (:data context) (:data states))),
        :on event-map})
      (render-children (:children markup) context on-action))))
