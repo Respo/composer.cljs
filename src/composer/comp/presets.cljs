@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> action-> cursor-> list-> span div]]
+            [respo.core :refer [defcomp <> action-> cursor-> list-> span div a]]
             [composer.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [feather.core :refer [comp-i]]
@@ -71,7 +71,14 @@
                     (fn [e d! m!]
                       (if selected?
                         (handle-op :remove (:id preset) d!)
-                        (handle-op :add (:id preset) d!)))))])))))))))
+                        (handle-op :add (:id preset) d!)))))]))))
+       (div
+        {}
+        (a
+         {:style ui/link,
+          :inner-text "Config presets",
+          :on-click (fn [e d! m!]
+            (d! :router/change {:name :settings, :data {:tab :presets}}))})))))))
 
 (defcomp
  comp-presets

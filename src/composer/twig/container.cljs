@@ -29,6 +29,7 @@
                   :home {}
                   :preview {}
                   :profile (twig-members (:sessions db) (:users db))
+                  :settings (:data router)
                   {})),
        :count (count (:sessions db)),
        :color (color/randomColor),

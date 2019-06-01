@@ -22,17 +22,16 @@
 
 (defcomp
  comp-settings
- (states settings)
- (let [state (or (:data states) {:tab :colors})]
-   (div
-    {:style (merge ui/flex ui/column)}
-    (div
-     {:style {:border-bottom (str "1px solid " (hsl 0 0 90))}}
-     (comp-tabs
-      setting-tabs
-      (:tab state)
-      (fn [result d! m!] (m! (assoc state :tab (:value result))))))
-    (case (:tab state)
-      :colors (cursor-> :colors comp-colors-manager states (:color-groups settings))
-      :presets (cursor-> :presets comp-presets-manager states (:presets settings))
-      (<> "No tab selected.")))))
+ (states settings router-data)
+ (div
+  {:style (merge ui/flex ui/column)}
+  (div
+   {:style {:border-bottom (str "1px solid " (hsl 0 0 90))}}
+   (comp-tabs
+    setting-tabs
+    (:tab router-data)
+    (fn [result d! m!] (d! :router/change {:name :settings, :data {:tab (:value result)}}))))
+  (case (:tab router-data)
+    :colors (cursor-> :colors comp-colors-manager states (:color-groups settings))
+    :presets (cursor-> :presets comp-presets-manager states (:presets settings))
+    (<> "No tab selected."))))

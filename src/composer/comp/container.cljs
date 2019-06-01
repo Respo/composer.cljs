@@ -92,7 +92,7 @@
                settings)
             :overview (cursor-> :overview comp-overview states templates focuses settings)
             :profile (comp-profile (:user store) (:data router))
-            :settings (cursor-> :settings comp-settings states settings)
+            :settings (cursor-> :settings comp-settings states settings (:data router))
             (<> router))
           (comp-login states))
         (comp-status-color (:color store))
