@@ -11,9 +11,9 @@
 
 (defcomp
  comp-entry
- (title router-name router)
+ (title router-name router router-data)
  (div
-  {:on-click (action-> :router/change {:name router-name}),
+  {:on-click (action-> :router/change {:name router-name, :data router-data}),
    :style (merge
            {:cursor :pointer, :color (hsl 0 0 70)}
            (if (= router-name (:name router)) {:color :black}))}
@@ -33,13 +33,13 @@
             :font-family ui/font-fancy})}
   (div
    {:style ui/row-middle}
-   (comp-entry (:title config/site) :home router)
+   (comp-entry (:title config/site) :home router nil)
    (=< 16 nil)
-   (comp-entry "Preview" :preview router)
+   (comp-entry "Preview" :preview router nil)
    (=< 16 nil)
-   (comp-entry "Overview" :overview router)
+   (comp-entry "Overview" :overview router nil)
    (=< 16 nil)
-   (comp-entry "Settings" :settings router))
+   (comp-entry "Settings" :settings router {:tab :colors}))
   (div
    {:style ui/row-middle}
    (a
