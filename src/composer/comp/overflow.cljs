@@ -16,7 +16,6 @@
  comp-overview
  (states templates focuses settings)
  (let [tmpls (neaten-templates templates), state (or (:data states) {:filter ""})]
-   (println "settings" settings)
    (div
     {:style (merge ui/flex ui/column {:overflow :auto, :background-color (hsl 0 0 94)})}
     (div

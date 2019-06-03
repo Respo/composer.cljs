@@ -121,7 +121,6 @@
   (->> preset-ids
        (map
         (fn [preset-id]
-          (println :presets presets)
           (let [preset (get presets preset-id)]
             (if (some? preset) (:style preset) (js/console.warn "Unknown preset:" preset-id)))))
        (apply merge)))
@@ -459,7 +458,6 @@
         (span {})))))
 
 (defn render-markup [markup context on-action]
-  (println "presets" (:presets context))
   (case (:type markup)
     :box (render-box markup context on-action)
     :space (render-space markup context)

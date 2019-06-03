@@ -81,9 +81,16 @@
               (m! %cursor (assoc state :pointer nil))
               (d! :settings/remove-preset (:id preset)))))
           (=< nil 16)
-          (pre
-           {:style {:margin 0, :padding 12, :background-color (hsl 0 0 96)}}
-           (code {:inner-text (write-edn (:style preset))}))
+          (list->
+           {:style {:font-family ui/font-code}}
+           (->> (:style preset)
+                (map
+                 (fn [[k v]]
+                   [k
+                    (div
+                     {:style (merge ui/row {:border-bottom (str "1px solid " (hsl 0 0 94))})}
+                     (<> k {:display :inline-block, :min-width 160})
+                     (<> v))]))))
           (=< nil 16)
           (div
            {}
