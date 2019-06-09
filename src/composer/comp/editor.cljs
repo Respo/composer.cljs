@@ -247,7 +247,7 @@
    (=< nil 4)
    (cursor-> :operations comp-operations states template (or focused-path []))
    (div
-    {:style (merge ui/flex {:overflow :auto, :padding "0 8px"})}
+    {:style (merge ui/flex {:overflow :auto, :padding "0 8px 120px 8px"})}
     (comp-markup (:markup template) [] focused-path active-paths)
     (when config/dev? (comp-inspect "Markup" (:markup template) {:bottom 0}))))
   (div {:style {:width 1, :background-color "#eee"}})
