@@ -115,7 +115,18 @@
     (->> attrs (map (fn [[k v]] [(keyword k) (read-token v data state)])) (into {}))))
 
 (defn read-styles [style data state]
-  (->> style (map (fn [[k v]] [k (read-token v data state)])) (into {})))
+  (->> style
+       (map
+        (fn [[k v]]
+          [k
+           (cond
+             (re-matches #"^\#[0-9a-f]{3}$" v)
+               (do (js/console.warn "Outdated color syntax" v) v)
+             (re-matches #"\#[0-9a-f]{6}" v)
+               (do (js/console.warn "Outdated color syntax" v) v)
+             read-token v
+             data state)]))
+       (into {})))
 
 (defn style-presets [preset-ids presets]
   (->> preset-ids
