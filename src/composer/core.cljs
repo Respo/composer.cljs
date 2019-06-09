@@ -122,7 +122,7 @@
            (cond
              (re-matches #"^\#[0-9a-f]{3}$" v)
                (do (js/console.warn "Outdated color syntax" v) v)
-             (re-matches #"\#[0-9a-f]{6}" v)
+             (re-matches #"^\#[0-9a-f]{6}$" v)
                (do (js/console.warn "Outdated color syntax" v) v)
              read-token v
              data state)]))

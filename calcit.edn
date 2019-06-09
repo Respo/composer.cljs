@@ -29613,7 +29613,7 @@
                     :type :expr, :by "B1y7Rc-Zz", :at 1560072748865, :id "z7NKUNb16o"
                     :data {
                      "T" {:type :leaf, :by "B1y7Rc-Zz", :at 1560072756250, :text "re-matches", :id "jm6vCyf3S"}
-                     "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1560072836984, :text "#\"\\#[0-9a-f]{6}", :id "h7fVD6L3G3"}
+                     "j" {:type :leaf, :by "B1y7Rc-Zz", :at 1560074702725, :text "#\"^\\#[0-9a-f]{6}$", :id "h7fVD6L3G3"}
                      "r" {:type :leaf, :by "B1y7Rc-Zz", :at 1560072776130, :text "v", :id "9VE242I3K"}
                     }
                    }
