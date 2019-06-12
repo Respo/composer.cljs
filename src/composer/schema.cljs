@@ -1,7 +1,7 @@
 
 (ns composer.schema )
 
-(def color {:id nil, :name "", :color ""})
+(def color {:id nil, :group-id nil, :name "", :color ""})
 
 (def color-group {:id nil, :name "", :colors (do color {})})
 

@@ -66,6 +66,7 @@
   (println "Saved file.")
   (let [file-content (write-edn
                       (-> (:db @*reel) (assoc :sessions {}) (dissoc :saved-templates)))]
+    (reset! *snapshot-md5 (md5 file-content))
     (write-mildly! storage-file file-content)
     (comment write-mildly! (get-backup-path!) file-content)))
 

@@ -42,7 +42,7 @@
   (update-in
    db
    [:settings :color-groups (:group-id op-data) :colors (:id op-data)]
-   (fn [color] (assoc color :color (:color op-data)))))
+   (fn [color] (merge color op-data))))
 
 (defn update-preset [db op-data sid op-id op-time]
   (assoc-in db [:settings :presets (:id op-data) :style] (:style op-data)))
