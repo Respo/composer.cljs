@@ -60,7 +60,19 @@
   {:style (merge
            ui/center
            {:margin 8, :padding "8px 32px", :border "1px solid #eee", :position :relative})}
-  (div {} (<> (:name color)))
+  (div
+   {}
+   (cursor->
+    :update-name
+    comp-prompt
+    states
+    {:trigger (<> (:name color)),
+     :initial (:name color),
+     :input-style {:font-family ui/font-code},
+     :text "Change name"}
+    (fn [result d! m!]
+      (when-not (string/blank? result)
+        (d! :settings/update-color {:id (:id color), :group-id group-id, :name result})))))
   (<> (:color color) {:font-size 12, :color (hsl 0 0 70), :font-family ui/font-code})
   (cursor->
    :update
