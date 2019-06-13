@@ -15,7 +15,7 @@ Introduction:
 [![Clojars Project](https://img.shields.io/clojars/v/respo/composer.svg)](https://clojars.org/respo/composer) ![respo/composer-app](https://img.shields.io/npm/v/@respo/composer-app.svg)
 
 ```edn
-[respo/composer "0.1.15"]
+[respo/composer "0.1.18"]
 ```
 
 ```bash
