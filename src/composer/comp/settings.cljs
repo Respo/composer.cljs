@@ -3,13 +3,13 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp cursor-> list-> <> span div button input]]
+            [respo.core :refer [defcomp >> list-> <> span div button input]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [feather.core :refer [comp-i]]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [respo.util.list :refer [map-val]]
-            [respo-alerts.comp.alerts :refer [comp-confirm comp-prompt]]
+            [respo-alerts.core :refer [comp-confirm comp-prompt]]
             [clojure.string :as string]
             [composer.util.dom :refer [focus-element!]]
             [composer.comp.colors-manager :refer [comp-colors-manager]]
@@ -32,6 +32,6 @@
     (:tab router-data)
     (fn [result d! m!] (d! :router/change {:name :settings, :data {:tab (:value result)}}))))
   (case (:tab router-data)
-    :colors (cursor-> :colors comp-colors-manager states (:color-groups settings))
-    :presets (cursor-> :presets comp-presets-manager states (:presets settings))
+    :colors (comp-colors-manager (>> states :colors) (:color-groups settings))
+    :presets (comp-presets-manager (>> states :presets) (:presets settings))
     (<> "No tab selected."))))

@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> action-> cursor-> list-> span div a]]
+            [respo.core :refer [defcomp <> >> list-> span div a]]
             [composer.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [feather.core :refer [comp-i]]
@@ -34,10 +34,8 @@
                    (d!
                     :template/node-preset
                     {:template-id template-id, :path path, :op op, :value preset}))]
-   (cursor->
-    :picker
-    comp-popup
-    states
+   (comp-popup
+    (>> states :picker)
     {:trigger (comp-i :edit 14 (hsl 200 80 50)), :style {:display :inline-block}}
     (fn [toggle!]
       (div
@@ -89,7 +87,7 @@
    {:style ui/row-middle}
    (<> "Presets" style/field-label)
    (=< 8 nil)
-   (cursor-> :edit comp-presets-picker states presets all-presets template-id path))
+   (comp-presets-picker (>> states :edit) presets all-presets template-id path))
   (list->
    {:style (merge ui/row {:padding "0 8px"})}
    (->> presets

@@ -3,13 +3,13 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> list-> span div cursor-> button a]]
+            [respo.core :refer [defcomp <> >> span div cursor-> button a]]
             [composer.config :as config]
             ["copy-text-to-clipboard" :as copy!]
             [favored-edn.core :refer [write-edn]]
             [composer.style :as style]
             [feather.core :refer [comp-icon]]
-            [respo-alerts.comp.alerts :refer [comp-prompt]]
+            [respo-alerts.core :refer [comp-prompt]]
             [clojure.string :as string]
             [respo.util.list :refer [map-val]]))
 
@@ -22,10 +22,8 @@
     (div
      {:style (merge ui/row-parted {:border-bottom "1px solid #eee"})}
      (<> "Templates" {:font-family ui/font-fancy})
-     (cursor->
-      :name
-      comp-prompt
-      states
+     (comp-prompt
+      (>> states :name)
       {:trigger (comp-icon :plus {:font-size 15, :color (hsl 0 0 30), :cursor :pointer} nil)}
       (fn [result d! m!]
         (when-not (string/blank? result)

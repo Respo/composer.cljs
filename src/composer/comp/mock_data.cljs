@@ -3,12 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button textarea pre a]]
+            [respo.core :refer [defcomp list-> >> <> span div button textarea pre a]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [respo.util.list :refer [map-val]]
             [feather.core :refer [comp-i]]
-            [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm]]
             [clojure.string :as string]
             [favored-edn.core :refer [write-edn]]
             [cljs.reader :refer [read-string]]
@@ -64,10 +64,8 @@
     {:style (merge ui/flex ui/column {:overflow :auto})}
     (div
      {:style {:padding "4px 8px"}}
-     (cursor->
-      :rename
-      comp-prompt
-      states
+     (comp-prompt
+      (>> states :rename)
       {:trigger (div
                  {:style ui/row-middle}
                  (<> (:name mock))
@@ -86,10 +84,8 @@
        :on-click (fn [e d! m!]
          (d! :template/use-mock {:template-id template-id, :mock-id (:id mock)}))})
      (=< 8 nil)
-     (cursor->
-      :fork
-      comp-prompt
-      states
+     (comp-prompt
+      (>> states :fork)
       {:trigger (a {:style ui/link, :inner-text "Fork"}), :text "Fork with new name:"}
       (fn [result d! m!]
         (when-not (string/blank? result)
@@ -97,10 +93,8 @@
            :template/fork-mock
            {:template-id template-id, :mock-id (:id mock), :name result}))))
      (=< 8 nil)
-     (cursor->
-      :remove
-      comp-confirm
-      states
+     (comp-confirm
+      (>> states :remove)
       {:trigger (a {:style ui/link, :inner-text "Remove"}),
        :text "Sure to remove mock data?"}
       (fn [e d! m!]
@@ -110,16 +104,12 @@
      (pre {:style style-code-preview, :disabled true, :inner-text (write-edn (:data mock))}))
     (div
      {:style {:padding 8}}
-     (cursor->
-      :edit
-      comp-popup
-      states
+     (comp-popup
+      (>> states :edit)
       {:trigger (a {:style ui/link, :inner-text "Edit data"}), :style nil}
       (fn [on-toggle]
-        (cursor->
-         :edit-data
-         comp-data-editor
-         states
+        (comp-data-editor
+         (>> states :edit-data)
          (:data mock)
          (fn [data d! m!]
            (comment println "edit data" data)
@@ -131,16 +121,12 @@
       {:style style-code-preview, :disabled true, :inner-text (write-edn (:state mock))}))
     (div
      {:style {:padding 8}}
-     (cursor->
-      :edit-state
-      comp-popup
-      states
+     (comp-popup
+      (>> states :edit-state)
       {:trigger (a {:style ui/link, :inner-text "Edit state"}), :style nil}
       (fn [on-toggle]
-        (cursor->
-         :edit-data
-         comp-data-editor
-         states
+        (comp-data-editor
+         (>> states :edit-data)
          (:state mock)
          (fn [data d! m!]
            (comment println "edit data" data)
@@ -161,10 +147,8 @@
               :border-bottom "1px solid #eee",
               :font-family ui/font-fancy})}
     (<> "Mock data")
-    (cursor->
-     :create
-     comp-prompt
-     states
+    (comp-prompt
+     (>> states :create)
      {:trigger (comp-i :plus 14 (hsl 0 0 70))}
      (fn [result d! m!]
        (when-not (string/blank? result)
@@ -192,7 +176,7 @@
                (=< 8 nil)
                (if (= used-mock (:id mock)) (comp-i :star 14 (hsl 0 80 70))))))))))
   (if-let [mock (get mocks focused-id)]
-    (cursor-> :editor comp-mock-editor states template-id mock)
+    (comp-mock-editor (>> states :editor) template-id mock)
     (div
      {:style (merge
               ui/flex

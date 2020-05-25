@@ -3,12 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button input a]]
+            [respo.core :refer [defcomp list-> >> <> span div button input a]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [respo.util.list :refer [map-val]]
             [composer.core :refer [render-markup]]
-            [respo-alerts.comp.alerts :refer [comp-select]]
+            [respo-alerts.core :refer [comp-select]]
             [composer.comp.templates-list :refer [comp-templates-list]]
             [composer.util :refer [neaten-templates]]
             [clojure.string :as string])
@@ -42,7 +42,7 @@
                          (string/join ", "))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :templates comp-templates-list states templates template-id active-templates)
+    (comp-templates-list (>> states :templates) templates template-id active-templates)
     (div
      {:style (merge ui/flex ui/column)}
      (div

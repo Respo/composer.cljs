@@ -3,12 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button a pre]]
+            [respo.core :refer [defcomp list-> >> <> span div button a pre]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo.util.list :refer [map-val]]
-            [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm comp-select]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm comp-select]]
             [composer.util :refer [path-with-children]]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.comp.presets :refer [comp-presets]]
@@ -36,10 +36,8 @@
   {:style ui/row-middle}
   (<> "Font family:" style/field-label)
   (=< 8 nil)
-  (cursor->
-   :font-color
-   comp-select
-   states
+  (comp-select
+   (>> states :font-color)
    fontface
    fontface-choices
    {:text "Select fontface"}
@@ -66,10 +64,8 @@
     {:style ui/row-middle}
     (<> "Layout:" style/field-label)
     (=< 8 nil)
-    (cursor->
-     :popup
-     comp-popup
-     states
+    (comp-popup
+     (>> states :popup)
      {:trigger (comp-layout-name (:layout markup))}
      (fn [on-toggle]
        (div
@@ -187,10 +183,8 @@
   {:style ui/row-middle}
   (<> "Mock:" style/field-label)
   (=< 8 nil)
-  (cursor->
-   :mock
-   comp-select
-   states
+  (comp-select
+   (>> states :mock)
    (:mock-pointer template)
    (get-mocks (:mocks template))
    {:text "Select mock"}
@@ -245,7 +239,7 @@
   (div
    {:style (merge ui/flex ui/column {:overflow :auto})}
    (=< nil 4)
-   (cursor-> :operations comp-operations states template (or focused-path []))
+   (comp-operations (>> states :operations) template (or focused-path []))
    (div
     {:style (merge ui/flex {:overflow :auto, :padding "0 8px 120px 8px"})}
     (comp-markup (:markup template) [] focused-path active-paths)
@@ -262,21 +256,17 @@
       {:style (merge ui/flex ui/row {:overflow :auto})}
       (div
        {:style (merge ui/expand {:padding 8})}
-       (cursor-> :type comp-type-picker states template-id focused-path child)
-       (cursor-> :layout comp-layout-picker states template-id focused-path child)
+       (comp-type-picker (>> states :type) template-id focused-path child)
+       (comp-layout-picker (>> states :layout) template-id focused-path child)
        (when config/dev? (comp-inspect "Node" child {:bottom 0}))
-       (cursor->
-        :presets
-        comp-presets
-        states
+       (comp-presets
+        (>> states :presets)
         (:presets child)
         (:presets settings)
         template-id
         focused-path)
-       (cursor->
-        :props
-        comp-dict-editor
-        states
+       (comp-dict-editor
+        (>> states :props)
         "Props:"
         (:props child)
         (get schema/props-hints (:type child))
@@ -284,10 +274,8 @@
           (d!
            :template/node-props
            (merge {:template-id template-id, :path focused-path} change))))
-       (cursor->
-        :event
-        comp-dict-editor
-        states
+       (comp-dict-editor
+        (>> states :event)
         "Event:"
         (:event child)
         nil
@@ -295,10 +283,8 @@
           (d!
            :template/node-event
            (merge {:template-id template-id, :path focused-path} change))))
-       (cursor->
-        :attrs
-        comp-dict-editor
-        states
+       (comp-dict-editor
+        (>> states :attrs)
         "Attrs:"
         (:attrs child)
         nil
@@ -309,18 +295,14 @@
        (comp-props-hint (:type child)))
       (div
        {:style (merge ui/expand {:border-left "1px solid #f4f4f4", :padding 8})}
-       (cursor->
-        :font-color
-        comp-font-color-picker
-        states
+       (comp-font-color-picker
+        (>> states :font-color)
         template-id
         focused-path
         child
         (:color-groups settings))
-       (cursor->
-        :fontface
-        comp-fontface-picker
-        states
+       (comp-fontface-picker
+        (>> states :fontface)
         (get-in child [:style "font-family"])
         (fn [result d! m!]
           (d!
@@ -328,18 +310,14 @@
            (merge
             {:template-id template-id, :path focused-path}
             {:type :set, :key "font-family", :value result}))))
-       (cursor->
-        :background
-        comp-bg-picker
-        states
+       (comp-bg-picker
+        (>> states :background)
         template-id
         focused-path
         child
         (:color-groups settings))
-       (cursor->
-        :style
-        comp-dict-editor
-        states
+       (comp-dict-editor
+        (>> states :style)
         "Style:"
         (:style child)
         nil
@@ -352,7 +330,7 @@
                ui/flex
                ui/column
                {:padding 8, :overflow :auto, :border-top (str "1px solid " (hsl 0 0 94))})}
-      (cursor-> :mocks comp-mock-picker states template)
+      (comp-mock-picker (>> states :mocks) template)
       (pre
        {:inner-text (write-edn mock-data),
         :style (merge style-mock-data {:overflow :auto, :flex 2})})

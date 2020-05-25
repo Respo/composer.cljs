@@ -2,19 +2,7 @@
 (ns composer.core
   (:require [respo.core
              :refer
-             [defcomp
-              cursor->
-              list->
-              <>
-              div
-              button
-              textarea
-              span
-              a
-              i
-              input
-              create-list-element
-              img]]
+             [defcomp list-> <> div button textarea span a i input create-list-element img]]
             [respo.comp.space :refer [=<]]
             [hsl.core :refer [hsl]]
             ["feather-icons" :as icons]

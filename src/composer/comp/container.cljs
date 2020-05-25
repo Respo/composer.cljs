@@ -2,7 +2,7 @@
 (ns composer.comp.container
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp <> div span action-> cursor-> button]]
+            [respo.core :refer [defcomp <> div span >> button]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo.comp.space :refer [=<]]
             [composer.comp.navigation :refer [comp-navigation]]
@@ -78,21 +78,18 @@
          (:templates-modified? store))
         (if (:logged-in? store)
           (case (:name router)
-            :home
-              (cursor-> :workspace comp-workspace states templates settings focus-to focuses)
+            :home (comp-workspace (>> states :workspace) templates settings focus-to focuses)
             :preview
-              (cursor->
-               :preview
-               comp-preview
-               states
+              (comp-preview
+               (>> states :preview)
                templates
                focus-to
                (:shadows? session)
                focuses
                settings)
-            :overview (cursor-> :overview comp-overview states templates focuses settings)
+            :overview (comp-overview (>> states :overview) templates focuses settings)
             :profile (comp-profile (:user store) (:data router))
-            :settings (cursor-> :settings comp-settings states settings (:data router))
+            :settings (comp-settings (>> states :settings) settings (:data router))
             (<> router))
           (comp-login states))
         (comp-status-color (:color store))

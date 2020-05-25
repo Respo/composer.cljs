@@ -3,11 +3,11 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp cursor-> list-> <> span div button]]
+            [respo.core :refer [defcomp >> <> span div button]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [feather.core :refer [comp-icon]]
-            [respo-alerts.comp.alerts :refer [comp-prompt]]
+            [respo-alerts.core :refer [comp-prompt]]
             [clojure.string :as string]
             [respo.util.list :refer [map-val]]
             [composer.comp.editor :refer [comp-editor]]
@@ -43,7 +43,7 @@
                          (set))]
    (div
     {:style (merge ui/flex ui/row {:overflow :auto})}
-    (cursor-> :list comp-templates-list states templates template-id active-templates)
+    (comp-templates-list (>> states :list) templates template-id active-templates)
     (if (nil? template)
       (div
        {:style (merge
@@ -65,16 +65,13 @@
          (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)})))
         (<> active-names {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70)}))
        (case (or tab :editor)
-         :editor
-           (cursor-> :editor comp-editor states template settings focused-path active-paths)
+         :editor (comp-editor (>> states :editor) template settings focused-path active-paths)
          :mocks
-           (cursor->
-            :mock
-            comp-mock-data
-            states
+           (comp-mock-data
+            (>> states :mock)
             (:id template)
             (:mock-id focus-to)
             (:mock-pointer template)
             (:mocks template))
-         :settings (cursor-> :settings comp-template-settings states template)
+         :settings (comp-template-settings (>> states :settings) template)
          (<> (str "Unknown tab:" (pr-str tab)))))))))

@@ -3,10 +3,10 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button]]
+            [respo.core :refer [defcomp list-> >> <> span div button]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
-            [respo-alerts.comp.alerts :refer [comp-confirm comp-prompt]]
+            [respo-alerts.core :refer [comp-confirm comp-prompt]]
             [clojure.string :as string]
             ["copy-text-to-clipboard" :as copy!]))
 
@@ -18,10 +18,8 @@
   (div {:style {:font-family ui/font-fancy, :font-size 20}} (<> "Template settings"))
   (div
    {}
-   (cursor->
-    :rename
-    comp-prompt
-    states
+   (comp-prompt
+    (>> states :rename)
     {:trigger (button {:style ui/button, :inner-text "Change name"}),
      :initial (:name template),
      :text "Change the name"}
@@ -34,10 +32,8 @@
      :inner-text "Copy",
      :on-click (fn [e d! m!] (copy! (pr-str (:markup template))))})
    (=< 8 nil)
-   (cursor->
-    :remove
-    comp-confirm
-    states
+   (comp-confirm
+    (>> states :remove)
     {:trigger (button
                {:style (merge ui/button {:color :red, :border-color :red}),
                 :inner-text "Remove"}),

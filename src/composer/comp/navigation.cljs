@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> action-> span div button a]]
+            [respo.core :refer [defcomp <> span div button a]]
             [composer.config :as config]
             ["copy-text-to-clipboard" :as copy!]
             [favored-edn.core :refer [write-edn]]

@@ -1,7 +1,7 @@
 
 (ns composer.client
   (:require [respo.core :refer [render! clear-cache! realize-ssr!]]
-            [respo.cursor :refer [mutate]]
+            [respo.cursor :refer [update-states]]
             [composer.comp.container :refer [comp-container]]
             [cljs.reader :refer [read-string]]
             [composer.schema :as schema]
@@ -18,7 +18,7 @@
 
 (declare simulate-login!)
 
-(defonce *states (atom {}))
+(defonce *states (atom {:states {}}))
 
 (defonce *store (atom nil))
 
@@ -31,7 +31,7 @@
 (defn dispatch! [op op-data]
   (when (and config/dev? (not= op :states)) (println "Dispatch" op op-data))
   (case op
-    :states (reset! *states ((mutate op-data) @*states))
+    :states (reset! *states (update-states @*states op-data))
     :effect/connect (connect!)
     (ws-send! {:kind :op, :op op, :data op-data})))
 
@@ -61,7 +61,7 @@
     (dispatch! :effect/persist nil)))
 
 (defn render-app! [renderer]
-  (renderer mount-target (comp-container @*states @*store) dispatch!))
+  (renderer mount-target (comp-container (:states @*states) @*store) dispatch!))
 
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 
