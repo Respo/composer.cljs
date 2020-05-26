@@ -3,13 +3,13 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp cursor-> list-> <> span div button input]]
+            [respo.core :refer [defcomp >> list-> <> span div button input]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [feather.core :refer [comp-i comp-icon]]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [respo.util.list :refer [map-val]]
-            [respo-alerts.comp.alerts :refer [comp-confirm comp-prompt]]
+            [respo-alerts.core :refer [comp-confirm comp-prompt]]
             [clojure.string :as string]
             [composer.util.dom :refer [focus-element!]])
   (:require-macros [clojure.core.strint :refer [<<]]))
@@ -62,10 +62,8 @@
            {:margin 8, :padding "8px 32px", :border "1px solid #eee", :position :relative})}
   (div
    {}
-   (cursor->
-    :update-name
-    comp-prompt
-    states
+   (comp-prompt
+    (>> states :update-name)
     {:trigger (<> (:name color)),
      :initial (:name color),
      :input-style {:font-family ui/font-code},
@@ -74,10 +72,8 @@
       (when-not (string/blank? result)
         (d! :settings/update-color {:id (:id color), :group-id group-id, :name result})))))
   (<> (:color color) {:font-size 12, :color (hsl 0 0 70), :font-family ui/font-code})
-  (cursor->
-   :update
-   comp-prompt
-   states
+  (comp-prompt
+   (>> states :update)
    {:trigger (div
               {:style {:background-color (:color color),
                        :width 40,
@@ -89,10 +85,8 @@
    (fn [result d! m!]
      (when-not (string/blank? result)
        (d! :settings/update-color {:id (:id color), :group-id group-id, :color result}))))
-  (cursor->
-   :remove
-   comp-confirm
-   states
+  (comp-confirm
+   (>> states :remove)
    {:text "Sure to remove?",
     :trigger (comp-i :x 14 (hsl 0 80 70)),
     :style {:position :absolute, :right 8, :top 8}}
@@ -111,10 +105,8 @@
      (:name color-group)
      {:font-family ui/font-fancy, :color (hsl 0 0 70), :font-size 16})
     (=< 8 nil)
-    (cursor->
-     :rename
-     comp-prompt
-     states
+    (comp-prompt
+     (>> states :rename)
      {:trigger (comp-i :edit-2 14 (hsl 200 100 80)),
       :style {:display :inline-block},
       :initial (:name color-group),
@@ -122,18 +114,14 @@
      (fn [result d! m!]
        (d! :settings/rename-color-group {:id (:id color-group), :name result})))
     (=< 8 nil)
-    (cursor->
-     :create
-     comp-popup
-     states
+    (comp-popup
+     (>> states :create)
      {:trigger (comp-i "plus" 20 (hsl 200 100 80)),
       :style {:display :inline-block},
       :on-popup (fn [e d! m!] (focus-element! ".color-name"))}
-     (fn [on-toggle] (cursor-> :creator comp-color-creator states on-toggle color-group))))
-   (cursor->
-    :remove
-    comp-confirm
-    states
+     (fn [on-toggle] (comp-color-creator (>> states :creator) on-toggle color-group))))
+   (comp-confirm
+    (>> states :remove)
     {:trigger (comp-i "x" 20 (hsl 0 100 80)),
      :style {:display :inline-block},
      :text (<< "Remove the whole group \"~(:name color-group)\"?")}
@@ -142,7 +130,7 @@
    {:style ui/row}
    (->> (:colors color-group)
         (map-val
-         (fn [color] (cursor-> (:id color) comp-color-drop states color (:id color-group))))))))
+         (fn [color] (comp-color-drop (>> states (:id color)) color (:id color-group))))))))
 
 (defcomp
  comp-group-creator
@@ -185,14 +173,12 @@
    {:style {}}
    (->> color-groups
         (map-val
-         (fn [color-group] (cursor-> (:id color-group) comp-color-group states color-group)))))
+         (fn [color-group] (comp-color-group (>> states (:id color-group)) color-group)))))
   (=< nil 16)
   (div
    {}
-   (cursor->
-    :create-group
-    comp-popup
-    states
+   (comp-popup
+    (>> states :create-group)
     {:trigger (button
                {:style (merge ui/row-middle ui/button)}
                (comp-icon
@@ -201,4 +187,4 @@
                 nil)
                (<> "Add group")),
      :on-popup (fn [e d! m!] (focus-element! ".group-name"))}
-    (fn [on-toggle] (cursor-> :group-creator comp-group-creator states on-toggle))))))
+    (fn [on-toggle] (comp-group-creator (>> states :group-creator) on-toggle))))))

@@ -1,0 +1,6 @@
+{:version "0.1.18"
+ :group-id "respo"
+ :artifact-id "composer"
+ :skip-tag true
+ :description "Respo composer renderer library"
+ :scm-url "https://github.com/Respo/composer"}

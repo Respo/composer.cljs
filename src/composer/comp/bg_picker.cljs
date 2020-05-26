@@ -3,9 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core
-             :refer
-             [defcomp <> action-> list-> cursor-> span div input button a]]
+            [respo.core :refer [defcomp <> >> span div input button a]]
             [composer.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.style :as style]
@@ -64,17 +62,15 @@
     {:style ui/row-middle}
     (<> "Background:" style/field-label)
     (=< 8 nil)
-    (cursor->
-     :bg-color
-     comp-popup
-     states
+    (comp-popup
+     (>> states :bg-color)
      {:trigger (div
                 {:style {:width 24,
                          :height 24,
                          :background-color bg-color,
                          :border "1px solid #ddd"}})}
      (fn [on-toggle]
-       (cursor-> :panel comp-color-panel states color-groups bg-color set-color! on-toggle))))))
+       (comp-color-panel (>> states :panel) color-groups bg-color set-color! on-toggle))))))
 
 (defcomp
  comp-font-color-picker
@@ -88,14 +84,12 @@
     {:style ui/row-middle}
     (<> "Font color:" style/field-label)
     (=< 8 nil)
-    (cursor->
-     :font-color
-     comp-popup
-     states
+    (comp-popup
+     (>> states :font-color)
      {:trigger (div
                 {:style {:width 24,
                          :height 24,
                          :background-color init-color,
                          :border "1px solid #ddd"}})}
      (fn [on-toggle]
-       (cursor-> :panel comp-color-panel states color-groups init-color set-color! on-toggle))))))
+       (comp-color-panel (>> states :panel) color-groups init-color set-color! on-toggle))))))

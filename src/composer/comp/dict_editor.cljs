@@ -3,13 +3,11 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core
-             :refer
-             [defcomp <> action-> list-> cursor-> button input span div a]]
+            [respo.core :refer [defcomp <> >> list-> button input span div a]]
             [clojure.string :as string]
             [composer.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
-            [respo-alerts.comp.alerts :refer [comp-prompt]]
+            [respo-alerts.core :refer [comp-prompt]]
             [feather.core :refer [comp-i]]
             [composer.style :as style]
             [cumulo-util.core :refer [delay!]]))
@@ -68,16 +66,12 @@
      {:style ui/row-middle}
      (<> title style/field-label)
      (=< 8 nil)
-     (cursor->
-      :set
-      comp-popup
-      states
+     (comp-popup
+      (>> states :set)
       {:trigger (comp-i :plus 14 (hsl 200 80 70)), :on-popup (fn [e d! m!] (do-focus!))}
       (fn [on-toggle]
-        (cursor->
-         :pair
-         comp-pair-editor
-         states
+        (comp-pair-editor
+         (>> states :pair)
          (fn [result d! m!] (on-change (merge result {:type :set}) d! m!) (on-toggle m!))))))
     (list->
      {:style {:padding-left 16}}
@@ -89,10 +83,8 @@
                {:style (merge ui/row-middle {:line-height "20px"})}
                (<> k {:color (hsl 0 0 70)})
                (=< 8 nil)
-               (cursor->
-                k
-                comp-prompt
-                states
+               (comp-prompt
+                (>> states k)
                 {:trigger (if (some? v) (<> v) (<> "nil" {:color (hsl 300 80 30 0.4)})),
                  :text "new value",
                  :initial v}

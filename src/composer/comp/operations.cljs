@@ -3,12 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp list-> cursor-> <> span div button a pre]]
+            [respo.core :refer [defcomp list-> >> <> span div button a pre]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo.util.list :refer [map-val]]
-            [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm comp-select]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm comp-select]]
             [composer.util :refer [path-with-children]]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.style :as style]
@@ -51,10 +51,8 @@
        :on-click (fn [e d! m!]
          (d! :template/before-markup {:template-id template-id, :path focused-path})
          (d! :router/move-before nil))})
-     (cursor->
-      :remove
-      comp-confirm
-      states
+     (comp-confirm
+      (>> states :remove)
       {:trigger (a {:style ui/link, :inner-text "Remove"})}
       (fn [e d! m!]
         (d! :template/remove-markup {:template-id template-id, :path focused-path})
@@ -83,10 +81,8 @@
        :inner-text "Paste",
        :on-click (fn [e d! m!]
          (d! :session/paste-markup {:template-id template-id, :path focused-path}))})
-     (cursor->
-      :replace
-      comp-prompt
-      states
+     (comp-prompt
+      (>> states :replace)
       {:trigger (a {:style style/link, :inner-text "Replace"}),
        :text "Replace markup",
        :multiline? true,

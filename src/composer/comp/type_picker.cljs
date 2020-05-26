@@ -3,9 +3,9 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp cursor-> list-> <> action-> span div a]]
+            [respo.core :refer [defcomp >> list-> <> action-> span div a]]
             [composer.config :as config]
-            [respo-alerts.comp.alerts :refer [comp-select]]
+            [respo-alerts.core :refer [comp-select]]
             [composer.style :as style]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [clojure.string :as string]
@@ -42,10 +42,8 @@
   {:style ui/row-middle}
   (<> "Node Type:" style/field-label)
   (=< 8 nil)
-  (cursor->
-   :popup
-   comp-popup
-   states
+  (comp-popup
+   (>> states :popup)
    {:trigger (<> (name (:type markup)))}
    (fn [on-toggle]
      (let [on-pick (fn [result d! m!]

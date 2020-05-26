@@ -3,14 +3,12 @@
   (:require [hsl.core :refer [hsl]]
             [composer.schema :as schema]
             [respo-ui.core :as ui]
-            [respo.core
-             :refer
-             [defcomp list-> cursor-> <> span div button input a pre code]]
+            [respo.core :refer [defcomp list-> >> <> span div button input a pre code]]
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [respo.util.list :refer [map-val]]
             [composer.core :refer [render-markup]]
-            [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm]]
             [clojure.string :as string]
             [feather.core :refer [comp-icon comp-i]]
             [favored-edn.core :refer [write-edn]]
@@ -27,10 +25,8 @@
      {:style {:font-family ui/font-fancy, :font-size 20, :color (hsl 0 0 70)}}
      (<> "Presets")
      (=< 8 nil)
-     (cursor->
-      :create
-      comp-prompt
-      states
+     (comp-prompt
+      (>> states :create)
       {:trigger (comp-i :plus 14 (hsl 200 100 80)),
        :style {:display :inline-block},
        :text "Name for a preset:"}
@@ -62,19 +58,15 @@
             {:style ui/row-middle}
             (<> (:name preset))
             (=< 8 nil)
-            (cursor->
-             :rename
-             comp-prompt
-             states
+            (comp-prompt
+             (>> states :rename)
              {:trigger (comp-i :edit-2 14 (hsl 200 80 70)),
               :initial (:name preset),
               :text "New name for preset:"}
              (fn [result d! m!]
                (d! :settings/rename-preset {:id (:id preset), :name result}))))
-           (cursor->
-            :remove
-            comp-confirm
-            states
+           (comp-confirm
+            (>> states :remove)
             {:trigger (comp-i :x 14 (hsl 0 80 70)),
              :text (<< "This ~(:name preset) will be erased!")}
             (fn [e d! m!]
@@ -94,10 +86,8 @@
           (=< nil 16)
           (div
            {}
-           (cursor->
-            :update
-            comp-prompt
-            states
+           (comp-prompt
+            (>> states :update)
             {:trigger (button {:inner-text "Edit", :style ui/button}),
              :multiline? true,
              :input-style {:font-family ui/font-code},
