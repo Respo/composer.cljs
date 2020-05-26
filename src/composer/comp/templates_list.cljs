@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> >> span div cursor-> button a]]
+            [respo.core :refer [defcomp <> >> list-> span div button a]]
             [composer.config :as config]
             ["copy-text-to-clipboard" :as copy!]
             [favored-edn.core :refer [write-edn]]
@@ -25,7 +25,7 @@
      (comp-prompt
       (>> states :name)
       {:trigger (comp-icon :plus {:font-size 15, :color (hsl 0 0 30), :cursor :pointer} nil)}
-      (fn [result d! m!]
+      (fn [result d!]
         (when-not (string/blank? result)
           (d! :template/create {:name result, :template-id template-id})))))
     (if (empty? templates)
@@ -47,15 +47,15 @@
                            {:border-color (hsl 200 80 80)})
                          (if (= template-id (:id template))
                            {:background-color (hsl 0 0 94)})),
-                 :on-click (fn [e d! m!]
+                 :on-click (fn [e d!]
                    (d!
                     :session/focus-to
                     {:template-id (:id template), :path [], :mock-id nil})),
                  :draggable true,
-                 :on-dragstart (fn [e d! m!]
+                 :on-dragstart (fn [e d!]
                    (-> e :event .-dataTransfer (.setData "text" (:id template)))),
-                 :on-dragover (fn [e d! m!] (.preventDefault (:event e))),
-                 :on-drop (fn [e d! m!]
+                 :on-dragover (fn [e d!] (.preventDefault (:event e))),
+                 :on-drop (fn [e d!]
                    (let [drag-id (-> e :event .-dataTransfer (.getData "text"))]
                      (d! :template/move-order {:from drag-id, :to (:id template)})))}
                 (<> (:name template))

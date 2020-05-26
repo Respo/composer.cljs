@@ -90,38 +90,38 @@
         {:style style-number,
          :type "number",
          :value (:width template),
-         :on-input (fn [e d! m!] (change-size! d! (:value e) (:height template)))})
+         :on-input (fn [e d!] (change-size! d! (:value e) (:height template)))})
        (=< 8 nil)
        (input
         {:style style-number,
          :type "number",
          :value (:height template),
-         :on-input (fn [e d! m!] (change-size! d! (:width template) (:value e)))})
+         :on-input (fn [e d!] (change-size! d! (:width template) (:value e)))})
        (=< 8 nil)
        (a
         {:style ui/link,
          :inner-text "100x240",
-         :on-click (fn [e d! m!] (change-size! d! 100 240))})
+         :on-click (fn [e d!] (change-size! d! 100 240))})
        (a
         {:style ui/link,
          :inner-text "240x60",
-         :on-click (fn [e d! m!] (change-size! d! 240 60))})
+         :on-click (fn [e d!] (change-size! d! 240 60))})
        (a
         {:style ui/link,
          :inner-text "Full",
-         :on-click (fn [e d! m!] (change-size! d! nil nil))})
+         :on-click (fn [e d!] (change-size! d! nil nil))})
        (=< 8 nil)
        (input
         {:type "checkbox",
          :style {:cursor :pointer},
          :checked shadows?,
-         :on-change (fn [e d! m!] (d! :session/toggle-shadows nil))})
+         :on-change (fn [e d!] (d! :session/toggle-shadows nil))})
        (<> "shadows?" {:color (hsl 0 0 70)})
        (=< 8 nil)
        (a
         {:style ui/link,
          :inner-text "Emulate",
-         :on-click (fn [e d! m!] (d! :router/change {:name :emulate, :data template-id}))}))
+         :on-click (fn [e d!] (d! :router/change {:name :emulate, :data template-id}))}))
       (<>
        active-names
        {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70), :margin-right 8}))))))

@@ -15,7 +15,9 @@
 (defcomp
  comp-overview
  (states templates focuses settings)
- (let [tmpls (neaten-templates templates), state (or (:data states) {:filter ""})]
+ (let [tmpls (neaten-templates templates)
+       cursor (:cursor states)
+       state (or (:data states) {:filter ""})]
    (div
     {:style (merge ui/flex ui/column {:overflow :auto, :background-color (hsl 0 0 94)})}
     (div
@@ -26,13 +28,13 @@
       {:style ui/input,
        :placeholder "filter...",
        :value (:filter state),
-       :on-input (fn [e d! m!] (m! (assoc state :filter (:value e))))})
+       :on-input (fn [e d!] (d! cursor (assoc state :filter (:value e))))})
      (=< 8 nil)
      (if-not (string/blank? (:filter state))
        (comp-icon
         :delete
         {:font-size 18, :color (hsl 200 80 70), :cursor :pointer}
-        (fn [e d! m!] (m! (assoc state :filter ""))))))
+        (fn [e d!] (d! cursor (assoc state :filter ""))))))
     (list->
      {:style (merge ui/flex {:overflow :auto, :padding "8px 16px 160px 16px"})}
      (->> templates

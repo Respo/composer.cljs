@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp <> >> span div input button a]]
+            [respo.core :refer [defcomp <> >> list-> span div input button a]]
             [composer.config :as config]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.style :as style]
@@ -38,14 +38,14 @@
                                   :margin 4,
                                   :cursor :pointer,
                                   :border "1px solid #ddd"}),
-                         :on-click (fn [e d! m!] (set-color! (:color color) d!))}
+                         :on-click (fn [e d!] (set-color! (:color color) d!))}
                         (<> (:name color) {:color :white, :font-size 10})))))))))))
     (div
      {}
      (a
       {:style ui/link,
        :inner-text "Add colors",
-       :on-click (fn [e d! m!] (d! :router/change {:name :settings, :data {:tab :colors}}))})))))
+       :on-click (fn [e d!] (d! :router/change {:name :settings, :data {:tab :colors}}))})))))
 
 (defcomp
  comp-bg-picker

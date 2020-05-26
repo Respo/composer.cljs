@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.comp.space :refer [=<]]
-            [respo.core :refer [defcomp >> list-> <> action-> span div a]]
+            [respo.core :refer [defcomp >> list-> <> span div a]]
             [composer.config :as config]
             [respo-alerts.core :refer [comp-select]]
             [composer.style :as style]
@@ -29,7 +29,7 @@
            :background-color (hsl 0 0 96),
            :line-height "32px",
            :margin-bottom 8},
-   :on-click (fn [e d! m!] (on-pick x d! m!))}
+   :on-click (fn [e d!] (on-pick x d!))}
   (<> (let [y (name x)] (str (string/upper-case (first y)) (subs y 1))))))
 
 (defn render-title [title]
@@ -46,11 +46,11 @@
    (>> states :popup)
    {:trigger (<> (name (:type markup)))}
    (fn [on-toggle]
-     (let [on-pick (fn [result d! m!]
+     (let [on-pick (fn [result d!]
                      (d!
                       :template/node-type
                       {:template-id template-id, :path focused-path, :type result})
-                     (on-toggle m!))
+                     (on-toggle d!))
            render-list (fn [types]
                          (list-> {} (->> types (map (fn [x] [x (comp-node-type x on-pick)])))))]
        (div

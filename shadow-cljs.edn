@@ -13,7 +13,7 @@
     [respo/alerts "0.5.1"]
     [respo/message "0.3.6"]
     [respo/feather "0.1.1"]
-    [respo/inflow-popup "0.2.8"]
+    [respo/inflow-popup "0.3.0-a1"]
     [respo/markdown "0.2.5"]
     [cirru/bisection-key "0.1.5"]
     [cirru/favored-edn "0.1.3"]

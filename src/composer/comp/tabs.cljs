@@ -21,5 +21,5 @@
             {:style (merge
                      {:padding "0 8px", :cursor :pointer, :color (hsl 0 0 60)}
                      (if (= (:value tab) selected-tab) {:color :black})),
-             :on-click (fn [e d! m!] (on-select tab d! m!))}
+             :on-click (fn [e d!] (on-select tab d!))}
             (<> (:display tab)))])))))

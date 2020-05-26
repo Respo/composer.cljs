@@ -41,7 +41,7 @@
    fontface
    fontface-choices
    {:text "Select fontface"}
-   (fn [result d! m!] (on-select result d! m!)))))
+   (fn [result d!] (on-select result d!)))))
 
 (defcomp
  comp-layout-name
@@ -80,9 +80,9 @@
                                      [(:value item)
                                       (div
                                        {:style {:margin "4px 0", :cursor :pointer},
-                                        :on-click (fn [e d! m!]
+                                        :on-click (fn [e d!]
                                           (on-pick (:value item) d!)
-                                          (on-toggle m!))}
+                                          (on-toggle d!))}
                                        (comp-layout-name (:value item)))])))))]
           (div
            {:style ui/row}
@@ -97,7 +97,7 @@
          (a
           {:style ui/link,
            :inner-text "Clear",
-           :on-click (fn [e d! m!] (on-pick nil d!) (on-toggle m!))}))))))))
+           :on-click (fn [e d!] (on-pick nil d!) (on-toggle d!))}))))))))
 
 (defn display-events [xs] (->> xs (map last) (string/join "; ")))
 
@@ -130,7 +130,7 @@
    {:style (merge
             style-element
             (if (= path focused-path) {:background-color (hsl 200 80 76), :color :white})),
-    :on-click (fn [e d! m!] (d! :session/focus-to {:path path}))}
+    :on-click (fn [e d!] (d! :session/focus-to {:path path}))}
    (<> (name (:type markup)))
    (=< 8 nil)
    (<> (display-props (:props markup)) {:font-size 10, :font-family ui/font-code})
@@ -153,7 +153,7 @@
         :margin-left "4px",
         :vertical-align :middle}
        (if (= path focused-path) {:color "white"}))
-      (fn [e d! m!] (d! :session/jump-template (get-in markup [:props "name"]))))))
+      (fn [e d!] (d! :session/jump-template (get-in markup [:props "name"]))))))
   (list->
    {:style (merge
             {:padding-left 8, :margin-left 8}
@@ -188,14 +188,14 @@
    (:mock-pointer template)
    (get-mocks (:mocks template))
    {:text "Select mock"}
-   (fn [result d! m!]
+   (fn [result d!]
      (if (some? result)
        (d! :template/use-mock {:template-id (:id template), :mock-id result}))))
   (=< 8 nil)
   (comp-icon
    :edit
    {:font-size 14, :color (hsl 200 80 80), :cursor :pointer}
-   (fn [e d! m!] (d! :session/focus-to {:tab :mocks, :mock-id (:mock-pointer template)})))))
+   (fn [e d!] (d! :session/focus-to {:tab :mocks, :mock-id (:mock-pointer template)})))))
 
 (defcomp
  comp-props-hint
@@ -270,7 +270,7 @@
         "Props:"
         (:props child)
         (get schema/props-hints (:type child))
-        (fn [change d! m!]
+        (fn [change d!]
           (d!
            :template/node-props
            (merge {:template-id template-id, :path focused-path} change))))
@@ -279,7 +279,7 @@
         "Event:"
         (:event child)
         nil
-        (fn [change d! m!]
+        (fn [change d!]
           (d!
            :template/node-event
            (merge {:template-id template-id, :path focused-path} change))))
@@ -288,7 +288,7 @@
         "Attrs:"
         (:attrs child)
         nil
-        (fn [change d! m!]
+        (fn [change d!]
           (d!
            :template/node-attrs
            (merge {:template-id template-id, :path focused-path} change))))
@@ -304,7 +304,7 @@
        (comp-fontface-picker
         (>> states :fontface)
         (get-in child [:style "font-family"])
-        (fn [result d! m!]
+        (fn [result d!]
           (d!
            :template/node-style
            (merge
@@ -321,7 +321,7 @@
         "Style:"
         (:style child)
         nil
-        (fn [change d! m!]
+        (fn [change d!]
           (d!
            :template/node-style
            (merge {:template-id template-id, :path focused-path} change))))))

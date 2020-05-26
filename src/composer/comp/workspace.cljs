@@ -62,7 +62,7 @@
         (comp-tabs
          template-tabs
          tab
-         (fn [selected d! m!] (d! :session/focus-to {:tab (:value selected)})))
+         (fn [selected d!] (d! :session/focus-to {:tab (:value selected)})))
         (<> active-names {:font-family ui/font-fancy, :font-size 12, :color (hsl 0 0 70)}))
        (case (or tab :editor)
          :editor (comp-editor (>> states :editor) template settings focused-path active-paths)

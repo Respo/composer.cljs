@@ -13,7 +13,7 @@
  comp-entry
  (title router-name router router-data)
  (div
-  {:on-click (action-> :router/change {:name router-name, :data router-data}),
+  {:on-click (fn [e d!] (d! :router/change {:name router-name, :data router-data})),
    :style (merge
            {:cursor :pointer, :color (hsl 0 0 70)}
            (if (= router-name (:name router)) {:color :black}))}
@@ -45,10 +45,10 @@
    (a
     {:style (merge style/link (if modified? {:color (hsl 200 80 50)} {:color (hsl 0 0 86)})),
      :inner-text "Save",
-     :on-click (fn [e d! m!] (d! :effect/persist nil))})
+     :on-click (fn [e d!] (d! :effect/persist nil))})
    (=< 12 nil)
    (div
-    {:style {:cursor :pointer}, :on-click (action-> :router/change {:name :profile})}
+    {:style {:cursor :pointer}, :on-click (fn [e d!] (d! :router/change {:name :profile}))}
     (<> (if logged-in? "Me" "Guest"))
     (=< 4 nil)
     (<> count-members)))))

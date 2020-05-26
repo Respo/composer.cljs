@@ -36,7 +36,7 @@
             :background-size :contain}})
   (div
    {:style {:cursor :pointer, :line-height "32px"},
-    :on-click (action-> :effect/connect nil)}
+    :on-click (fn [e d!] (d! :effect/connect nil))}
    (<> "No connection..." {:font-family ui/font-fancy, :font-size 24}))))
 
 (defcomp
@@ -97,7 +97,7 @@
         (comp-messages
          (get-in store [:session :messages])
          {}
-         (fn [info d! m!] (d! :session/remove-message info)))
+         (fn [info d!] (d! :session/remove-message info)))
         (when dev? (comp-reel (:reel-length store) {:bottom 60}))))))
 
 (def style-body {:padding "8px 16px"})
