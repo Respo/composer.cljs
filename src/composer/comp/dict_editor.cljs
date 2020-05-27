@@ -15,7 +15,7 @@
 (defcomp
  comp-pair-editor
  (states on-change)
- (let [state (or (:data states) {:key "", :value ""})]
+ (let [cursor (:cursor states), state (or (:data states) {:key "", :value ""})]
    (div
     {}
     (div {} (<> "Key/value"))
@@ -26,7 +26,7 @@
        :class-name "pair-key",
        :style ui/input,
        :value (:key state),
-       :on-input (fn [e d! m!] (m! (assoc state :key (:value e)))),
+       :on-input (fn [e d!] (d! cursor (assoc state :key (:value e)))),
        :autofocus true,
        :auto-focus true})
      (=< 8 nil)
@@ -35,9 +35,9 @@
        :class-name "pair-value",
        :style ui/input,
        :value (:value state),
-       :on-input (fn [e d! m!] (m! (assoc state :value (:value e)))),
-       :on-keydown (fn [e d! m!]
-         (if (= 13 (:keycode e)) (do (on-change state d! m!) (m! nil))))}))
+       :on-input (fn [e d!] (d! cursor (assoc state :value (:value e)))),
+       :on-keydown (fn [e d!]
+         (if (= 13 (:keycode e)) (do (on-change state d!) (d! cursor nil))))}))
     (=< nil 8)
     (div
      {:style ui/row-parted}
@@ -45,7 +45,7 @@
      (button
       {:style ui/button,
        :inner-text "Submit",
-       :on-click (fn [e d! m!] (on-change state d! m!) (m! nil))})))))
+       :on-click (fn [e d!] (on-change state d!) (d! cursor nil))})))))
 
 (defcomp
  comp-dict-editor
@@ -68,11 +68,11 @@
      (=< 8 nil)
      (comp-popup
       (>> states :set)
-      {:trigger (comp-i :plus 14 (hsl 200 80 70)), :on-popup (fn [e d! m!] (do-focus!))}
+      {:trigger (comp-i :plus 14 (hsl 200 80 70)), :on-popup (fn [e d!] (do-focus!))}
       (fn [on-toggle]
         (comp-pair-editor
          (>> states :pair)
-         (fn [result d! m!] (on-change (merge result {:type :set}) d! m!) (on-toggle m!))))))
+         (fn [result d!] (on-change (merge result {:type :set}) d!) (on-toggle d!))))))
     (list->
      {:style {:padding-left 16}}
      (->> (merge props-defaults dict)
@@ -88,10 +88,10 @@
                 {:trigger (if (some? v) (<> v) (<> "nil" {:color (hsl 300 80 30 0.4)})),
                  :text "new value",
                  :initial v}
-                (fn [result d! m!] (on-change {:type :set, :key k, :value result} d! m!)))
+                (fn [result d!] (on-change {:type :set, :key k, :value result} d!)))
                (=< 8 nil)
                (if (some? v)
                  (span
                   {:style {:cursor :pointer},
-                   :on-click (fn [e d! m!] (on-change {:type :remove, :key k} d! m!))}
+                   :on-click (fn [e d!] (on-change {:type :remove, :key k} d!))}
                   (comp-i :delete 14 (hsl 200 80 70)))))])))))))

@@ -30,7 +30,7 @@
    (comp-tabs
     setting-tabs
     (:tab router-data)
-    (fn [result d! m!] (d! :router/change {:name :settings, :data {:tab (:value result)}}))))
+    (fn [result d!] (d! :router/change {:name :settings, :data {:tab (:value result)}}))))
   (case (:tab router-data)
     :colors (comp-colors-manager (>> states :colors) (:color-groups settings))
     :presets (comp-presets-manager (>> states :presets) (:presets settings))

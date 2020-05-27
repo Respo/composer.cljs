@@ -18,7 +18,7 @@
 (defcomp
  comp-presets-manager
  (states presets)
- (let [state (or (:data states) {:pointer nil})]
+ (let [cursor (:cursor states), state (or (:data states) {:pointer nil})]
    (div
     {:style (merge ui/expand ui/column {:padding 16})}
     (div
@@ -30,7 +30,7 @@
       {:trigger (comp-i :plus 14 (hsl 200 100 80)),
        :style {:display :inline-block},
        :text "Name for a preset:"}
-      (fn [result d! m!] (d! :settings/create-preset result))))
+      (fn [result d!] (d! :settings/create-preset result))))
     (div
      {:style (merge ui/flex ui/row), :class-name ""}
      (list->
@@ -45,7 +45,7 @@
                         {:cursor :pointer, :padding "0 8px"}
                         (if (= (:id preset) (:pointer state))
                           {:background-color (hsl 200 80 70), :color :white})),
-                :on-click (fn [e d! m!] (m! (assoc state :pointer (:id preset))))}
+                :on-click (fn [e d!] (d! cursor (assoc state :pointer (:id preset))))}
                (<> (:name preset)))))))
      (=< 16 nil)
      (if (some? (:pointer state))
@@ -63,14 +63,13 @@
              {:trigger (comp-i :edit-2 14 (hsl 200 80 70)),
               :initial (:name preset),
               :text "New name for preset:"}
-             (fn [result d! m!]
-               (d! :settings/rename-preset {:id (:id preset), :name result}))))
+             (fn [result d!] (d! :settings/rename-preset {:id (:id preset), :name result}))))
            (comp-confirm
             (>> states :remove)
             {:trigger (comp-i :x 14 (hsl 0 80 70)),
              :text (<< "This ~(:name preset) will be erased!")}
-            (fn [e d! m!]
-              (m! %cursor (assoc state :pointer nil))
+            (fn [e d!]
+              (d! cursor (assoc state :pointer nil))
               (d! :settings/remove-preset (:id preset)))))
           (=< nil 16)
           (list->
@@ -94,6 +93,6 @@
              :initial (write-edn (:style preset)),
              :text "Style definition in EDN:",
              :validator (fn [x] (try (do (read-string x) nil) (catch js/Error e (str e))))}
-            (fn [result d! m!]
+            (fn [result d!]
               (d! :settings/update-preset {:id (:id preset), :style (read-string result)}))))))
        (<> "No selection" {:font-family ui/font-fancy, :color (hsl 0 0 70)}))))))

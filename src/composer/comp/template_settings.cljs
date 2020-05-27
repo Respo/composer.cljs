@@ -23,14 +23,14 @@
     {:trigger (button {:style ui/button, :inner-text "Change name"}),
      :initial (:name template),
      :text "Change the name"}
-    (fn [result d! m!]
+    (fn [result d!]
       (when-not (string/blank? result)
         (d! :template/rename {:id (:id template), :name result}))))
    (=< 8 nil)
    (button
     {:style ui/button,
      :inner-text "Copy",
-     :on-click (fn [e d! m!] (copy! (pr-str (:markup template))))})
+     :on-click (fn [e d!] (copy! (pr-str (:markup template))))})
    (=< 8 nil)
    (comp-confirm
     (>> states :remove)
@@ -38,4 +38,4 @@
                {:style (merge ui/button {:color :red, :border-color :red}),
                 :inner-text "Remove"}),
      :text "Sure to remove?"}
-    (fn [e d! m!] (d! :template/remove (:id template)))))))
+    (fn [e d!] (d! :template/remove (:id template)))))))

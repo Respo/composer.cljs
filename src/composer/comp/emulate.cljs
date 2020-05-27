@@ -37,4 +37,4 @@
     (comp-icon
      :x
      {:font-size 14, :color (hsl 0 0 80), :position :fixed, :bottom 8, :right 8}
-     (fn [e d! m!] (d! :router/change {:name :preview}))))))
+     (fn [e d!] (d! :router/change {:name :preview}))))))

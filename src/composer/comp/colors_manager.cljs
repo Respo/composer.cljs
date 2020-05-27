@@ -17,7 +17,7 @@
 (defcomp
  comp-color-creator
  (states on-toggle color-group)
- (let [state (or (:data states) {:name "", :color ""})]
+ (let [cursor (:cursor states), state (or (:data states) {:name "", :color ""})]
    (div
     {:style ui/column}
     (div
@@ -30,7 +30,7 @@
      {:placeholder "name",
       :style ui/input,
       :value (:name state),
-      :on-input (fn [e d! m!] (m! (assoc state :name (:value e)))),
+      :on-input (fn [e d!] (d! cursor (assoc state :name (:value e)))),
       :auto-focus true,
       :class-name "color-name"})
     (=< nil 8)
@@ -38,7 +38,7 @@
      {:placeholder "color",
       :style ui/input,
       :value (:color state),
-      :on-input (fn [e d! m!] (m! (assoc state :color (:value e))))})
+      :on-input (fn [e d!] (d! cursor (assoc state :color (:value e))))})
     (=< nil 8)
     (div
      {:style ui/row-parted}
@@ -46,12 +46,12 @@
      (button
       {:style ui/button,
        :inner-text "Add",
-       :on-click (fn [e d! m!]
-         (m! nil)
+       :on-click (fn [e d!]
+         (d! cursor nil)
          (d!
           :settings/add-color
           {:group-id (:id color-group), :name (:name state), :color (:color state)})
-         (on-toggle m!))})))))
+         (on-toggle d!))})))))
 
 (defcomp
  comp-color-drop
@@ -68,7 +68,7 @@
      :initial (:name color),
      :input-style {:font-family ui/font-code},
      :text "Change name"}
-    (fn [result d! m!]
+    (fn [result d!]
       (when-not (string/blank? result)
         (d! :settings/update-color {:id (:id color), :group-id group-id, :name result})))))
   (<> (:color color) {:font-size 12, :color (hsl 0 0 70), :font-family ui/font-code})
@@ -82,7 +82,7 @@
     :initial (:color color),
     :input-style {:font-family ui/font-code},
     :text "Change color"}
-   (fn [result d! m!]
+   (fn [result d!]
      (when-not (string/blank? result)
        (d! :settings/update-color {:id (:id color), :group-id group-id, :color result}))))
   (comp-confirm
@@ -90,7 +90,7 @@
    {:text "Sure to remove?",
     :trigger (comp-i :x 14 (hsl 0 80 70)),
     :style {:position :absolute, :right 8, :top 8}}
-   (fn [e d! m!] (d! :settings/remove-color {:id (:id color), :group-id group-id})))))
+   (fn [e d!] (d! :settings/remove-color {:id (:id color), :group-id group-id})))))
 
 (defcomp
  comp-color-group
@@ -111,21 +111,21 @@
       :style {:display :inline-block},
       :initial (:name color-group),
       :text "New name for this group:"}
-     (fn [result d! m!]
+     (fn [result d!]
        (d! :settings/rename-color-group {:id (:id color-group), :name result})))
     (=< 8 nil)
     (comp-popup
      (>> states :create)
      {:trigger (comp-i "plus" 20 (hsl 200 100 80)),
       :style {:display :inline-block},
-      :on-popup (fn [e d! m!] (focus-element! ".color-name"))}
+      :on-popup (fn [e d!] (focus-element! ".color-name"))}
      (fn [on-toggle] (comp-color-creator (>> states :creator) on-toggle color-group))))
    (comp-confirm
     (>> states :remove)
     {:trigger (comp-i "x" 20 (hsl 0 100 80)),
      :style {:display :inline-block},
      :text (<< "Remove the whole group \"~(:name color-group)\"?")}
-    (fn [e d! m!] (d! :settings/remove-color-group (:id color-group)))))
+    (fn [e d!] (d! :settings/remove-color-group (:id color-group)))))
   (list->
    {:style ui/row}
    (->> (:colors color-group)
@@ -135,7 +135,7 @@
 (defcomp
  comp-group-creator
  (states on-toggle)
- (let [state (or (:data states) {:name ""})]
+ (let [cursor (:cursor states), state (or (:data states) {:name ""})]
    (div
     {:style ui/column}
     (div {} (<> "Add group" {:font-family ui/font-fancy, :font-size 20}))
@@ -145,7 +145,7 @@
       :autofocus true,
       :placeholder "name",
       :value (:name state),
-      :on-input (fn [e d! m!] (m! (assoc state :name (:value e)))),
+      :on-input (fn [e d!] (d! cursor (assoc state :name (:value e)))),
       :class-name "group-name"})
     (=< nil 16)
     (div
@@ -154,10 +154,10 @@
      (button
       {:style ui/button,
        :inner-text "Submit",
-       :on-click (fn [e d! m!]
+       :on-click (fn [e d!]
          (d! :settings/add-color-group (:name state))
-         (m! nil)
-         (on-toggle m!))})))))
+         (d! cursor nil)
+         (on-toggle d!))})))))
 
 (defcomp
  comp-colors-manager
@@ -186,5 +186,5 @@
                 {:font-size 20, :color (hsl 200 100 80), :vertical-align :middle}
                 nil)
                (<> "Add group")),
-     :on-popup (fn [e d! m!] (focus-element! ".group-name"))}
+     :on-popup (fn [e d!] (focus-element! ".group-name"))}
     (fn [on-toggle] (comp-group-creator (>> states :group-creator) on-toggle))))))

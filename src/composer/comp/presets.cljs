@@ -53,7 +53,7 @@
                      (comp-preset
                       (or preset preset-id)
                       true
-                      (fn [e d! m!] (handle-op :remove (:id preset) d!)))]))))))
+                      (fn [e d!] (handle-op :remove (:id preset) d!)))]))))))
        (div {} (<> "Others"))
        (list->
         {}
@@ -66,7 +66,7 @@
                    (comp-preset
                     preset
                     selected?
-                    (fn [e d! m!]
+                    (fn [e d!]
                       (if selected?
                         (handle-op :remove (:id preset) d!)
                         (handle-op :add (:id preset) d!)))))]))))
@@ -75,8 +75,7 @@
         (a
          {:style ui/link,
           :inner-text "Config presets",
-          :on-click (fn [e d! m!]
-            (d! :router/change {:name :settings, :data {:tab :presets}}))})))))))
+          :on-click (fn [e d!] (d! :router/change {:name :settings, :data {:tab :presets}}))})))))))
 
 (defcomp
  comp-presets
@@ -98,7 +97,7 @@
               (comp-preset
                preset
                false
-               (fn [e d! m!]
+               (fn [e d!]
                  (d!
                   :template/node-preset
                   {:template-id template-id, :path path, :op :remove, :value (:id preset)}))))]))))))

@@ -49,7 +49,7 @@
            :padding "4px 4px",
            :font-family ui/font-fancy},
    :inner-text title,
-   :on-click (fn [e d! m!] (js/console.log (clj->js props)))}))
+   :on-click (fn [e d!] (js/console.log (clj->js props)))}))
 
 (defn read-token [x scope state]
   (if (string? x)
@@ -133,7 +133,7 @@
                        (map
                         (fn [[name action]]
                           [name
-                           (fn [e d! m!]
+                           (fn [e d!]
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
@@ -175,7 +175,7 @@
                        (map
                         (fn [[name action]]
                           [name
-                           (fn [e d! m!]
+                           (fn [e d!]
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
@@ -235,7 +235,7 @@
                        (map
                         (fn [[name action]]
                           [name
-                           (fn [e d! m!]
+                           (fn [e d!]
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
@@ -287,7 +287,7 @@
     (span
      {:inner-text (pr-str value),
       :style style-inspect,
-      :on-click (fn [e d! m!]
+      :on-click (fn [e d!]
         (js/console.log (clj->js (:data context)) (clj->js (:state context))))})))
 
 (defn render-link [markup context on-action]
@@ -300,7 +300,7 @@
                        (map
                         (fn [[name action]]
                           [name
-                           (fn [e d! m!]
+                           (fn [e d!]
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
@@ -433,7 +433,7 @@
                   :overflow :auto,
                   :padding 32,
                   :background-color (hsl 0 0 0 0.7)},
-          :on-click (fn [e d! m!]
+          :on-click (fn [e d!]
             (if (some? backdrop-click-action)
               (on-action
                d!
@@ -442,7 +442,7 @@
                {:event (:event e), :props props, :param param})))}
          (list->
           (merge
-           {:on-click (fn [e d! m!] )}
+           {:on-click (fn [e d!] )}
            (eval-attrs (:attrs markup) (:data context) (:data states))
            {:style (merge
                     (use-string-keys
@@ -539,7 +539,7 @@
                        (map
                         (fn [[name action]]
                           [name
-                           (fn [e d! m!]
+                           (fn [e d!]
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
@@ -590,7 +590,7 @@
                        (map
                         (fn [[name action]]
                           [name
-                           (fn [e d! m!]
+                           (fn [e d!]
                              (on-action
                               d!
                               (read-token action (:data context) (:data states))
