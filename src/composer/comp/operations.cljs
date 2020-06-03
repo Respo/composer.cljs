@@ -10,7 +10,6 @@
             [respo.util.list :refer [map-val]]
             [respo-alerts.core :refer [comp-prompt comp-confirm comp-select]]
             [composer.util :refer [path-with-children]]
-            [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.style :as style]
             [bisection-key.core :as bisection]
             ["copy-text-to-clipboard" :as copy!]

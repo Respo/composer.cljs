@@ -7,10 +7,10 @@
     [mvc-works/fuzzy-filter "0.0.6"]
     [cumulo/recollect "0.5.0"]
     [cumulo/reel "0.2.0"]
-    [cumulo/util "0.1.11"]
+    [cumulo/util "0.1.12"]
     [respo "0.12.1"]
     [respo/ui "0.3.14"]
-    [respo/alerts "0.5.1"]
+    [respo/alerts "0.5.2"]
     [respo/message "0.3.6"]
     [respo/feather "0.1.1"]
     [respo/inflow-popup "0.3.0-a1"]
@@ -38,8 +38,7 @@
     :server {
       :target :node-script, :output-to "target/server.js", :main composer.server/main!
       :devtools {
-        :after-load composer.server/reload!
-        :build-notify cumulo-util.build-info/on-build!
+        :after-load composer.server/reload!, :build-notify cumulo-util.build-info/on-build!
         :preloads [cumulo-util.build-info]
       }
       :release {:output-to "dist/server.js"}

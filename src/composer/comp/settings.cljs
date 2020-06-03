@@ -7,7 +7,6 @@
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [feather.core :refer [comp-i]]
-            [inflow-popup.comp.popup :refer [comp-popup]]
             [respo.util.list :refer [map-val]]
             [respo-alerts.core :refer [comp-confirm comp-prompt]]
             [clojure.string :as string]
