@@ -5,7 +5,7 @@
             [respo.comp.space :refer [=<]]
             [respo.core :refer [defcomp >> list-> <> span div a]]
             [composer.config :as config]
-            [respo-alerts.core :refer [comp-select]]
+            [respo-alerts.core :refer [comp-select comp-modal]]
             [composer.style :as style]
             [inflow-popup.comp.popup :refer [comp-popup]]
             [clojure.string :as string]
@@ -38,40 +38,50 @@
 (defcomp
  comp-type-picker
  (states template-id focused-path markup)
- (div
-  {:style ui/row-middle}
-  (<> "Node Type:" style/field-label)
-  (=< 8 nil)
-  (comp-popup
-   (>> states :popup)
-   {:trigger (<> (name (:type markup)))}
-   (fn [on-toggle]
-     (let [on-pick (fn [result d!]
-                     (d!
-                      :template/node-type
-                      {:template-id template-id, :path focused-path, :type result})
-                     (on-toggle d!))
-           render-list (fn [types]
-                         (list-> {} (->> types (map (fn [x] [x (comp-node-type x on-pick)])))))]
-       (div
-        {:style (merge ui/row {:width 480})}
-        (div {:style ui/flex} (render-title "Elements") (render-list (:element node-types)))
-        (=< 16 nil)
-        (div
-         {:style ui/flex}
-         (render-title "Layout")
-         (render-list (:layout node-types))
-         (render-title "DevTool")
-         (render-list (:devtool node-types)))
-        (=< 16 nil)
-        (div
-         {:style ui/flex}
-         (render-title "Controls")
-         (render-list (:control node-types))
-         (render-title "Advanced")
-         (render-list (:advanced node-types)))))))
-  (=< 8 nil)
-  (if (= :icon (:type markup)) (comp-icon-site))))
+ (let [cursor (:cursor states), state (or (:data states) {:show? false})]
+   (div
+    {:style ui/row-middle}
+    (<> "Node Type:" style/field-label)
+    (=< 8 nil)
+    (span
+     {:inner-text (name (:type markup)),
+      :style {:cursor :pointer},
+      :on-click (fn [e d!] (d! cursor (assoc state :show? true)))})
+    (comp-modal
+     {:render-body (fn []
+        (let [on-pick (fn [result d!]
+                        (d!
+                         :template/node-type
+                         {:template-id template-id, :path focused-path, :type result})
+                        (d! cursor (assoc state :show? false)))
+              render-list (fn [types]
+                            (list->
+                             {}
+                             (->> types (map (fn [x] [x (comp-node-type x on-pick)])))))]
+          (div
+           {:style (merge ui/row {:padding "16px"})}
+           (div
+            {:style ui/flex}
+            (render-title "Elements")
+            (render-list (:element node-types)))
+           (=< 16 nil)
+           (div
+            {:style ui/flex}
+            (render-title "Layout")
+            (render-list (:layout node-types))
+            (render-title "DevTool")
+            (render-list (:devtool node-types)))
+           (=< 16 nil)
+           (div
+            {:style ui/flex}
+            (render-title "Controls")
+            (render-list (:control node-types))
+            (render-title "Advanced")
+            (render-list (:advanced node-types))))))}
+     (:show? state)
+     (fn [d!] (d! cursor (assoc state :show? false))))
+    (=< 8 nil)
+    (if (= :icon (:type markup)) (comp-icon-site)))))
 
 (defn find-option [x options]
   (if (empty? options)
