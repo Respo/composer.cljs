@@ -10,7 +10,7 @@
     [cumulo/util "0.1.12"]
     [respo "0.12.1"]
     [respo/ui "0.3.14"]
-    [respo/alerts "0.5.2"]
+    [respo/alerts "0.5.3-a1"]
     [respo/message "0.3.6"]
     [respo/feather "0.1.1"]
     [respo/inflow-popup "0.3.0-a1"]

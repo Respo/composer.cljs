@@ -5,8 +5,8 @@
             [respo.comp.space :refer [=<]]
             [respo.core :refer [defcomp <> >> list-> span div a]]
             [composer.config :as config]
-            [inflow-popup.comp.popup :refer [comp-popup]]
-            [feather.core :refer [comp-i]]
+            [feather.core :refer [comp-i comp-icon]]
+            [respo-alerts.core :refer [use-modal]]
             [clojure.set :refer [difference]]
             [composer.style :as style]))
 
@@ -33,49 +33,57 @@
  (let [handle-op (fn [op preset d!]
                    (d!
                     :template/node-preset
-                    {:template-id template-id, :path path, :op op, :value preset}))]
-   (comp-popup
-    (>> states :picker)
-    {:trigger (comp-i :edit 14 (hsl 200 80 50)), :style {:display :inline-block}}
-    (fn [toggle!]
-      (div
-       {:style {:width 320}}
-       (div {} (<> "Selected"))
-       (if (empty? presets)
-         (<> "Empty" {:font-family ui/font-fancy, :color (hsl 0 0 70)})
-         (list->
-          {}
-          (->> presets
-               (map
-                (fn [preset-id]
-                  (let [preset (get all-presets preset-id)]
-                    [preset-id
-                     (comp-preset
-                      (or preset preset-id)
-                      true
-                      (fn [e d!] (handle-op :remove (:id preset) d!)))]))))))
-       (div {} (<> "Others"))
-       (list->
-        {}
-        (->> all-presets
-             (vals)
-             (map
-              (fn [preset]
-                [preset
-                 (let [selected? (contains? (set presets) (:id preset))]
-                   (comp-preset
-                    preset
-                    selected?
-                    (fn [e d!]
-                      (if selected?
-                        (handle-op :remove (:id preset) d!)
-                        (handle-op :add (:id preset) d!)))))]))))
-       (div
-        {}
-        (a
-         {:style ui/link,
-          :inner-text "Config presets",
-          :on-click (fn [e d!] (d! :router/change {:name :settings, :data {:tab :presets}}))})))))))
+                    {:template-id template-id, :path path, :op op, :value preset}))
+       picker-modal (use-modal
+                     (>> states :picker)
+                     {:style {:width 400},
+                      :render-body (fn [toggle!]
+                        (div
+                         {:style {:padding "8px 16px"}}
+                         (div {} (<> "Selected"))
+                         (if (empty? presets)
+                           (<> "Empty" {:font-family ui/font-fancy, :color (hsl 0 0 70)})
+                           (list->
+                            {}
+                            (->> presets
+                                 (map
+                                  (fn [preset-id]
+                                    (let [preset (get all-presets preset-id)]
+                                      [preset-id
+                                       (comp-preset
+                                        (or preset preset-id)
+                                        true
+                                        (fn [e d!] (handle-op :remove (:id preset) d!)))]))))))
+                         (div {} (<> "Others"))
+                         (list->
+                          {}
+                          (->> all-presets
+                               (vals)
+                               (map
+                                (fn [preset]
+                                  [preset
+                                   (let [selected? (contains? (set presets) (:id preset))]
+                                     (comp-preset
+                                      preset
+                                      selected?
+                                      (fn [e d!]
+                                        (if selected?
+                                          (handle-op :remove (:id preset) d!)
+                                          (handle-op :add (:id preset) d!)))))]))))
+                         (div
+                          {}
+                          (a
+                           {:style ui/link,
+                            :inner-text "Config presets",
+                            :on-click (fn [e d!]
+                              (d! :router/change {:name :settings, :data {:tab :presets}}))}))))})]
+   (span
+    {}
+    (comp-icon
+     :edit
+     {:font-size 14, :color (hsl 200 80 50), :cursor :pointer}
+     (fn [e d!] ((:show picker-modal) d!)))
+    (:ui picker-modal))))
 
 (defcomp
  comp-presets
