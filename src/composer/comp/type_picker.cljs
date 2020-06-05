@@ -7,7 +7,6 @@
             [composer.config :as config]
             [respo-alerts.core :refer [comp-select comp-modal]]
             [composer.style :as style]
-            [inflow-popup.comp.popup :refer [comp-popup]]
             [clojure.string :as string]
             [composer.schema :refer [node-types]]))
 

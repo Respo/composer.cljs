@@ -6,9 +6,8 @@
             [respo.core :refer [defcomp <> >> list-> button input span div a]]
             [clojure.string :as string]
             [composer.config :as config]
-            [inflow-popup.comp.popup :refer [comp-popup]]
-            [respo-alerts.core :refer [comp-prompt]]
-            [feather.core :refer [comp-i]]
+            [respo-alerts.core :refer [comp-prompt use-modal]]
+            [feather.core :refer [comp-icon comp-i]]
             [composer.style :as style]
             [cumulo-util.core :refer [delay!]]))
 
@@ -17,7 +16,7 @@
  (states on-change)
  (let [cursor (:cursor states), state (or (:data states) {:key "", :value ""})]
    (div
-    {}
+    {:style {:padding "8 16px 8px 16px"}}
     (div {} (<> "Key/value"))
     (div
      {}
@@ -59,20 +58,26 @@
                         (if (some? target)
                           (.focus target)
                           (js/console.warn ".pair-key not found!"))))))
-       props-defaults (->> suggests (map (fn [x] [x nil])) (into {}))]
+       props-defaults (->> suggests (map (fn [x] [x nil])) (into {}))
+       editor-modal (use-modal
+                     (>> states :pair)
+                     {:style {:width 400},
+                      :render-body (fn [on-toggle]
+                        (comp-pair-editor
+                         (>> states :pair)
+                         (fn [result d!]
+                           (on-change (merge result {:type :set}) d!)
+                           (on-toggle d!))))})]
    (div
     {}
     (div
      {:style ui/row-middle}
      (<> title style/field-label)
      (=< 8 nil)
-     (comp-popup
-      (>> states :set)
-      {:trigger (comp-i :plus 14 (hsl 200 80 70)), :on-popup (fn [e d!] (do-focus!))}
-      (fn [on-toggle]
-        (comp-pair-editor
-         (>> states :pair)
-         (fn [result d!] (on-change (merge result {:type :set}) d!) (on-toggle d!))))))
+     (comp-icon
+      :plus
+      {:font-size 14, :color (hsl 200 80 70), :cursor :pointer}
+      (fn [e d!] ((:show editor-modal) d!) (delay! 0.4 (fn [] (do-focus!))))))
     (list->
      {:style {:padding-left 16}}
      (->> (merge props-defaults dict)
@@ -94,4 +99,5 @@
                  (span
                   {:style {:cursor :pointer},
                    :on-click (fn [e d!] (on-change {:type :remove, :key k} d!))}
-                  (comp-i :delete 14 (hsl 200 80 70)))))])))))))
+                  (comp-i :delete 14 (hsl 200 80 70)))))]))))
+    (:ui editor-modal))))
