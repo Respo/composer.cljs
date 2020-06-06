@@ -8,9 +8,8 @@
             [composer.config :as config]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo.util.list :refer [map-val]]
-            [respo-alerts.core :refer [comp-prompt comp-confirm comp-select]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm comp-select use-modal]]
             [composer.util :refer [path-with-children]]
-            [inflow-popup.comp.popup :refer [comp-popup]]
             [composer.comp.presets :refer [comp-presets]]
             [composer.comp.type-picker :refer [comp-type-picker]]
             [composer.comp.bg-picker :refer [comp-bg-picker comp-font-color-picker]]
@@ -45,13 +44,17 @@
 
 (defcomp
  comp-layout-name
- (layout-name)
+ (layout-name on-click)
  (let [layout (->> schema/node-layouts
                    (filter (fn [item] (= layout-name (:value item))))
                    first)]
-   (if (some? layout)
-     (<> (:display layout) {:padding "2px 8px", :background-color (hsl 0 0 94)})
-     (<> "Nothing" {:color (hsl 0 0 80), :font-family ui/font-fancy}))))
+   (span
+    {:on-click on-click}
+    (if (some? layout)
+      (<>
+       (:display layout)
+       {:padding "2px 8px", :background-color (hsl 0 0 94), :cursor :pointer})
+      (<> "Nothing" {:color (hsl 0 0 80), :font-family ui/font-fancy, :cursor :pointer})))))
 
 (defcomp
  comp-layout-picker
@@ -59,45 +62,47 @@
  (let [on-pick (fn [layout d!]
                  (d!
                   :template/node-layout
-                  {:template-id template-id, :path path, :layout layout}))]
+                  {:template-id template-id, :path path, :layout layout}))
+       render-list (fn [kind on-toggle]
+                     (list->
+                      {:style ui/column}
+                      (->> schema/node-layouts
+                           (filter (fn [item] (= kind (:kind item))))
+                           (map
+                            (fn [item]
+                              [(:value item)
+                               (div
+                                {:style {:margin "4px 0", :cursor :pointer},
+                                 :on-click (fn [e d!]
+                                   (on-pick (:value item) d!)
+                                   (on-toggle d!))}
+                                (comp-layout-name (:value item) (fn [e d!] )))])))))
+       editor-modal (use-modal
+                     (>> states :editor)
+                     {:style {:width 400},
+                      :render-body (fn [on-toggle]
+                        (div
+                         {:style (merge ui/column {:padding "8px 16px"})}
+                         (div
+                          {:style ui/row}
+                          (render-list :row on-toggle)
+                          (=< 16 nil)
+                          (render-list :column on-toggle)
+                          (=< 16 nil)
+                          (render-list :center on-toggle))
+                         (div
+                          {:style ui/row-parted}
+                          (span nil)
+                          (a
+                           {:style ui/link,
+                            :inner-text "Clear",
+                            :on-click (fn [e d!] (on-pick nil d!) (on-toggle d!))}))))})]
    (div
     {:style ui/row-middle}
     (<> "Layout:" style/field-label)
     (=< 8 nil)
-    (comp-popup
-     (>> states :popup)
-     {:trigger (comp-layout-name (:layout markup))}
-     (fn [on-toggle]
-       (div
-        {:style ui/column}
-        (let [render-list (fn [kind]
-                            (list->
-                             {:style ui/column}
-                             (->> schema/node-layouts
-                                  (filter (fn [item] (= kind (:kind item))))
-                                  (map
-                                   (fn [item]
-                                     [(:value item)
-                                      (div
-                                       {:style {:margin "4px 0", :cursor :pointer},
-                                        :on-click (fn [e d!]
-                                          (on-pick (:value item) d!)
-                                          (on-toggle d!))}
-                                       (comp-layout-name (:value item)))])))))]
-          (div
-           {:style ui/row}
-           (render-list :row)
-           (=< 16 nil)
-           (render-list :column)
-           (=< 16 nil)
-           (render-list :center)))
-        (div
-         {:style ui/row-parted}
-         (span nil)
-         (a
-          {:style ui/link,
-           :inner-text "Clear",
-           :on-click (fn [e d!] (on-pick nil d!) (on-toggle d!))}))))))))
+    (comp-layout-name (:layout markup) (fn [e d!] ((:show editor-modal) d!)))
+    (:ui editor-modal))))
 
 (defn display-events [xs] (->> xs (map last) (string/join "; ")))
 
