@@ -7,11 +7,11 @@
             [respo.comp.space :refer [=<]]
             [composer.config :as config]
             [feather.core :refer [comp-i comp-icon]]
-            [inflow-popup.comp.popup :refer [comp-popup]]
             [respo.util.list :refer [map-val]]
-            [respo-alerts.core :refer [comp-confirm comp-prompt]]
+            [respo-alerts.core :refer [comp-confirm comp-prompt use-modal]]
             [clojure.string :as string]
-            [composer.util.dom :refer [focus-element!]])
+            [composer.util.dom :refer [focus-element!]]
+            [cumulo-util.core :refer [delay!]])
   (:require-macros [clojure.core.strint :refer [<<]]))
 
 (defcomp
@@ -95,42 +95,48 @@
 (defcomp
  comp-color-group
  (states color-group)
- (div
-  {:style {:border-top (str "1px solid " (hsl 0 0 96)), :margin-bottom 16, :padding 8}}
-  (div
-   {:style ui/row-parted}
+ (let [creation-modal (use-modal
+                       (>> states :create)
+                       {:style {:padding "8px 16px", :width 300},
+                        :render-body (fn [on-toggle]
+                          (comp-color-creator (>> states :creator) on-toggle color-group))})]
    (div
-    {:style ui/row-middle}
-    (<>
-     (:name color-group)
-     {:font-family ui/font-fancy, :color (hsl 0 0 70), :font-size 16})
-    (=< 8 nil)
-    (comp-prompt
-     (>> states :rename)
-     {:trigger (comp-i :edit-2 14 (hsl 200 100 80)),
-      :style {:display :inline-block},
-      :initial (:name color-group),
-      :text "New name for this group:"}
-     (fn [result d!]
-       (d! :settings/rename-color-group {:id (:id color-group), :name result})))
-    (=< 8 nil)
-    (comp-popup
-     (>> states :create)
-     {:trigger (comp-i "plus" 20 (hsl 200 100 80)),
-      :style {:display :inline-block},
-      :on-popup (fn [e d!] (focus-element! ".color-name"))}
-     (fn [on-toggle] (comp-color-creator (>> states :creator) on-toggle color-group))))
-   (comp-confirm
-    (>> states :remove)
-    {:trigger (comp-i "x" 20 (hsl 0 100 80)),
-     :style {:display :inline-block},
-     :text (<< "Remove the whole group \"~(:name color-group)\"?")}
-    (fn [e d!] (d! :settings/remove-color-group (:id color-group)))))
-  (list->
-   {:style ui/row}
-   (->> (:colors color-group)
-        (map-val
-         (fn [color] (comp-color-drop (>> states (:id color)) color (:id color-group))))))))
+    {:style {:border-top (str "1px solid " (hsl 0 0 96)), :margin-bottom 16, :padding 8}}
+    (div
+     {:style ui/row-parted}
+     (div
+      {:style ui/row-middle}
+      (<>
+       (:name color-group)
+       {:font-family ui/font-fancy, :color (hsl 0 0 70), :font-size 16})
+      (=< 8 nil)
+      (comp-prompt
+       (>> states :rename)
+       {:trigger (comp-i :edit-2 14 (hsl 200 100 80)),
+        :style {:display :inline-block},
+        :initial (:name color-group),
+        :text "New name for this group:"}
+       (fn [result d!]
+         (d! :settings/rename-color-group {:id (:id color-group), :name result})))
+      (=< 8 nil)
+      (comp-icon
+       :plus
+       {:color (hsl 200 100 80), :font-size 20, :cursor :pointer, :display :inline-block}
+       (fn [e d!]
+         ((:show creation-modal) d!)
+         (delay! 0.4 (fn [] (focus-element! ".color-name"))))))
+     (comp-confirm
+      (>> states :remove)
+      {:trigger (comp-i "x" 20 (hsl 0 100 80)),
+       :style {:display :inline-block},
+       :text (<< "Remove the whole group \"~(:name color-group)\"?")}
+      (fn [e d!] (d! :settings/remove-color-group (:id color-group)))))
+    (list->
+     {:style ui/row}
+     (->> (:colors color-group)
+          (map-val
+           (fn [color] (comp-color-drop (>> states (:id color)) color (:id color-group))))))
+    (:ui creation-modal))))
 
 (defcomp
  comp-group-creator
@@ -162,29 +168,29 @@
 (defcomp
  comp-colors-manager
  (states color-groups)
- (div
-  {:style (merge ui/expand {:padding 16})}
-  (div
-   {:style (merge
-            ui/row-middle
-            {:font-family ui/font-fancy, :font-size 20, :color (hsl 0 0 70)})}
-   (<> "Colors"))
-  (list->
-   {:style {}}
-   (->> color-groups
-        (map-val
-         (fn [color-group] (comp-color-group (>> states (:id color-group)) color-group)))))
-  (=< nil 16)
-  (div
-   {}
-   (comp-popup
-    (>> states :create-group)
-    {:trigger (button
-               {:style (merge ui/row-middle ui/button)}
-               (comp-icon
-                :plus
-                {:font-size 20, :color (hsl 200 100 80), :vertical-align :middle}
-                nil)
-               (<> "Add group")),
-     :on-popup (fn [e d!] (focus-element! ".group-name"))}
-    (fn [on-toggle] (comp-group-creator (>> states :group-creator) on-toggle))))))
+ (let [group-modal (use-modal
+                    (>> states :create-group)
+                    {:style {:width 300, :padding "8px 16px"},
+                     :render-body (fn [on-toggle]
+                       (comp-group-creator (>> states :group-creator) on-toggle))})]
+   (div
+    {:style (merge ui/expand {:padding 16})}
+    (div
+     {:style (merge
+              ui/row-middle
+              {:font-family ui/font-fancy, :font-size 20, :color (hsl 0 0 70)})}
+     (<> "Colors"))
+    (list->
+     {:style {}}
+     (->> color-groups
+          (map-val
+           (fn [color-group] (comp-color-group (>> states (:id color-group)) color-group)))))
+    (=< nil 16)
+    (button
+     {:style (merge ui/row-middle ui/button),
+      :on-click (fn [e d!]
+        ((:show group-modal) d!)
+        (delay! 0.4 (fn [] (focus-element! ".group-name"))))}
+     (comp-icon :plus {:font-size 20, :color (hsl 200 100 80), :vertical-align :middle} nil)
+     (<> "Add group"))
+    (:ui group-modal))))

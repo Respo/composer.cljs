@@ -8,11 +8,10 @@
             [composer.config :as config]
             [respo.util.list :refer [map-val]]
             [feather.core :refer [comp-i]]
-            [respo-alerts.core :refer [comp-prompt comp-confirm]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm use-modal]]
             [clojure.string :as string]
             [favored-edn.core :refer [write-edn]]
-            [cljs.reader :refer [read-string]]
-            [inflow-popup.comp.popup :refer [comp-popup]]))
+            [cljs.reader :refer [read-string]]))
 
 (def style-code {:font-family ui/font-code, :font-size 12, :line-height "18px"})
 
@@ -32,7 +31,7 @@
    (div
     {:style ui/column}
     (textarea
-     {:style (merge ui/textarea style-code {:height 240, :width 600}),
+     {:style (merge ui/textarea style-code {:height 240, :width "100%"}),
       :placeholder "EDN data",
       :value (:draft state),
       :on-input (fn [e d!] (d! cursor (assoc state :draft (:value e)))),
@@ -63,7 +62,29 @@
 (defcomp
  comp-mock-editor
  (states template-id mock)
- (let [base-op-data {:template-id template-id, :mock-id (:id mock)}]
+ (let [base-op-data {:template-id template-id, :mock-id (:id mock)}
+       edit-modal (use-modal
+                   (>> states :edit)
+                   {:style {:padding 8},
+                    :render-body (fn [on-toggle]
+                      (comp-data-editor
+                       (>> states :edit-data)
+                       (:data mock)
+                       (fn [data d!]
+                         (comment println "edit data" data)
+                         (d! :template/update-mock (merge base-op-data {:data data}))
+                         (on-toggle d!))))})
+       state-modal (use-modal
+                    (>> states :edit-state)
+                    {:style {:padding 8},
+                     :render-body (fn [on-toggle]
+                       (comp-data-editor
+                        (>> states :edit-data)
+                        (:state mock)
+                        (fn [data d!]
+                          (comment println "edit data" data)
+                          (d! :template/update-mock (merge base-op-data {:state data}))
+                          (on-toggle d!))))})]
    (div
     {:style (merge ui/flex ui/column {:overflow :auto})}
     (div
@@ -107,34 +128,22 @@
      (pre {:style style-code-preview, :disabled true, :inner-text (write-edn (:data mock))}))
     (div
      {:style {:padding 8}}
-     (comp-popup
-      (>> states :edit)
-      {:trigger (a {:style ui/link, :inner-text "Edit data"}), :style nil}
-      (fn [on-toggle]
-        (comp-data-editor
-         (>> states :edit-data)
-         (:data mock)
-         (fn [data d!]
-           (comment println "edit data" data)
-           (d! :template/update-mock (merge base-op-data {:data data}))
-           (on-toggle d!))))))
+     (a
+      {:style ui/link,
+       :inner-text "Edit data",
+       :on-click (fn [e d!] ((:show edit-modal) d!))}))
     (div
      {:style {:padding "0px 8px", :max-height 320, :overflow :auto}}
      (pre
       {:style style-code-preview, :disabled true, :inner-text (write-edn (:state mock))}))
     (div
      {:style {:padding 8}}
-     (comp-popup
-      (>> states :edit-state)
-      {:trigger (a {:style ui/link, :inner-text "Edit state"}), :style nil}
-      (fn [on-toggle]
-        (comp-data-editor
-         (>> states :edit-data)
-         (:state mock)
-         (fn [data d!]
-           (comment println "edit data" data)
-           (d! :template/update-mock (merge base-op-data {:state data}))
-           (on-toggle d!)))))))))
+     (a
+      {:style ui/link,
+       :inner-text "Edit state",
+       :on-click (fn [e d!] ((:show state-modal) d!))}))
+    (:ui edit-modal)
+    (:ui state-modal))))
 
 (defcomp
  comp-mock-data

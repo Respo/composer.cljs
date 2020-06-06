@@ -5,7 +5,7 @@
             [respo.comp.space :refer [=<]]
             [respo.core :refer [defcomp <> >> list-> span div input button a]]
             [composer.config :as config]
-            [inflow-popup.comp.popup :refer [comp-popup]]
+            [respo-alerts.core :refer [use-modal]]
             [composer.style :as style]
             [respo.util.list :refer [map-val]]))
 
@@ -57,20 +57,29 @@
                      {:template-id template-id,
                       :path path,
                       :property "background-color",
-                      :value color}))]
+                      :value color}))
+       bg-modal (use-modal
+                 (>> states :bg-colors)
+                 {:style {:width 400, :padding "8px 16px"},
+                  :render-body (fn [on-toggle]
+                    (comp-color-panel
+                     (>> states :panel)
+                     color-groups
+                     bg-color
+                     set-color!
+                     on-toggle))})]
    (div
     {:style ui/row-middle}
     (<> "Background:" style/field-label)
     (=< 8 nil)
-    (comp-popup
-     (>> states :bg-color)
-     {:trigger (div
-                {:style {:width 24,
-                         :height 24,
-                         :background-color bg-color,
-                         :border "1px solid #ddd"}})}
-     (fn [on-toggle]
-       (comp-color-panel (>> states :panel) color-groups bg-color set-color! on-toggle))))))
+    (div
+     {:style {:width 24,
+              :height 24,
+              :background-color bg-color,
+              :border "1px solid #ddd",
+              :cursor :pointer},
+      :on-click (fn [e d!] (println "click") ((:show bg-modal) d!))})
+    (:ui bg-modal))))
 
 (defcomp
  comp-font-color-picker
@@ -79,17 +88,26 @@
        set-color! (fn [color d!]
                     (d!
                      :template/set-node-style
-                     {:template-id template-id, :path path, :property "color", :value color}))]
+                     {:template-id template-id, :path path, :property "color", :value color}))
+       font-modal (use-modal
+                   (>> states :font-color)
+                   {:style {:width 400, :padding "8px 16px"},
+                    :render-body (fn [on-toggle]
+                      (comp-color-panel
+                       (>> states :panel)
+                       color-groups
+                       init-color
+                       set-color!
+                       on-toggle))})]
    (div
     {:style ui/row-middle}
     (<> "Font color:" style/field-label)
     (=< 8 nil)
-    (comp-popup
-     (>> states :font-color)
-     {:trigger (div
-                {:style {:width 24,
-                         :height 24,
-                         :background-color init-color,
-                         :border "1px solid #ddd"}})}
-     (fn [on-toggle]
-       (comp-color-panel (>> states :panel) color-groups init-color set-color! on-toggle))))))
+    (div
+     {:style {:width 24,
+              :height 24,
+              :background-color init-color,
+              :border "1px solid #ddd",
+              :cursor :pointer},
+      :on-click (fn [e d!] ((:show font-modal) d!))})
+    (:ui font-modal))))
