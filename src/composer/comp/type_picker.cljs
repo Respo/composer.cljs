@@ -5,7 +5,7 @@
             [respo.comp.space :refer [=<]]
             [respo.core :refer [defcomp >> list-> <> span div a]]
             [composer.config :as config]
-            [respo-alerts.core :refer [comp-select comp-modal]]
+            [respo-alerts.core :refer [comp-select use-modal]]
             [composer.style :as style]
             [clojure.string :as string]
             [composer.schema :refer [node-types]]))
@@ -37,7 +37,44 @@
 (defcomp
  comp-type-picker
  (states template-id focused-path markup)
- (let [cursor (:cursor states), state (or (:data states) {:show? false})]
+ (let [cursor (:cursor states)
+       type-modal (use-modal
+                   (>> states :type)
+                   {:style {:padding "8px 16px"},
+                    :render-body (fn [on-close]
+                      (let [on-pick (fn [result d!]
+                                      (d!
+                                       :template/node-type
+                                       {:template-id template-id,
+                                        :path focused-path,
+                                        :type result})
+                                      (on-close d!))
+                            render-list (fn [types]
+                                          (list->
+                                           {}
+                                           (->> types
+                                                (map
+                                                 (fn [x] [x (comp-node-type x on-pick)])))))]
+                        (div
+                         {:style (merge ui/row)}
+                         (div
+                          {:style ui/flex}
+                          (render-title "Elements")
+                          (render-list (:element node-types)))
+                         (=< 16 nil)
+                         (div
+                          {:style ui/flex}
+                          (render-title "Layout")
+                          (render-list (:layout node-types))
+                          (render-title "DevTool")
+                          (render-list (:devtool node-types)))
+                         (=< 16 nil)
+                         (div
+                          {:style ui/flex}
+                          (render-title "Controls")
+                          (render-list (:control node-types))
+                          (render-title "Advanced")
+                          (render-list (:advanced node-types))))))})]
    (div
     {:style ui/row-middle}
     (<> "Node Type:" style/field-label)
@@ -45,42 +82,10 @@
     (span
      {:inner-text (name (:type markup)),
       :style {:cursor :pointer},
-      :on-click (fn [e d!] (d! cursor (assoc state :show? true)))})
-    (comp-modal
-     {:render-body (fn []
-        (let [on-pick (fn [result d!]
-                        (d!
-                         :template/node-type
-                         {:template-id template-id, :path focused-path, :type result})
-                        (d! cursor (assoc state :show? false)))
-              render-list (fn [types]
-                            (list->
-                             {}
-                             (->> types (map (fn [x] [x (comp-node-type x on-pick)])))))]
-          (div
-           {:style (merge ui/row {:padding "16px"})}
-           (div
-            {:style ui/flex}
-            (render-title "Elements")
-            (render-list (:element node-types)))
-           (=< 16 nil)
-           (div
-            {:style ui/flex}
-            (render-title "Layout")
-            (render-list (:layout node-types))
-            (render-title "DevTool")
-            (render-list (:devtool node-types)))
-           (=< 16 nil)
-           (div
-            {:style ui/flex}
-            (render-title "Controls")
-            (render-list (:control node-types))
-            (render-title "Advanced")
-            (render-list (:advanced node-types))))))}
-     (:show? state)
-     (fn [d!] (d! cursor (assoc state :show? false))))
+      :on-click (fn [e d!] ((:show type-modal) d!))})
     (=< 8 nil)
-    (if (= :icon (:type markup)) (comp-icon-site)))))
+    (if (= :icon (:type markup)) (comp-icon-site))
+    (:ui type-modal))))
 
 (defn find-option [x options]
   (if (empty? options)
