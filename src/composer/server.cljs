@@ -13,7 +13,7 @@
             [cumulo-util.core :refer [id! repeat! unix-time! delay!]]
             [composer.twig.container :refer [twig-container]]
             [recollect.diff :refer [diff-twig]]
-            [recollect.twig :refer [render-twig]]
+            [recollect.twig :refer [new-twig-loop! clear-twig-caches!]]
             [ws-edn.server :refer [wss-serve! wss-send! wss-each!]]
             [favored-edn.core :refer [write-edn]]
             [composer.util :refer [specified-port!]]
@@ -101,14 +101,15 @@
            records (:records reel)
            session (get-in db [:sessions sid])
            old-store (or (get @*client-caches sid) nil)
-           new-store (render-twig (twig-container db session records) old-store)
+           new-store (twig-container db session records)
            changes (diff-twig old-store new-store {:key :id})]
        (when config/dev?
          (println (.gray chalk (str "Changes for " sid ": " (count changes)))))
        (if (not= changes [])
          (do
           (wss-send! sid {:kind :patch, :data changes})
-          (swap! *client-caches assoc sid new-store)))))))
+          (swap! *client-caches assoc sid new-store))))))
+  (new-twig-loop!))
 
 (defn render-loop! []
   (when (not (identical? @*reader-reel @*reel))
@@ -155,7 +156,10 @@
   (check-settings!)
   (watch-snapshot!))
 
-(defn reload! []
+(defn ^:dev/after-load
+  reload!
+  []
   (println "Code updated.")
+  (clear-twig-caches!)
   (reset! *reel (refresh-reel @*reel initial-db updater))
   (sync-clients! @*reader-reel))
