@@ -1,4 +1,4 @@
-{:version "0.1.19-a2",
+{:version "0.1.19-a3",
  :group-id "respo",
  :artifact-id "composer",
  :skip-tag true,
