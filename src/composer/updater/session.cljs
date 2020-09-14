@@ -20,7 +20,7 @@
 
 (defn jump-template [db op-data sid op-id op-time]
   (let [target (->> (vals (:templates db))
-                    (filter (fn [template] (= (str "\"" (:name template)) op-data)))
+                    (filter (fn [template] (= (str "" (:name template)) op-data)))
                     (first))]
     (if (some? target)
       (update-in
