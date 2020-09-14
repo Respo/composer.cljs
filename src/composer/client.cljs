@@ -76,4 +76,9 @@
   (.addEventListener js/window "keydown" #(on-window-keydown %))
   (println "App started!"))
 
-(defn reload! [] (clear-cache!) (render-app! render!) (println "Code updated."))
+(defn ^:dev/after-load
+  reload!
+  []
+  (clear-cache!)
+  (render-app! render!)
+  (println "Code updated."))

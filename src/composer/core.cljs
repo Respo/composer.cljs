@@ -185,7 +185,7 @@
     (if (some? obj)
       (i
        {:style (merge {"display" :inline-block, "cursor" :pointer} (:style markup)),
-        :innerHTML (.toSvg obj (clj->js {:width size, :height size, :color color})),
+        :innerHTML (.toSvg ^js obj (clj->js {:width size, :height size, :color color})),
         :on event-map})
       (comp-invalid (str "No icon: " icon-name) props))))
 
